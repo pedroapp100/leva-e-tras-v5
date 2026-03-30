@@ -133,7 +133,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-011", codigo: "LT-20260314-00011", cliente_id: "cli-001", entregador_id: "ent-003",
-    status: "rejeitada", tipo_operacao: "standard", ponto_coleta: "Rua das Flores, 123 - Centro",
+    status: "rejeitada", tipo_operacao: "tipo-comercial", ponto_coleta: "Rua das Flores, 123 - Centro",
     data_solicitacao: "2026-03-14T11:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: null, valor_total_repasse: null, justificativa: "Endereço fora da área de cobertura",
     historico: [
