@@ -350,7 +350,7 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose, isDriverView = fal
           </div>
 
           {/* Resumo de Conciliação (só para concluída) */}
-          {isConcluida && conciliacao && (
+          {isConcluida && conciliacao && !isDriverView && (
             <>
               <Separator />
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-2">
@@ -381,6 +381,22 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose, isDriverView = fal
                     * {isFaturado ? "Operação faturada" : "Cliente pré-pago"} — taxa não somada ao total do entregador.
                   </p>
                 )}
+              </div>
+            </>
+          )}
+
+          {isConcluida && conciliacao && isDriverView && conciliacao.totalLoja > 0 && (
+            <>
+              <Separator />
+              <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-2">
+                <h4 className="text-sm font-semibold mb-2">Resumo — Valores Cobrados</h4>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Store className="h-3.5 w-3.5" />
+                    Total cobrado do cliente
+                  </span>
+                  <span className="tabular-nums font-medium">{fmt(conciliacao.totalLoja)}</span>
+                </div>
               </div>
             </>
           )}
