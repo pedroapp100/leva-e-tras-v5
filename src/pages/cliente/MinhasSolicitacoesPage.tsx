@@ -16,6 +16,7 @@ import type { StatusSolicitacao, Solicitacao } from "@/types/database";
 import { MapPin, Calendar, Eye, X } from "lucide-react";
 import { ViewSolicitacaoDialog } from "@/pages/admin/solicitacoes/ViewSolicitacaoDialog";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 
 const CLIENTE_ID = "cli-001";
 
@@ -55,6 +56,7 @@ export default function MinhasSolicitacoesPage() {
     { key: "codigo", header: "Código", sortable: true, cell: (s) => <span className="text-sm font-medium">{s.codigo}</span> },
     { key: "ponto_coleta", header: "Coleta", cell: (s) => <span className="text-sm text-muted-foreground truncate max-w-[200px] block">{s.ponto_coleta}</span> },
     { key: "data_solicitacao", header: "Data", sortable: true, cell: (s) => <span className="text-sm">{formatDateBR(s.data_solicitacao)}</span> },
+    { key: "tipo_operacao", header: "Tipo", cell: (s) => <TipoOperacaoBadge tipoOperacao={s.tipo_operacao} /> },
     { key: "entregador_id", header: "Entregador", cell: (s) => <span className="text-sm text-muted-foreground">{getEntregadorName(s.entregador_id)}</span> },
     { key: "valor_total_taxas", header: "Valor", sortable: true, cell: (s) => s.valor_total_taxas != null ? <span className="font-semibold tabular-nums">{formatCurrency(s.valor_total_taxas)}</span> : <span className="text-muted-foreground">—</span> },
     { key: "status", header: "Status", cell: (s) => <StatusBadge status={s.status} /> },
@@ -78,8 +80,9 @@ export default function MinhasSolicitacoesPage() {
     <Card className="p-4 cursor-pointer" onClick={() => setViewing(s)}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-semibold">{s.codigo}</span>
+            <TipoOperacaoBadge tipoOperacao={s.tipo_operacao} />
             <StatusBadge status={s.status} />
           </div>
           <div className="mt-2 space-y-1">
