@@ -49,8 +49,8 @@ export function AdminConciliacaoDialog({
     getRotasBySolicitacao,
     getPagamentosBySolicitacao,
     addPagamentos,
-    concluirSolicitacaoComFatura,
   } = useGlobalStore();
+  const concluirComCaixa = useConcluirComCaixa();
 
   const rotas = getRotasBySolicitacao(solicitacao.id);
   const driverPagamentos = getPagamentosBySolicitacao(solicitacao.id);
