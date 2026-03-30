@@ -34,6 +34,7 @@ import LogsPage from "./pages/admin/LogsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import EntregasPage from "./pages/admin/EntregasPage";
+import CaixasEntregadoresPage from "./pages/admin/CaixasEntregadoresPage";
 
 // Cliente pages
 import ClienteDashboard from "./pages/cliente/ClienteDashboard";
