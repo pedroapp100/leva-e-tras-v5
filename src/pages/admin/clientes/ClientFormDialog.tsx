@@ -15,7 +15,7 @@ interface ClientFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editing: Cliente | null;
-  onSave: (data: Cliente) => void;
+  onSave: (data: Cliente, senha?: string) => void;
 }
 
 const UF_LIST = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
