@@ -80,8 +80,9 @@ export default function MinhasSolicitacoesPage() {
     <Card className="p-4 cursor-pointer" onClick={() => setViewing(s)}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-semibold">{s.codigo}</span>
+            <TipoOperacaoBadge tipoOperacao={s.tipo_operacao} />
             <StatusBadge status={s.status} />
           </div>
           <div className="mt-2 space-y-1">
