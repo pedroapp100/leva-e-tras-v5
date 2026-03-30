@@ -54,7 +54,7 @@ export default function EntregadoresPage() {
 
   const { addUser, findByEmail } = useUserStore();
 
-  const handleSave = (data: Entregador) => {
+  const handleSave = (data: Entregador, senha?: string) => {
     if (editing) {
       setEntregadores((prev) => prev.map((e) => (e.id === editing.id ? { ...data, id: editing.id } : e)));
       toast.success("Entregador atualizado com sucesso!");
@@ -62,13 +62,12 @@ export default function EntregadoresPage() {
       const newId = `ent-${Date.now()}`;
       setEntregadores((prev) => [...prev, { ...data, id: newId }]);
 
-      // Auto-criar conta de acesso se email ainda não existe
-      if (!findByEmail(data.email)) {
-        const defaultPassword = "123456";
+      // Auto-criar conta de acesso
+      if (senha && !findByEmail(data.email)) {
         addUser({
           id: `user-${newId}`,
           email: data.email,
-          password: defaultPassword,
+          password: senha,
           nome: data.nome,
           role: "entregador",
           cargo_id: null,
@@ -78,7 +77,7 @@ export default function EntregadoresPage() {
           updated_at: new Date().toISOString(),
         });
         toast.success(
-          `Entregador cadastrado! Credenciais de acesso: Email: ${data.email} | Senha: ${defaultPassword}`,
+          `Entregador cadastrado! Credenciais: Email: ${data.email} | Senha definida pelo admin`,
           { duration: 10000 }
         );
       } else {

@@ -15,7 +15,7 @@ interface ClientFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editing: Cliente | null;
-  onSave: (data: Cliente) => void;
+  onSave: (data: Cliente, senha?: string) => void;
 }
 
 const UF_LIST = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
@@ -37,6 +37,7 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
   const [numEntregas, setNumEntregas] = useState<number | "">("");
   const [diaSemana, setDiaSemana] = useState<DiaSemana | "">("");
   const [diaMes, setDiaMes] = useState<number | "">("");
+  const [senha, setSenha] = useState("");
 
   useEffect(() => {
     if (editing) {
@@ -61,12 +62,17 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
       setEndereco(""); setBairro(""); setCidade(""); setUf("CE");
       setChavePix(""); setStatus("ativo"); setModalidade("pre_pago");
       setFaturamentoAuto(false); setFrequencia(""); setNumEntregas(""); setDiaSemana(""); setDiaMes("");
+      setSenha("");
     }
   }, [editing, open]);
 
   const handleSubmit = () => {
     if (!nome.trim() || !email.trim() || !telefone.trim()) {
       toast.error("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    if (!editing && !senha.trim()) {
+      toast.error("Defina uma senha de acesso para o cliente.");
       return;
     }
 
@@ -91,7 +97,7 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
       dia_do_mes_faturamento: frequencia === "mensal" && diaMes ? Number(diaMes) : null,
       created_at: editing?.created_at ?? now,
       updated_at: now,
-    });
+    }, !editing ? senha.trim() : undefined);
   };
 
   return (
@@ -275,6 +281,31 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
               </div>
             </div>
           </div>
+
+          {/* Seção 3: Acesso ao Portal (apenas novo cadastro) */}
+          {!editing && (
+            <>
+              <Separator />
+              <div>
+                <h3 className="text-base font-semibold mb-4">Acesso ao Portal</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Senha de acesso *</Label>
+                    <Input
+                      type="password"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      minLength={6}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      O cliente usará o email cadastrado e esta senha para acessar o portal.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         <DialogFooter>

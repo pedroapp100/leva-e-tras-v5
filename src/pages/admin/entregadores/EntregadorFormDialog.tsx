@@ -15,7 +15,7 @@ interface EntregadorFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editing: Entregador | null;
-  onSave: (data: Entregador) => void;
+  onSave: (data: Entregador, senha?: string) => void;
 }
 
 export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: EntregadorFormDialogProps) {
@@ -29,6 +29,7 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
   const [status, setStatus] = useState<"ativo" | "inativo">("ativo");
   const [tipoComissao, setTipoComissao] = useState<TipoComissao>("percentual");
   const [valorComissao, setValorComissao] = useState(0);
+  const [senha, setSenha] = useState("");
 
   useEffect(() => {
     if (editing) {
@@ -46,12 +47,17 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       setNome(""); setDocumento(""); setEmail(""); setTelefone("");
       setCidade("Fortaleza"); setBairro(""); setVeiculo("moto");
       setStatus("ativo"); setTipoComissao("percentual"); setValorComissao(0);
+      setSenha("");
     }
   }, [editing, open]);
 
   const handleSubmit = () => {
     if (!nome.trim() || !documento.trim() || !email.trim() || !telefone.trim()) {
       toast.error("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    if (!editing && !senha.trim()) {
+      toast.error("Defina uma senha de acesso para o entregador.");
       return;
     }
     const now = new Date().toISOString();
@@ -62,7 +68,7 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       valor_comissao: valorComissao,
       created_at: editing?.created_at ?? now,
       updated_at: now,
-    });
+    }, !editing ? senha.trim() : undefined);
   };
 
   return (
@@ -169,6 +175,26 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
               </div>
             </div>
           </div>
+
+          {/* Acesso ao Portal (apenas novo cadastro) */}
+          {!editing && (
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Acesso ao Portal</h4>
+              <div className="space-y-2">
+                <Label>Senha de acesso *</Label>
+                <Input
+                  type="password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  placeholder="Mínimo 6 caracteres"
+                  minLength={6}
+                />
+                <p className="text-xs text-muted-foreground">
+                  O entregador usará o email cadastrado e esta senha para acessar o portal.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         <DialogFooter>
