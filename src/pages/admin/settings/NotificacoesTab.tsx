@@ -301,6 +301,53 @@ export function NotificacoesTab() {
     setNewMensagem((m) => m + varName);
   }
 
+  const SAMPLE_DATA: Record<string, string> = {
+    "{{cliente_nome}}": "Maria Silva",
+    "{{solicitacao_id}}": "4821",
+    "{{data_solicitacao}}": "30/03/2026",
+    "{{endereco_coleta}}": "Rua das Flores, 123 - Centro",
+    "{{endereco_entrega}}": "Av. Brasil, 456 - Jardim América",
+    "{{valor_total}}": "R$ 25,00",
+    "{{tipo_operacao}}": "Comercial",
+    "{{entregador_nome}}": "João Santos",
+    "{{previsao_entrega}}": "14:30",
+    "{{status_entrega}}": "Em trânsito",
+    "{{fatura_id}}": "1042",
+    "{{valor_fatura}}": "R$ 1.250,00",
+    "{{data_vencimento}}": "05/04/2026",
+    "{{valor_pago}}": "R$ 1.250,00",
+    "{{saldo_atual}}": "R$ 350,00",
+  };
+
+  function fillSampleData(msg: string): string {
+    let filled = msg;
+    for (const [key, val] of Object.entries(SAMPLE_DATA)) {
+      filled = filled.replaceAll(key, val);
+    }
+    return filled;
+  }
+
+  function openTestSend(t: NotificacaoTemplate) {
+    setTestTemplate(t);
+    setTestPhone("");
+    setTestSending(false);
+    setTestSent(false);
+    setTestOpen(true);
+  }
+
+  function handleTestSend() {
+    if (!testPhone || testPhone.length < 10) {
+      toast.error("Informe um número de telefone válido.");
+      return;
+    }
+    setTestSending(true);
+    setTimeout(() => {
+      setTestSending(false);
+      setTestSent(true);
+      toast.success("Mensagem de teste enviada com sucesso!");
+    }, 2000);
+  }
+
   const columns: Column<NotificacaoTemplate>[] = [
     {
       key: "evento_label",
