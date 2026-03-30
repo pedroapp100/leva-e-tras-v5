@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Plus, Users, UserCheck, Package, Clock, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { useUserStore } from "@/data/mockUsers";
 import { EntregadorFormDialog } from "./entregadores/EntregadorFormDialog";
 
 export default function EntregadoresPage() {
