@@ -63,6 +63,7 @@ export default function SolicitacoesPage() {
   const [conciliacaoTarget, setConciliacaoTarget] = useState<Solicitacao | null>(null);
   const [justifyTarget, setJustifyTarget] = useState<{ sol: Solicitacao; action: "cancelar" | "rejeitar" } | null>(null);
   const [simuladorOpen, setSimuladorOpen] = useState(false);
+  const [adminConciliacaoTarget, setAdminConciliacaoTarget] = useState<Solicitacao | null>(null);
 
   const filtered = useMemo(() => {
     return solicitacoes.filter((s) => {
