@@ -67,6 +67,7 @@ export default function SettingsPage() {
             <TabsContent value="taxas_extras" className="mt-4"><TaxasExtrasTab /></TabsContent>
             <TabsContent value="simulador" className="mt-4"><SimuladorOperacoes showClienteSelector /></TabsContent>
             <TabsContent value="webhooks" className="mt-4"><WebhooksTab /></TabsContent>
+            <TabsContent value="integracoes" className="mt-4"><IntegracoesTab /></TabsContent>
           </Tabs>
         </CardContent>
       </Card>
