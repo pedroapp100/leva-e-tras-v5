@@ -206,18 +206,7 @@ export default function EntregasPage() {
     {
       key: "tipo_operacao",
       header: "Tipo",
-      cell: (r) => {
-        const tipoStyles: Record<string, string> = {
-          standard: "bg-primary/10 text-primary border-primary/25",
-          express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-          retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-        };
-        return (
-          <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>
-            {TIPO_OPERACAO_LABELS[r.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? r.tipo_operacao}
-          </Badge>
-        );
-      },
+      cell: (r) => <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />,
     },
     {
       key: "taxa_resolvida",
