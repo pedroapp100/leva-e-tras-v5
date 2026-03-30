@@ -137,6 +137,7 @@ const App = () => (
                 </>
               </ErrorBoundary>
             </OnboardingProvider>
+            </CaixaStoreProvider>
             </GlobalStoreProvider>
             </LogStoreProvider>
           </AuthProvider>
