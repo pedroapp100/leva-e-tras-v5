@@ -323,12 +323,24 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose, isDriverView = fal
                   )}
 
                   {/* ── Modo Conciliação (concluída) ── */}
-                  {isConcluida && (
+                  {isConcluida && !isDriverView && (
                     <RotaConciliationCard
                       rota={rota}
                       pagamentos={pagamentosPorRota[rota.id] || []}
                       isFaturado={!!isFaturado}
                     />
+                  )}
+                  {isConcluida && isDriverView && rota.receber_do_cliente && (
+                    <div className="rounded-md border border-border bg-muted/30 p-3 space-y-1.5">
+                      <span className="flex items-center gap-1.5 font-medium text-xs uppercase tracking-wide">
+                        <Store className="h-3.5 w-3.5 text-status-pending" />
+                        Cobrar do Cliente
+                      </span>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Valor cobrado</span>
+                        <span className="tabular-nums font-medium">{fmt(rota.valor_a_receber)}</span>
+                      </div>
+                    </div>
                   )}
 
                   {rota.observacoes && <p className="text-xs text-muted-foreground italic">{rota.observacoes}</p>}
