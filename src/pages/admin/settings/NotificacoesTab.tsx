@@ -385,6 +385,7 @@ export function NotificacoesTab() {
             </Tooltip>
           </div>
         </TooltipProvider>
+      ),
     },
   ];
 
