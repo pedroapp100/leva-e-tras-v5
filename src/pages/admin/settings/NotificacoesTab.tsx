@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Pencil, X, MessageSquare, Eye, Info } from "lucide-react";
+import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { create } from "zustand";
 
