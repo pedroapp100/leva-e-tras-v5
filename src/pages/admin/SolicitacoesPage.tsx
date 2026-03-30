@@ -435,6 +435,14 @@ export default function SolicitacoesPage() {
             isConcluding={conciliacaoTarget.status === "em_andamento"}
           />
         )}
+        {adminConciliacaoTarget && (
+          <AdminConciliacaoDialog
+            open={!!adminConciliacaoTarget}
+            onOpenChange={(open) => !open && setAdminConciliacaoTarget(null)}
+            solicitacao={adminConciliacaoTarget}
+            onConfirm={() => setAdminConciliacaoTarget(null)}
+          />
+        )}
       </Suspense>
       <JustificationDialog
         open={!!justifyTarget}
