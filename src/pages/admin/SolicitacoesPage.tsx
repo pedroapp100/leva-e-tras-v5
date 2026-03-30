@@ -291,7 +291,6 @@ export default function SolicitacoesPage() {
       key: "tipo_operacao", header: "Tipo",
       cell: (r) => <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />,
     },
-    },
     {
       key: "entregador_id", header: "Entregador",
       cell: (r) => <span className="text-muted-foreground">{getEntregadorName(r.entregador_id)}</span>,
