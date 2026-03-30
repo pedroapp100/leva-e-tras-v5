@@ -290,8 +290,10 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleConcluir} disabled={!isBalanced}>
-            {isConcluding ? "Concluir e Conciliar" : isEditing ? "Salvar Alterações" : "Concluir Conciliação"}
+          <Button onClick={handleConcluir} disabled={!isDriverView && !isBalanced}>
+            {isDriverView
+              ? "Registrar Recebimentos"
+              : isConcluding ? "Concluir e Conciliar" : isEditing ? "Salvar Alterações" : "Concluir Conciliação"}
           </Button>
         </DialogFooter>
       </DialogContent>
