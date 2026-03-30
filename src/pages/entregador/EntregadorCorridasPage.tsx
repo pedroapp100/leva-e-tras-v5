@@ -278,6 +278,7 @@ export default function EntregadorCorridasPage() {
             rotas={getRotasBySolicitacao(conciliacaoTarget.id)}
             clienteId={conciliacaoTarget.cliente_id}
             isConcluding
+            isDriverView
             onConcluir={() => handleConcluir(conciliacaoTarget)}
           />
         </Suspense>
