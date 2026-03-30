@@ -97,7 +97,7 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
       dia_do_mes_faturamento: frequencia === "mensal" && diaMes ? Number(diaMes) : null,
       created_at: editing?.created_at ?? now,
       updated_at: now,
-    });
+    }, !editing ? senha.trim() : undefined);
   };
 
   return (
