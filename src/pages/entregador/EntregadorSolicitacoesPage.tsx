@@ -287,7 +287,6 @@ export default function EntregadorSolicitacoesPage() {
                     <Badge variant="secondary" className="tabular-nums text-xs">
                       {getRotasBySolicitacao(r.id).length} rotas
                     </Badge>
-                    <span className="tabular-nums font-medium text-foreground">{fmt(r.valor_total_taxas)}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between border-t border-border pt-2">
