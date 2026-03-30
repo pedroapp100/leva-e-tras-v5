@@ -93,9 +93,6 @@ export default function EntregadorHistoricoPage() {
           </div>
         </div>
         <div className="text-right shrink-0 space-y-2">
-          {s.valor_total_taxas != null && (
-            <span className="text-base font-bold tabular-nums text-foreground">{formatCurrency(s.valor_total_taxas)}</span>
-          )}
           <Button variant="ghost" size="sm" onClick={() => setViewSol(s)}>
             <Eye className="h-4 w-4 mr-1" /> Ver
           </Button>
