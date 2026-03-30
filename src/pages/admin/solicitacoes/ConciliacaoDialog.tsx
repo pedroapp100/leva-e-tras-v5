@@ -172,43 +172,69 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
             <div key={rota.id} className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold">Rota {i + 1} — {getBairroName(rota.bairro_destino_id)}</h4>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>Taxa: {fmt(rota.taxa_resolvida ?? 0)}</span>
-                  {rota.receber_do_cliente && <span>| Receber: {fmt(rota.valor_a_receber ?? 0)}</span>}
-                </div>
+                {!isDriverView && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>Taxa: {fmt(rota.taxa_resolvida ?? 0)}</span>
+                    {rota.receber_do_cliente && <span>| Receber: {fmt(rota.valor_a_receber ?? 0)}</span>}
+                  </div>
+                )}
+                {isDriverView && rota.receber_do_cliente && (
+                  <span className="text-xs text-muted-foreground">Cobrar: {fmt(rota.valor_a_receber ?? 0)}</span>
+                )}
               </div>
 
               <div className="space-y-2">
                 {(pagamentosPorRota[rota.id] || []).map((pag) => (
-                  <div key={pag.id} className="grid grid-cols-[1fr_100px_120px_auto] gap-2 items-end">
-                    <div className="space-y-1">
-                      <Label className="text-xs">Meio</Label>
-                      <Select value={pag.forma_pagamento_id} onValueChange={(v) => updatePagamento(rota.id, pag.id, "forma_pagamento_id", v)}>
-                        <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          {formasAtivas.map((f) => (<SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>))}
-                          {isFaturado && <SelectItem value={FATURAR_ID}>Faturar</SelectItem>}
-                        </SelectContent>
-                      </Select>
+                  isDriverView ? (
+                    <div key={pag.id} className="grid grid-cols-[1fr_100px_auto] gap-2 items-end">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Meio</Label>
+                        <Select value={pag.forma_pagamento_id} onValueChange={(v) => updatePagamento(rota.id, pag.id, "forma_pagamento_id", v)}>
+                          <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {formasAtivas.map((f) => (<SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Valor</Label>
+                        <CurrencyInput value={pag.valor} onChange={(v) => updatePagamento(rota.id, pag.id, "valor", v)} />
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive" onClick={() => removePagamento(rota.id, pag.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs">Valor</Label>
-                      <CurrencyInput value={pag.valor} onChange={(v) => updatePagamento(rota.id, pag.id, "valor", v)} />
+                  ) : (
+                    <div key={pag.id} className="grid grid-cols-[1fr_100px_120px_auto] gap-2 items-end">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Meio</Label>
+                        <Select value={pag.forma_pagamento_id} onValueChange={(v) => updatePagamento(rota.id, pag.id, "forma_pagamento_id", v)}>
+                          <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {formasAtivas.map((f) => (<SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>))}
+                            {isFaturado && <SelectItem value={FATURAR_ID}>Faturar</SelectItem>}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Valor</Label>
+                        <CurrencyInput value={pag.valor} onChange={(v) => updatePagamento(rota.id, pag.id, "valor", v)} />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Pertence a</Label>
+                        <Select value={pag.pertence_a} onValueChange={(v) => updatePagamento(rota.id, pag.id, "pertence_a", v)}>
+                          <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="operacao">Operação</SelectItem>
+                            <SelectItem value="loja">Loja</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive" onClick={() => removePagamento(rota.id, pag.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs">Pertence a</Label>
-                      <Select value={pag.pertence_a} onValueChange={(v) => updatePagamento(rota.id, pag.id, "pertence_a", v)}>
-                        <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="operacao">Operação</SelectItem>
-                          <SelectItem value="loja">Loja</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive" onClick={() => removePagamento(rota.id, pag.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  )
                 ))}
               </div>
 
@@ -218,7 +244,7 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
 
               {i < rotas.length - 1 && <Separator />}
             </div>
-          ))}
+          )}
 
           {/* Resumo */}
           <div className="rounded-lg border border-border p-4 space-y-2">
