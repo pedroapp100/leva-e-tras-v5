@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Solicitacao, Rota, PagamentoSolicitacao } from "@/types/database";
-import { STATUS_SOLICITACAO_LABELS, TIPO_OPERACAO_LABELS } from "@/types/database";
+import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
 import { MOCK_BAIRROS, MOCK_REGIOES, MOCK_FORMAS_PAGAMENTO } from "@/data/mockSettings";
