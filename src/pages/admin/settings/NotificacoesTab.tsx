@@ -237,7 +237,7 @@ export function NotificacoesTab() {
   const [testSending, setTestSending] = useState(false);
   const [testSent, setTestSent] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [historyTemplate, setHistoryTemplate] = useState<NotificacaoTemplate | null>(null);
+  const [historyTemplateId, setHistoryTemplateId] = useState<string | null>(null);
 
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
