@@ -43,6 +43,9 @@ const statusLabelMap: Record<string, string> = {
   ativo: "Ativo",
   inativo: "Inativo",
   bloqueado: "Bloqueado",
+  aberto: "Aberto",
+  fechado: "Fechado",
+  divergente: "Divergente",
 };
 
 interface StatusBadgeProps {
