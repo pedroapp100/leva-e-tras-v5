@@ -74,6 +74,7 @@ const App = () => (
           <AuthProvider>
             <LogStoreProvider>
             <GlobalStoreProvider>
+            <CaixaStoreProvider>
             <OnboardingProvider>
               <WelcomeModal />
               <OnboardingOverlay />
