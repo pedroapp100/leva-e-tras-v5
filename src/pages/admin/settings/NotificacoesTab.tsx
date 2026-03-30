@@ -239,6 +239,7 @@ export function NotificacoesTab() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyTemplateId, setHistoryTemplateId] = useState<string | null>(null);
 
+  const historyTemplate = historyTemplateId ? templates.find((t) => t.id === historyTemplateId) ?? null : null;
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
   const filtered = templates.filter((t) => {
