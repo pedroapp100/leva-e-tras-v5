@@ -56,7 +56,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-004", codigo: "LT-20260315-00004", cliente_id: "cli-004", entregador_id: "ent-001",
-    status: "aceita", tipo_operacao: "standard", ponto_coleta: "Av. Washington Soares, 1000 - Messejana",
+    status: "aceita", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Washington Soares, 1000 - Messejana",
     data_solicitacao: "2026-03-15T10:30:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 15.00, valor_total_repasse: null, justificativa: null,
     historico: [
