@@ -68,6 +68,7 @@ export default function SettingsPage() {
             <TabsContent value="precos" className="mt-4" data-onboarding="price-table"><TabelaPrecosTab initialClienteId={clienteId} /></TabsContent>
             <TabsContent value="taxas_extras" className="mt-4"><TaxasExtrasTab /></TabsContent>
             <TabsContent value="simulador" className="mt-4"><SimuladorOperacoes showClienteSelector /></TabsContent>
+            <TabsContent value="notificacoes" className="mt-4"><NotificacoesTab /></TabsContent>
             <TabsContent value="webhooks" className="mt-4"><WebhooksTab /></TabsContent>
             <TabsContent value="integracoes" className="mt-4"><IntegracoesTab /></TabsContent>
           </Tabs>
