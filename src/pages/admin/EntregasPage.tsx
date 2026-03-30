@@ -88,7 +88,7 @@ export default function EntregasPage() {
         codigo: sol?.codigo ?? "—",
         cliente_id: sol?.cliente_id ?? "",
         entregador_id: sol?.entregador_id,
-        tipo_operacao: sol?.tipo_operacao ?? "standard",
+        tipo_operacao: sol?.tipo_operacao ?? "",
         data_solicitacao: sol?.data_solicitacao ?? "",
         data_conclusao: sol?.data_conclusao,
         bairro_nome: getBairroName(rota.bairro_destino_id),
