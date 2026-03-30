@@ -83,7 +83,10 @@ const defaultTemplates: NotificacaoTemplate[] = [
   // Solicitação
   {
     id: "ntf-1", evento: "solicitacao.criada", evento_label: "Solicitação criada", categoria: "Solicitação",
-    titulo: "Nova solicitação", canal: "whatsapp", status: "ativo",
+    titulo: "Nova solicitação", canal: "whatsapp", status: "ativo", historico_testes: [
+      { id: "ts-1", telefone: "11999887766", data: "2026-03-28T14:30:00Z", status: "sucesso" },
+      { id: "ts-2", telefone: "11988776655", data: "2026-03-25T10:15:00Z", status: "falha" },
+    ],
     mensagem: "Olá {{cliente_nome}}! 👋\n\nSua solicitação *#{{solicitacao_id}}* foi criada com sucesso.\n\n📍 Coleta: {{endereco_coleta}}\n📍 Entrega: {{endereco_entrega}}\n💰 Valor: {{valor_total}}\n\nAcompanhe o status em tempo real!",
     variaveis: ["cliente_nome", "solicitacao_id", "endereco_coleta", "endereco_entrega", "valor_total"],
     updated_at: "2025-03-20T10:00:00Z",
