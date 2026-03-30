@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Pencil, X, MessageSquare, Eye, Info } from "lucide-react";
+import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { create } from "zustand";
 
@@ -161,6 +161,8 @@ const defaultTemplates: NotificacaoTemplate[] = [
 interface NotificacaoStore {
   templates: NotificacaoTemplate[];
   updateTemplate: (id: string, data: Partial<Omit<NotificacaoTemplate, "id">>) => void;
+  addTemplate: (data: Omit<NotificacaoTemplate, "id" | "updated_at">) => void;
+  removeTemplate: (id: string) => void;
 }
 
 const useNotificacaoStore = create<NotificacaoStore>((set) => ({
@@ -170,6 +172,17 @@ const useNotificacaoStore = create<NotificacaoStore>((set) => ({
       templates: s.templates.map((t) =>
         t.id === id ? { ...t, ...data, updated_at: new Date().toISOString() } : t
       ),
+    })),
+  addTemplate: (data) =>
+    set((s) => ({
+      templates: [
+        ...s.templates,
+        { ...data, id: `ntf-${Date.now()}`, updated_at: new Date().toISOString() },
+      ],
+    })),
+  removeTemplate: (id) =>
+    set((s) => ({
+      templates: s.templates.filter((t) => t.id !== id),
     })),
 }));
 
@@ -189,7 +202,7 @@ function MensagemPreview({ mensagem }: { mensagem: string }) {
 
 /* ── Main Component ── */
 export function NotificacoesTab() {
-  const { templates, updateTemplate } = useNotificacaoStore();
+  const { templates, updateTemplate, addTemplate, removeTemplate } = useNotificacaoStore();
 
   const [search, setSearch] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todos");
@@ -200,6 +213,11 @@ export function NotificacoesTab() {
   const [formTitulo, setFormTitulo] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<NotificacaoTemplate | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newEvento, setNewEvento] = useState("");
+  const [newCategoria, setNewCategoria] = useState("Solicitação");
+  const [newTitulo, setNewTitulo] = useState("");
+  const [newMensagem, setNewMensagem] = useState("");
 
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
@@ -242,6 +260,39 @@ export function NotificacoesTab() {
 
   function insertVariable(varName: string) {
     setFormMensagem((m) => m + varName);
+  }
+
+  function handleCreate() {
+    if (!newEvento.trim() || !newTitulo.trim() || !newMensagem.trim()) {
+      toast.error("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    const eventoSlug = newEvento.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+    addTemplate({
+      evento: `${newCategoria.toLowerCase().replace(/ç/g, "c").replace(/ã/g, "a")}.${eventoSlug}`,
+      evento_label: newEvento.trim(),
+      categoria: newCategoria,
+      titulo: newTitulo.trim(),
+      mensagem: newMensagem.trim(),
+      canal: "whatsapp",
+      status: "ativo",
+      variaveis: [],
+    });
+    toast.success("Novo evento de notificação criado com sucesso!");
+    setCreateOpen(false);
+    setNewEvento("");
+    setNewTitulo("");
+    setNewMensagem("");
+    setNewCategoria("Solicitação");
+  }
+
+  function handleDelete(t: NotificacaoTemplate) {
+    removeTemplate(t.id);
+    toast.success("Evento removido com sucesso.");
+  }
+
+  function insertNewVariable(varName: string) {
+    setNewMensagem((m) => m + varName);
   }
 
   const columns: Column<NotificacaoTemplate>[] = [
@@ -319,6 +370,19 @@ export function NotificacoesTab() {
               </TooltipTrigger>
               <TooltipContent>Editar mensagem</TooltipContent>
             </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); handleDelete(r); }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Remover</TooltipContent>
+            </Tooltip>
           </div>
         </TooltipProvider>
       ),
@@ -336,6 +400,9 @@ export function NotificacoesTab() {
           <h3 className="text-lg font-semibold">Notificações WhatsApp</h3>
           <p className="text-sm text-muted-foreground">Personalize as mensagens enviadas aos clientes para cada evento do sistema.</p>
         </div>
+        <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" /> Novo Evento
+        </Button>
       </div>
 
       <Card>
@@ -412,6 +479,9 @@ export function NotificacoesTab() {
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-primary hover:bg-primary/10" onClick={() => openEdit(r)}>
                     <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10" onClick={() => handleDelete(r)}>
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -513,6 +583,102 @@ export function NotificacoesTab() {
             </DialogClose>
             <Button onClick={() => { setPreviewOpen(false); if (previewTemplate) openEdit(previewTemplate); }}>
               <Pencil className="mr-2 h-4 w-4" /> Editar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Novo Evento de Notificação
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Categoria</Label>
+                <Select value={newCategoria} onValueChange={setNewCategoria}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(VARIAVEIS_POR_CATEGORIA).map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Nome do evento *</Label>
+                <Input
+                  value={newEvento}
+                  onChange={(e) => setNewEvento(e.target.value)}
+                  placeholder="Ex: Solicitação reagendada"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Título da notificação *</Label>
+                <Input
+                  value={newTitulo}
+                  onChange={(e) => setNewTitulo(e.target.value)}
+                  placeholder="Ex: Reagendamento confirmado"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Mensagem *</Label>
+                <Textarea
+                  value={newMensagem}
+                  onChange={(e) => setNewMensagem(e.target.value)}
+                  placeholder="Digite a mensagem..."
+                  className="min-h-[140px] font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground">Use *texto* para negrito. Emojis são suportados.</p>
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                  Variáveis disponíveis
+                </Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {(VARIAVEIS_POR_CATEGORIA[newCategoria] || []).map((v) => (
+                    <TooltipProvider key={v.var} delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7 font-mono"
+                            onClick={() => insertNewVariable(v.var)}
+                          >
+                            {v.var}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{v.desc}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <Label>Pré-visualização</Label>
+              <div className="bg-[#ece5dd] dark:bg-[#0b141a] rounded-lg p-4 min-h-[250px] flex items-end justify-end">
+                <MensagemPreview mensagem={newMensagem || "Sua mensagem aparecerá aqui..."} />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">As variáveis serão substituídas pelos dados reais no envio.</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancelar</Button>
+            </DialogClose>
+            <Button onClick={handleCreate}>
+              <Plus className="mr-2 h-4 w-4" /> Criar Evento
             </Button>
           </DialogFooter>
         </DialogContent>
