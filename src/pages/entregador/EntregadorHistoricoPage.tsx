@@ -111,11 +111,10 @@ export default function EntregadorHistoricoPage() {
             const cfg = {
               title: "Histórico de Entregas",
               subtitle: `${entregas.length} entregas`,
-              headers: ["Código", "Cliente", "Coleta", "Data", "Valor", "Status"],
+              headers: ["Código", "Cliente", "Coleta", "Data", "Status"],
               rows: entregas.map((s) => [
                 s.codigo, getClienteName(s.cliente_id), s.ponto_coleta,
                 formatDateBR(s.data_solicitacao),
-                s.valor_total_taxas != null ? formatCurrency(s.valor_total_taxas) : "—",
                 s.status,
               ]),
               filename: "historico-entregas",
@@ -125,11 +124,10 @@ export default function EntregadorHistoricoPage() {
           onExportExcel={() => {
             exportCSV({
               title: "Histórico de Entregas",
-              headers: ["Código", "Cliente", "Coleta", "Data", "Valor", "Status"],
+              headers: ["Código", "Cliente", "Coleta", "Data", "Status"],
               rows: entregas.map((s) => [
                 s.codigo, getClienteName(s.cliente_id), s.ponto_coleta,
                 formatDateBR(s.data_solicitacao),
-                s.valor_total_taxas != null ? formatCurrency(s.valor_total_taxas) : "—",
                 s.status,
               ]),
               filename: "historico-entregas",
