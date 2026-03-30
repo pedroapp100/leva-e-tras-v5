@@ -12,6 +12,7 @@ import { TiposOperacaoTab } from "./settings/TiposOperacaoTab";
 import { UsuariosTab } from "./settings/UsuariosTab";
 import { WebhooksTab } from "./settings/WebhooksTab";
 import { IntegracoesTab } from "./settings/IntegracoesTab";
+import { NotificacoesTab } from "./settings/NotificacoesTab";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { useSearchParams } from "react-router-dom";
 
