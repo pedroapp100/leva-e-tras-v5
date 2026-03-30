@@ -199,11 +199,7 @@ export default function EntregadorSolicitacoesPage() {
     {
       key: "tipo_operacao",
       header: "Tipo",
-      cell: (r) => (
-        <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>
-          {TIPO_OPERACAO_LABELS[r.tipo_operacao]}
-        </Badge>
-      ),
+      cell: (r) => <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />,
     },
     {
       key: "rotas",
