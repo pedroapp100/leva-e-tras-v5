@@ -60,7 +60,7 @@ export default function ClientesPage() {
 
   const { addUser, findByEmail } = useUserStore();
 
-  const handleSave = (data: Cliente) => {
+  const handleSave = (data: Cliente, senha?: string) => {
     if (editing) {
       setClientes((prev) => prev.map((c) => (c.id === editing.id ? { ...data, id: editing.id } : c)));
       toast.success("Cliente atualizado com sucesso!");
@@ -68,13 +68,12 @@ export default function ClientesPage() {
       const newId = `cli-${Date.now()}`;
       setClientes((prev) => [...prev, { ...data, id: newId }]);
 
-      // Auto-criar conta de acesso se email ainda não existe
-      if (!findByEmail(data.email)) {
-        const defaultPassword = "123456";
+      // Auto-criar conta de acesso
+      if (senha && !findByEmail(data.email)) {
         addUser({
           id: `user-${newId}`,
           email: data.email,
-          password: defaultPassword,
+          password: senha,
           nome: data.nome,
           role: "cliente",
           cargo_id: null,
@@ -84,7 +83,7 @@ export default function ClientesPage() {
           updated_at: new Date().toISOString(),
         });
         toast.success(
-          `Cliente cadastrado! Credenciais de acesso: Email: ${data.email} | Senha: ${defaultPassword}`,
+          `Cliente cadastrado! Credenciais: Email: ${data.email} | Senha definida pelo admin`,
           { duration: 10000 }
         );
       } else {

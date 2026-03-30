@@ -281,6 +281,31 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
               </div>
             </div>
           </div>
+
+          {/* Seção 3: Acesso ao Portal (apenas novo cadastro) */}
+          {!editing && (
+            <>
+              <Separator />
+              <div>
+                <h3 className="text-base font-semibold mb-4">Acesso ao Portal</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Senha de acesso *</Label>
+                    <Input
+                      type="password"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      minLength={6}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      O cliente usará o email cadastrado e esta senha para acessar o portal.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         <DialogFooter>
