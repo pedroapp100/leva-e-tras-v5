@@ -322,7 +322,7 @@ export function NotificacoesTab() {
   function fillSampleData(msg: string): string {
     let filled = msg;
     for (const [key, val] of Object.entries(SAMPLE_DATA)) {
-      filled = filled.replaceAll(key, val);
+      filled = filled.split(key).join(val);
     }
     return filled;
   }
