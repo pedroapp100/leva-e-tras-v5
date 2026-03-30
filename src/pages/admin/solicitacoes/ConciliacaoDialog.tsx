@@ -122,7 +122,7 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            Conciliação de Pagamentos
+            {isDriverView ? "Registro de Recebimentos" : "Conciliação de Pagamentos"}
             {isEditing && <Badge variant="outline" className="text-xs">Editando</Badge>}
           </DialogTitle>
         </DialogHeader>
