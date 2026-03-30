@@ -29,6 +29,7 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
   const [status, setStatus] = useState<"ativo" | "inativo">("ativo");
   const [tipoComissao, setTipoComissao] = useState<TipoComissao>("percentual");
   const [valorComissao, setValorComissao] = useState(0);
+  const [senha, setSenha] = useState("");
 
   useEffect(() => {
     if (editing) {
