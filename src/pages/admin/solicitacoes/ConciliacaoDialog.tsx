@@ -244,7 +244,7 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
 
               {i < rotas.length - 1 && <Separator />}
             </div>
-          )}
+          ))}
 
           {/* Resumo */}
           {isDriverView ? (
