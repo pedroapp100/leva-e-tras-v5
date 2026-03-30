@@ -29,17 +29,6 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "divergente", label: "Divergente" },
 ];
 
-const statusVariantMap: Record<StatusCaixa, "info" | "success" | "error"> = {
-  aberto: "info",
-  fechado: "success",
-  divergente: "error",
-};
-
-const statusLabelMap: Record<StatusCaixa, string> = {
-  aberto: "Aberto",
-  fechado: "Fechado",
-  divergente: "Divergente",
-};
 
 export default function CaixasEntregadoresPage() {
   const [caixas, setCaixas] = useState<CaixaEntregador[]>(MOCK_CAIXAS);
