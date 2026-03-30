@@ -21,6 +21,14 @@ import { formatDateTimeBR, formatPhone } from "@/lib/formatters";
 /* ── Types ── */
 type NotificacaoStatus = "ativo" | "inativo";
 type CanalEnvio = "whatsapp";
+type TestSendStatus = "sucesso" | "falha";
+
+interface TestSendRecord {
+  id: string;
+  telefone: string;
+  data: string;
+  status: TestSendStatus;
+}
 
 interface NotificacaoTemplate {
   id: string;
@@ -33,6 +41,7 @@ interface NotificacaoTemplate {
   status: NotificacaoStatus;
   variaveis: string[];
   updated_at: string;
+  historico_testes: TestSendRecord[];
 }
 
 /* ── Variáveis disponíveis por categoria ── */
