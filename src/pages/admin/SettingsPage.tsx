@@ -1,7 +1,7 @@
 import { PageContainer } from "@/components/shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Globe, CreditCard, Shield, DollarSign, Receipt, Calculator, Clock, Users, Webhook } from "lucide-react";
+import { MapPin, Globe, CreditCard, Shield, DollarSign, Receipt, Calculator, Clock, Users, Webhook, Plug } from "lucide-react";
 import { BairrosTab } from "./settings/BairrosTab";
 import { RegioesTab } from "./settings/RegioesTab";
 import { FormasPagamentoTab } from "./settings/FormasPagamentoTab";
@@ -11,6 +11,7 @@ import { TaxasExtrasTab } from "./settings/TaxasExtrasTab";
 import { TiposOperacaoTab } from "./settings/TiposOperacaoTab";
 import { UsuariosTab } from "./settings/UsuariosTab";
 import { WebhooksTab } from "./settings/WebhooksTab";
+import { IntegracoesTab } from "./settings/IntegracoesTab";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { useSearchParams } from "react-router-dom";
 
@@ -25,6 +26,7 @@ const tabs = [
   { value: "taxas_extras", label: "Taxas Extras", icon: Receipt },
   { value: "simulador", label: "Simulador", icon: Calculator },
   { value: "webhooks", label: "Webhooks", icon: Webhook },
+  { value: "integracoes", label: "Integrações", icon: Plug },
 ];
 
 export default function SettingsPage() {
@@ -65,6 +67,7 @@ export default function SettingsPage() {
             <TabsContent value="taxas_extras" className="mt-4"><TaxasExtrasTab /></TabsContent>
             <TabsContent value="simulador" className="mt-4"><SimuladorOperacoes showClienteSelector /></TabsContent>
             <TabsContent value="webhooks" className="mt-4"><WebhooksTab /></TabsContent>
+            <TabsContent value="integracoes" className="mt-4"><IntegracoesTab /></TabsContent>
           </Tabs>
         </CardContent>
       </Card>
