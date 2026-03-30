@@ -8,6 +8,7 @@ import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
 import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName, STATUS_TABS } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { useConcluirComCaixa } from "@/hooks/useConcluirComCaixa";
 import { DatePickerWithRange } from "@/components/shared/DatePickerWithRange";
 import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
