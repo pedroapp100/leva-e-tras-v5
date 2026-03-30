@@ -25,6 +25,7 @@ const LaunchSolicitacaoDialog = lazy(() => import("./solicitacoes/LaunchSolicita
 const ViewSolicitacaoDialog = lazy(() => import("./solicitacoes/ViewSolicitacaoDialog").then(m => ({ default: m.ViewSolicitacaoDialog })));
 const AssignDriverDialog = lazy(() => import("./solicitacoes/AssignDriverDialog").then(m => ({ default: m.AssignDriverDialog })));
 const ConciliacaoDialog = lazy(() => import("./solicitacoes/ConciliacaoDialog").then(m => ({ default: m.ConciliacaoDialog })));
+const AdminConciliacaoDialog = lazy(() => import("./solicitacoes/AdminConciliacaoDialog").then(m => ({ default: m.AdminConciliacaoDialog })));
 import { JustificationDialog } from "@/components/shared/JustificationDialog";
 
 const statusVariant = (s: StatusSolicitacao): "default" | "secondary" | "outline" | "destructive" => {
