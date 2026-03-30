@@ -211,11 +211,6 @@ export default function EntregadorSolicitacoesPage() {
       ),
     },
     {
-      key: "valor_total_taxas",
-      header: "Taxas",
-      cell: (r) => <span className="tabular-nums font-medium">{fmt(r.valor_total_taxas)}</span>,
-    },
-    {
       key: "status",
       header: "Status",
       cell: (r) => <StatusBadge status={r.status} label={STATUS_SOLICITACAO_LABELS[r.status]} />,
