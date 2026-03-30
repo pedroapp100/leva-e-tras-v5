@@ -262,6 +262,39 @@ export function NotificacoesTab() {
     setFormMensagem((m) => m + varName);
   }
 
+  function handleCreate() {
+    if (!newEvento.trim() || !newTitulo.trim() || !newMensagem.trim()) {
+      toast.error("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    const eventoSlug = newEvento.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+    addTemplate({
+      evento: `${newCategoria.toLowerCase().replace(/ç/g, "c").replace(/ã/g, "a")}.${eventoSlug}`,
+      evento_label: newEvento.trim(),
+      categoria: newCategoria,
+      titulo: newTitulo.trim(),
+      mensagem: newMensagem.trim(),
+      canal: "whatsapp",
+      status: "ativo",
+      variaveis: [],
+    });
+    toast.success("Novo evento de notificação criado com sucesso!");
+    setCreateOpen(false);
+    setNewEvento("");
+    setNewTitulo("");
+    setNewMensagem("");
+    setNewCategoria("Solicitação");
+  }
+
+  function handleDelete(t: NotificacaoTemplate) {
+    removeTemplate(t.id);
+    toast.success("Evento removido com sucesso.");
+  }
+
+  function insertNewVariable(varName: string) {
+    setNewMensagem((m) => m + varName);
+  }
+
   const columns: Column<NotificacaoTemplate>[] = [
     {
       key: "evento_label",
