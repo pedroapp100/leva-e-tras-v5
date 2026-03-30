@@ -393,7 +393,7 @@ export function NotificacoesTab() {
     {
       key: "actions",
       header: "Ações",
-      className: "w-28 text-right",
+      className: "w-36 text-right",
       cell: (r) => (
         <TooltipProvider delayDuration={200}>
           <div className="flex items-center justify-end gap-1">
