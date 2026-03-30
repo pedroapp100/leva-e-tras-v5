@@ -215,11 +215,6 @@ export default function EntregadorCorridasPage() {
                           {" • "}{formatDateBR(sol.data_solicitacao)}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {sol.valor_total_taxas != null && (
-                          <span className="text-base font-bold tabular-nums">{formatCurrency(sol.valor_total_taxas)}</span>
-                        )}
-                      </div>
                     </div>
 
                     {/* Ponto de coleta */}
