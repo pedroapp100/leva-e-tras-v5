@@ -247,26 +247,45 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
           )}
 
           {/* Resumo */}
-          <div className="rounded-lg border border-border p-4 space-y-2">
-            <h4 className="text-sm font-semibold">Resumo</h4>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <span className="text-muted-foreground">Receita Operação</span>
-              <span className="tabular-nums text-right">{fmt(totalOperacao)} <span className="text-xs text-muted-foreground">/ {fmt(totalEsperadoTaxas)}</span></span>
-              {isFaturado && totalFaturar > 0 && (
+          {isDriverView ? (
+            <div className="rounded-lg border border-border p-4 space-y-2">
+              <h4 className="text-sm font-semibold">Resumo dos Recebimentos</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <span className="text-muted-foreground">Total Recebido</span>
+                <span className="tabular-nums text-right font-medium">{fmt(allPagamentos.reduce((s, p) => s + p.valor, 0))}</span>
+              </div>
+              {allPagamentos.length > 0 && (
                 <>
-                  <span className="text-muted-foreground">A Faturar</span>
-                  <span className="tabular-nums text-right">{fmt(totalFaturar)}</span>
+                  <Separator />
+                  <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                    <CheckCircle className="h-4 w-4" />
+                    {allPagamentos.length} pagamento(s) registrado(s)
+                  </div>
                 </>
               )}
-              <span className="text-muted-foreground">Crédito Loja</span>
-              <span className="tabular-nums text-right">{fmt(totalLoja)} <span className="text-xs text-muted-foreground">/ {fmt(totalEsperadoReceber)}</span></span>
             </div>
-            <Separator />
-            <div className={`flex items-center gap-2 text-sm font-medium ${isBalanced ? "text-emerald-500" : "text-amber-500"}`}>
-              {isBalanced ? <CheckCircle className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
-              {isBalanced ? "Valores balanceados" : `Diferença: Operação ${fmt(diffOperacao)} | Loja ${fmt(diffLoja)}`}
+          ) : (
+            <div className="rounded-lg border border-border p-4 space-y-2">
+              <h4 className="text-sm font-semibold">Resumo</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <span className="text-muted-foreground">Receita Operação</span>
+                <span className="tabular-nums text-right">{fmt(totalOperacao)} <span className="text-xs text-muted-foreground">/ {fmt(totalEsperadoTaxas)}</span></span>
+                {isFaturado && totalFaturar > 0 && (
+                  <>
+                    <span className="text-muted-foreground">A Faturar</span>
+                    <span className="tabular-nums text-right">{fmt(totalFaturar)}</span>
+                  </>
+                )}
+                <span className="text-muted-foreground">Crédito Loja</span>
+                <span className="tabular-nums text-right">{fmt(totalLoja)} <span className="text-xs text-muted-foreground">/ {fmt(totalEsperadoReceber)}</span></span>
+              </div>
+              <Separator />
+              <div className={`flex items-center gap-2 text-sm font-medium ${isBalanced ? "text-emerald-500" : "text-amber-500"}`}>
+                {isBalanced ? <CheckCircle className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                {isBalanced ? "Valores balanceados" : `Diferença: Operação ${fmt(diffOperacao)} | Loja ${fmt(diffLoja)}`}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <DialogFooter>
