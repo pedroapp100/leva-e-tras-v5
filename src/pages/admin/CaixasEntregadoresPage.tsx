@@ -1,16 +1,10 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus, Eye, Lock, Pencil, FileWarning } from "lucide-react";
+import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus } from "lucide-react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { MetricCard } from "@/components/shared/MetricCard";
-import { SearchInput } from "@/components/shared/SearchInput";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency } from "@/lib/formatters";
 import type { CaixaEntregador } from "@/data/mockCaixas";
 import { useCaixaStore } from "@/contexts/CaixaStore";
@@ -19,35 +13,20 @@ import { FecharCaixaDialog } from "./caixas/FecharCaixaDialog";
 import { EditarCaixaDialog } from "./caixas/EditarCaixaDialog";
 import { JustificativaDivergenciaDialog } from "./caixas/JustificativaDivergenciaDialog";
 import { CaixaDetailsModal } from "./caixas/CaixaDetailsModal";
+import { CaixasDoDiaTab } from "./caixas/CaixasDoDiaTab";
+import { HistoricoCaixasTab } from "./caixas/HistoricoCaixasTab";
 import { toast } from "sonner";
 
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
 const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 
-const STATUS_OPTIONS: { value: string; label: string }[] = [
-  { value: "todos", label: "Todos os Status" },
-  { value: "aberto", label: "Aberto" },
-  { value: "fechado", label: "Fechado" },
-  { value: "divergente", label: "Divergente" },
-];
-
 export default function CaixasEntregadoresPage() {
   const { caixas, abrirCaixa, fecharCaixa, editarCaixa, justificarDivergencia } = useCaixaStore();
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("todos");
   const [abrirOpen, setAbrirOpen] = useState(false);
   const [fecharTarget, setFecharTarget] = useState<CaixaEntregador | null>(null);
   const [editarTarget, setEditarTarget] = useState<CaixaEntregador | null>(null);
   const [justificarTarget, setJustificarTarget] = useState<CaixaEntregador | null>(null);
   const [detailsTarget, setDetailsTarget] = useState<CaixaEntregador | null>(null);
-
-  const filtered = useMemo(() => {
-    return caixas.filter((c) => {
-      const matchSearch = c.entregador_nome.toLowerCase().includes(search.toLowerCase());
-      const matchStatus = statusFilter === "todos" || c.status === statusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [caixas, search, statusFilter]);
 
   const metrics = useMemo(() => {
     const abertos = caixas.filter((c) => c.status === "aberto");
@@ -63,8 +42,12 @@ export default function CaixasEntregadoresPage() {
   const openEntregadorIds = caixas.filter((c) => c.status === "aberto" && c.data === hoje).map((c) => c.entregador_id);
 
   const handleAbrirCaixa = (entregadorId: string, trocoInicial: number) => {
-    abrirCaixa(entregadorId, trocoInicial);
-    toast.success("Caixa aberto com sucesso!");
+    const success = abrirCaixa(entregadorId, trocoInicial);
+    if (success) {
+      toast.success("Caixa aberto com sucesso!");
+    } else {
+      toast.error("Este entregador já possui um caixa aberto hoje.");
+    }
   };
 
   const handleFecharCaixa = (caixaId: string, valorDevolvido: number, observacoes: string) => {
@@ -107,109 +90,31 @@ export default function CaixasEntregadoresPage() {
         </motion.div>
       </motion.div>
 
-      <Card>
-        <CardContent className="pt-4 pb-2">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <SearchInput value={search} onChange={setSearch} placeholder="Buscar por entregador..." />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUS_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="hoje" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="hoje">Caixas do Dia</TabsTrigger>
+          <TabsTrigger value="historico">Histórico</TabsTrigger>
+        </TabsList>
 
-      {filtered.length === 0 ? (
-        <EmptyState icon={Wallet} title="Nenhum caixa encontrado" subtitle="Abra um novo caixa para um entregador." />
-      ) : (
-        <Card>
-          <div className="rounded-md border-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Entregador</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead className="text-right">Troco</TableHead>
-                  <TableHead className="text-center">Entregas</TableHead>
-                  <TableHead className="text-right">Recebido</TableHead>
-                  <TableHead className="text-right">Esperado</TableHead>
-                  <TableHead className="text-right">Devolvido</TableHead>
-                  <TableHead className="text-right">Diferença</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-center">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">{c.entregador_nome}</TableCell>
-                    <TableCell className="tabular-nums">{new Date(c.data).toLocaleDateString("pt-BR")}</TableCell>
-                    <TableCell className="text-right tabular-nums">{formatCurrency(c.troco_inicial)}</TableCell>
-                    <TableCell className="text-center tabular-nums">{c.recebimentos.length}</TableCell>
-                    <TableCell className="text-right tabular-nums">{formatCurrency(c.total_recebido)}</TableCell>
-                    <TableCell className="text-right tabular-nums font-medium">{formatCurrency(c.total_esperado)}</TableCell>
-                    <TableCell className="text-right tabular-nums">{c.valor_devolvido !== null ? formatCurrency(c.valor_devolvido) : "—"}</TableCell>
-                    <TableCell className={`text-right tabular-nums font-medium ${c.diferenca === null ? "" : c.diferenca === 0 ? "text-status-completed" : "text-destructive"}`}>
-                      {c.diferenca !== null ? formatCurrency(c.diferenca) : "—"}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={c.status} />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-center gap-1">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsTarget(c)}>
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Ver detalhes</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarTarget(c)}>
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Editar caixa</TooltipContent>
-                        </Tooltip>
-                        {c.status === "aberto" && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-status-pending hover:text-status-pending/80" onClick={() => setFecharTarget(c)}>
-                                <Lock className="h-4 w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Fechar caixa</TooltipContent>
-                          </Tooltip>
-                        )}
-                        {c.status === "divergente" && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarTarget(c)}>
-                                <FileWarning className="h-4 w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Relatar motivo da falta</TooltipContent>
-                          </Tooltip>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </Card>
-      )}
+        <TabsContent value="hoje">
+          <CaixasDoDiaTab
+            caixas={caixas}
+            onView={setDetailsTarget}
+            onEdit={setEditarTarget}
+            onClose={setFecharTarget}
+            onJustify={setJustificarTarget}
+          />
+        </TabsContent>
+
+        <TabsContent value="historico">
+          <HistoricoCaixasTab
+            caixas={caixas}
+            onView={setDetailsTarget}
+            onEdit={setEditarTarget}
+            onJustify={setJustificarTarget}
+          />
+        </TabsContent>
+      </Tabs>
 
       <AbrirCaixaDialog open={abrirOpen} onOpenChange={setAbrirOpen} onConfirm={handleAbrirCaixa} existingEntregadorIds={openEntregadorIds} />
       <FecharCaixaDialog open={!!fecharTarget} onOpenChange={(o) => !o && setFecharTarget(null)} caixa={fecharTarget} onConfirm={handleFecharCaixa} />
