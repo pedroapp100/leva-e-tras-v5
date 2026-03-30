@@ -20,7 +20,7 @@ export const MOCK_ROTAS: Rota[] = [
 export const MOCK_SOLICITACOES: Solicitacao[] = [
   {
     id: "sol-001", codigo: "LT-20260315-00001", cliente_id: "cli-001", entregador_id: "ent-001",
-    status: "concluida", tipo_operacao: "standard", ponto_coleta: "Rua das Flores, 123 - Centro",
+    status: "concluida", tipo_operacao: "tipo-comercial", ponto_coleta: "Rua das Flores, 123 - Centro",
     data_solicitacao: "2026-03-15T08:30:00Z", data_inicio: "2026-03-15T09:00:00Z", data_conclusao: "2026-03-15T10:15:00Z",
     valor_total_taxas: 22.00, valor_total_repasse: null, justificativa: null,
     historico: [
