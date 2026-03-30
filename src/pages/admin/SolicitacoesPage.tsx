@@ -43,7 +43,8 @@ const fmtDate = (d: string) => new Date(d).toLocaleDateString("pt-BR");
 
 export default function SolicitacoesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { solicitacoes, addSolicitacao, updateSolicitacao, getRotasBySolicitacao, addPagamentos, concluirSolicitacaoComFatura } = useGlobalStore();
+  const { solicitacoes, addSolicitacao, updateSolicitacao, getRotasBySolicitacao, addPagamentos } = useGlobalStore();
+  const concluirComCaixa = useConcluirComCaixa();
   const { addNotification } = useNotifications();
 
   // Initialize state from URL params
