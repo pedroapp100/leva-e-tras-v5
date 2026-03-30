@@ -175,6 +175,26 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
               </div>
             </div>
           </div>
+
+          {/* Acesso ao Portal (apenas novo cadastro) */}
+          {!editing && (
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Acesso ao Portal</h4>
+              <div className="space-y-2">
+                <Label>Senha de acesso *</Label>
+                <Input
+                  type="password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  placeholder="Mínimo 6 caracteres"
+                  minLength={6}
+                />
+                <p className="text-xs text-muted-foreground">
+                  O entregador usará o email cadastrado e esta senha para acessar o portal.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         <DialogFooter>
