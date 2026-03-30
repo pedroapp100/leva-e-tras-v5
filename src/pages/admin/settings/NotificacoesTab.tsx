@@ -474,6 +474,19 @@ export function NotificacoesTab() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  onClick={(e) => { e.stopPropagation(); openHistory(r); }}
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Histórico de testes</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10 transition-colors"
                   onClick={(e) => { e.stopPropagation(); handleDelete(r); }}
                 >
