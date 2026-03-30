@@ -60,6 +60,10 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       toast.error("Defina uma senha de acesso para o entregador.");
       return;
     }
+    if (!editing && senha.trim().length < 6) {
+      toast.error("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
     const now = new Date().toISOString();
     onSave({
       id: editing?.id ?? "",
