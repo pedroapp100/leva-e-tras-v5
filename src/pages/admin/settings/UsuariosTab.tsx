@@ -86,6 +86,10 @@ export function UsuariosTab() {
         toast.error("Defina uma senha para o novo usuário.");
         return;
       }
+      if (form.password.trim().length < 6) {
+        toast.error("A senha deve ter no mínimo 6 caracteres.");
+        return;
+      }
       const newUser: UserAccount = {
         id: `user-${Date.now()}`,
         email: form.email.trim().toLowerCase(),
