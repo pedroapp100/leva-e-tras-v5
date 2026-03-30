@@ -24,6 +24,14 @@ export function CaixaStoreProvider({ children }: { children: ReactNode }) {
   const abrirCaixa = useCallback((entregadorId: string, trocoInicial: number) => {
     const ent = MOCK_ENTREGADORES.find((e) => e.id === entregadorId);
     const hoje = new Date().toISOString().split("T")[0];
+
+    // Validação anti-duplicata: impede abertura se já existe caixa aberto no mesmo dia
+    const jaAberto = caixas.find(
+      (c) => c.entregador_id === entregadorId && c.status === "aberto" && c.data === hoje
+    );
+    if (jaAberto) {
+      return false;
+    }
     const novo: CaixaEntregador = {
       id: `caixa-${Date.now()}`,
       entregador_id: entregadorId,
