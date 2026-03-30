@@ -392,9 +392,7 @@ export default function SolicitacoesPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{getClienteName(r.cliente_id)}</span>
-                  {(() => {
-                    return <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />;
-                  })()}
+                  <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>{getEntregadorName(r.entregador_id)}</span>
