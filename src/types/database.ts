@@ -15,7 +15,7 @@ export type StatusSolicitacao =
   | "cancelada"
   | "rejeitada";
 
-export type TipoOperacao = "standard" | "express" | "retorno";
+export type TipoOperacao = string; // Dynamic — references TipoOperacaoConfig.id
 
 export type Modalidade = "pre_pago" | "faturado";
 
