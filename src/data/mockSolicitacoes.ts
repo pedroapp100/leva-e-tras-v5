@@ -78,7 +78,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-006", codigo: "LT-20260315-00006", cliente_id: "cli-005", entregador_id: null,
-    status: "pendente", tipo_operacao: "express", ponto_coleta: "Rua Padre Valdevino, 800 - Joaquim Távora",
+    status: "pendente", tipo_operacao: "tipo-feriado", ponto_coleta: "Rua Padre Valdevino, 800 - Joaquim Távora",
     data_solicitacao: "2026-03-15T11:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 16.00, valor_total_repasse: null, justificativa: null,
     historico: [
