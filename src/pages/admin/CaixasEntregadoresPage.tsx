@@ -182,7 +182,7 @@ export default function CaixasEntregadoresPage() {
                       {c.diferenca !== null ? formatCurrency(c.diferenca) : "—"}
                     </TableCell>
                     <TableCell>
-                      <StatusBadge status={statusLabelMap[c.status]} variant={statusVariantMap[c.status]} />
+                      <StatusBadge status={c.status} />
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-1">
