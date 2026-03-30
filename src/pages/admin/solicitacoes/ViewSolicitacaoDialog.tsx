@@ -14,11 +14,7 @@ import { MapPin, Phone, User, Clock, DollarSign, MessageCircle, Store, Building2
 
 const FATURAR_ID = "__faturar__";
 
-const tipoStyles: Record<string, string> = {
-  standard: "bg-primary/10 text-primary border-primary/25",
-  express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-  retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-};
+// tipoStyles removed — now using TipoOperacaoBadge component
 
 interface ViewSolicitacaoDialogProps {
   solicitacao: Solicitacao | null;
