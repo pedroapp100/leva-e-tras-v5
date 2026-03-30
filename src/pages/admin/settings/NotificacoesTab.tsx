@@ -355,12 +355,30 @@ export function NotificacoesTab() {
       toast.error("Informe um número de telefone válido.");
       return;
     }
+    if (!testTemplate) return;
     setTestSending(true);
+    const isSuccess = Math.random() > 0.15; // simulate occasional failure
     setTimeout(() => {
+      const record: TestSendRecord = {
+        id: `ts-${Date.now()}`,
+        telefone: testPhone,
+        data: new Date().toISOString(),
+        status: isSuccess ? "sucesso" : "falha",
+      };
+      addTestRecord(testTemplate.id, record);
       setTestSending(false);
       setTestSent(true);
-      toast.success("Mensagem de teste enviada com sucesso!");
+      if (isSuccess) {
+        toast.success("Mensagem de teste enviada com sucesso!");
+      } else {
+        toast.error("Falha ao enviar mensagem de teste. Tente novamente.");
+      }
     }, 2000);
+  }
+
+  function openHistory(t: NotificacaoTemplate) {
+    setHistoryTemplate(t);
+    setHistoryOpen(true);
   }
 
   const columns: Column<NotificacaoTemplate>[] = [
