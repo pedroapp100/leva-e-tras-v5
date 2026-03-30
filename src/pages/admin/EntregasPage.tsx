@@ -266,7 +266,7 @@ export default function EntregasPage() {
       e.bairro_nome,
       e.rota.responsavel || "—",
       getEntregadorName(e.entregador_id),
-      TIPO_OPERACAO_LABELS[e.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? e.tipo_operacao,
+      getTipoOperacaoLabel(e.tipo_operacao),
       e.rota.taxa_resolvida != null ? formatCurrency(e.rota.taxa_resolvida) : "—",
       e.rota.receber_do_cliente && e.rota.valor_a_receber != null ? formatCurrency(e.rota.valor_a_receber) : "—",
       STATUS_ROTA_LABELS[e.rota.status],
