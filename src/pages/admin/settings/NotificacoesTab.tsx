@@ -202,7 +202,7 @@ function MensagemPreview({ mensagem }: { mensagem: string }) {
 
 /* ── Main Component ── */
 export function NotificacoesTab() {
-  const { templates, updateTemplate } = useNotificacaoStore();
+  const { templates, updateTemplate, addTemplate, removeTemplate } = useNotificacaoStore();
 
   const [search, setSearch] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todos");
@@ -213,6 +213,11 @@ export function NotificacoesTab() {
   const [formTitulo, setFormTitulo] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<NotificacaoTemplate | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newEvento, setNewEvento] = useState("");
+  const [newCategoria, setNewCategoria] = useState("Solicitação");
+  const [newTitulo, setNewTitulo] = useState("");
+  const [newMensagem, setNewMensagem] = useState("");
 
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
