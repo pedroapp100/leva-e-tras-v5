@@ -122,7 +122,7 @@ export default function EntregadorSolicitacoesPage() {
   };
 
   const handleConcluir = (sol: Solicitacao) => {
-    concluirSolicitacaoComFatura(sol.id);
+    concluirComCaixa(sol.id);
     toast.success("Entrega concluída com sucesso! ✅");
     addNotification({
       title: "Entrega concluída",

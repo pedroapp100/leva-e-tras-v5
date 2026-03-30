@@ -201,7 +201,7 @@ export function AdminConciliacaoDialog({
 
     // Generate invoice if not already concluded
     if (solicitacao.status === "em_andamento") {
-      concluirSolicitacaoComFatura(solicitacao.id);
+      concluirComCaixa(solicitacao.id);
     }
 
     onConfirm();

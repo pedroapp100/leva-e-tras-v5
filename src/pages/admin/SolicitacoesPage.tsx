@@ -204,7 +204,7 @@ export default function SolicitacoesPage() {
   };
 
   const handleConcluir = (sol: Solicitacao) => {
-    concluirSolicitacaoComFatura(sol.id);
+    concluirComCaixa(sol.id);
     toast.success("Solicitação concluída!");
   };
 
