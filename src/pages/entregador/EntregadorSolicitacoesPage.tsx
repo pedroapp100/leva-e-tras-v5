@@ -42,7 +42,8 @@ const STATUS_TABS_DRIVER = [
 
 export default function EntregadorSolicitacoesPage() {
   const { addNotification } = useNotifications();
-  const { solicitacoes, updateSolicitacao, getRotasBySolicitacao, concluirSolicitacaoComFatura } = useGlobalStore();
+  const { solicitacoes, updateSolicitacao, getRotasBySolicitacao } = useGlobalStore();
+  const concluirComCaixa = useConcluirComCaixa();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("todas");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
