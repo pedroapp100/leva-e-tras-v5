@@ -56,6 +56,10 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
+    if (!editing && !senha.trim()) {
+      toast.error("Defina uma senha de acesso para o entregador.");
+      return;
+    }
     const now = new Date().toISOString();
     onSave({
       id: editing?.id ?? "",
