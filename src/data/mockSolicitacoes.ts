@@ -33,7 +33,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-002", codigo: "LT-20260315-00002", cliente_id: "cli-002", entregador_id: "ent-002",
-    status: "em_andamento", tipo_operacao: "standard", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
+    status: "em_andamento", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
     data_solicitacao: "2026-03-15T09:15:00Z", data_inicio: "2026-03-15T09:45:00Z", data_conclusao: null,
     valor_total_taxas: 8.00, valor_total_repasse: null, justificativa: null,
     historico: [

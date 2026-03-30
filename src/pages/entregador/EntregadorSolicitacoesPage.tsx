@@ -284,9 +284,7 @@ export default function EntregadorSolicitacoesPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{getClienteName(r.cliente_id)}</span>
-                  <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>
-                    {TIPO_OPERACAO_LABELS[r.tipo_operacao]}
-                  </Badge>
+                  <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>{fmtDate(r.data_solicitacao)}</span>

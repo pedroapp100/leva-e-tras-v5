@@ -254,7 +254,7 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoD
               </p>
             </div>
             <div><span className="text-muted-foreground">Entregador</span><p className="font-medium">{getEntregadorName(solicitacao.entregador_id)}</p></div>
-            <div><span className="text-muted-foreground">Tipo</span><p><Badge variant="outline" className={tipoStyles[solicitacao.tipo_operacao] || ""}>{TIPO_OPERACAO_LABELS[solicitacao.tipo_operacao]}</Badge></p></div>
+            <div><span className="text-muted-foreground">Tipo</span><p><TipoOperacaoBadge tipoOperacao={solicitacao.tipo_operacao} /></p></div>
             <div><span className="text-muted-foreground">Taxas</span><p className="font-medium tabular-nums">{fmt(solicitacao.valor_total_taxas)}</p></div>
           </div>
 

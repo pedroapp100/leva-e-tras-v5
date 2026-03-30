@@ -452,7 +452,7 @@ export default function EntregasPage() {
                 <div>
                   <p className="text-muted-foreground">Tipo Operação</p>
                   <p className="font-medium">
-                    {TIPO_OPERACAO_LABELS[viewEntrega.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? viewEntrega.tipo_operacao}
+                    {getTipoOperacaoLabel(viewEntrega.tipo_operacao)}
                   </p>
                 </div>
                 <div>

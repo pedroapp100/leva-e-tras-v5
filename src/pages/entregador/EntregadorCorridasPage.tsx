@@ -208,9 +208,7 @@ export default function EntregadorCorridasPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-mono text-sm font-semibold">{sol.codigo}</span>
                           <StatusBadge status={sol.status} label={STATUS_SOLICITACAO_LABELS[sol.status]} />
-                          <Badge variant="outline" className={tipoStyles[sol.tipo_operacao] || ""}>
-                            {TIPO_OPERACAO_LABELS[sol.tipo_operacao]}
-                          </Badge>
+                          <TipoOperacaoBadge tipoOperacao={sol.tipo_operacao} />
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">
                           <span className="font-medium text-foreground">{getClienteName(sol.cliente_id)}</span>
