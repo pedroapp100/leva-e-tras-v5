@@ -75,6 +75,10 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
       toast.error("Defina uma senha de acesso para o cliente.");
       return;
     }
+    if (!editing && senha.trim().length < 6) {
+      toast.error("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
 
     const now = new Date().toISOString();
     onSave({
