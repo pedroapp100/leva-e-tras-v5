@@ -11,7 +11,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency, formatDateBR } from "@/lib/formatters";
 import { MOCK_SOLICITACOES, getClienteName, getRotasBySolicitacao } from "@/data/mockSolicitacoes";
 import { MOCK_BAIRROS } from "@/data/mockSettings";
-import { STATUS_SOLICITACAO_LABELS, TIPO_OPERACAO_LABELS } from "@/types/database";
+import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import type { Solicitacao, StatusSolicitacao } from "@/types/database";
 import {
   Truck, Play, CheckCheck, MapPin, Package,
