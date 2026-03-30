@@ -4,6 +4,7 @@ import { MOCK_FORMAS_PAGAMENTO, MOCK_BAIRROS } from "@/data/mockSettings";
 import { MOCK_CLIENTES } from "@/data/mockClientes";
 import { getClienteName, getEntregadorName } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { useConcluirComCaixa } from "@/hooks/useConcluirComCaixa";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
