@@ -178,7 +178,7 @@ export default function CaixasEntregadoresPage() {
                     <TableCell className="text-right tabular-nums">{formatCurrency(c.total_recebido)}</TableCell>
                     <TableCell className="text-right tabular-nums font-medium">{formatCurrency(c.total_esperado)}</TableCell>
                     <TableCell className="text-right tabular-nums">{c.valor_devolvido !== null ? formatCurrency(c.valor_devolvido) : "—"}</TableCell>
-                    <TableCell className={`text-right tabular-nums font-medium ${c.diferenca === null ? "" : c.diferenca === 0 ? "text-green-600 dark:text-green-400" : "text-destructive"}`}>
+                    <TableCell className={`text-right tabular-nums font-medium ${c.diferenca === null ? "" : c.diferenca === 0 ? "text-status-completed" : "text-destructive"}`}>
                       {c.diferenca !== null ? formatCurrency(c.diferenca) : "—"}
                     </TableCell>
                     <TableCell>
