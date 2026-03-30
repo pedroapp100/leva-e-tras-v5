@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { useUserStore } from "@/data/mockUsers";
 import { ClientFormDialog } from "./clientes/ClientFormDialog";
 import { ClientProfileModal } from "./clientes/ClientProfileModal";
 
