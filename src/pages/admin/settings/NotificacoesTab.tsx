@@ -399,6 +399,9 @@ export function NotificacoesTab() {
           <h3 className="text-lg font-semibold">Notificações WhatsApp</h3>
           <p className="text-sm text-muted-foreground">Personalize as mensagens enviadas aos clientes para cada evento do sistema.</p>
         </div>
+        <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" /> Novo Evento
+        </Button>
       </div>
 
       <Card>
