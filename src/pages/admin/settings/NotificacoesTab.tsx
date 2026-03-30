@@ -595,6 +595,9 @@ export function NotificacoesTab() {
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-green-600 hover:bg-green-600/10" onClick={() => openTestSend(r)}>
                     <Send className="h-4 w-4" />
                   </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => openHistory(r)}>
+                    <History className="h-4 w-4" />
+                  </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10" onClick={() => handleDelete(r)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
