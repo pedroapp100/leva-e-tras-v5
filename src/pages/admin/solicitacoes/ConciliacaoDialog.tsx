@@ -32,6 +32,7 @@ interface ConciliacaoDialogProps {
   solicitacaoId?: string;
   isEditing?: boolean;
   isConcluding?: boolean;
+  isDriverView?: boolean;
 }
 
 const getBairroName = (id: string) => MOCK_BAIRROS.find((b) => b.id === id)?.nome ?? id;
