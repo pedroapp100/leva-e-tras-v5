@@ -99,7 +99,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-008", codigo: "LT-20260315-00008", cliente_id: "cli-003", entregador_id: "ent-006",
-    status: "em_andamento", tipo_operacao: "standard", ponto_coleta: "Rua Barão de Aracati, 200 - Meireles",
+    status: "em_andamento", tipo_operacao: "tipo-noturno", ponto_coleta: "Rua Barão de Aracati, 200 - Meireles",
     data_solicitacao: "2026-03-15T11:30:00Z", data_inicio: "2026-03-15T12:00:00Z", data_conclusao: null,
     valor_total_taxas: 9.00, valor_total_repasse: null, justificativa: null,
     historico: [
