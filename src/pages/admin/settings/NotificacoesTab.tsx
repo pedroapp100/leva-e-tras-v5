@@ -236,6 +236,8 @@ export function NotificacoesTab() {
   const [testPhone, setTestPhone] = useState("");
   const [testSending, setTestSending] = useState(false);
   const [testSent, setTestSent] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyTemplate, setHistoryTemplate] = useState<NotificacaoTemplate | null>(null);
 
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
