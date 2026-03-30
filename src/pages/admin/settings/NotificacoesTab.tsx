@@ -161,6 +161,8 @@ const defaultTemplates: NotificacaoTemplate[] = [
 interface NotificacaoStore {
   templates: NotificacaoTemplate[];
   updateTemplate: (id: string, data: Partial<Omit<NotificacaoTemplate, "id">>) => void;
+  addTemplate: (data: Omit<NotificacaoTemplate, "id" | "updated_at">) => void;
+  removeTemplate: (id: string) => void;
 }
 
 const useNotificacaoStore = create<NotificacaoStore>((set) => ({
@@ -170,6 +172,17 @@ const useNotificacaoStore = create<NotificacaoStore>((set) => ({
       templates: s.templates.map((t) =>
         t.id === id ? { ...t, ...data, updated_at: new Date().toISOString() } : t
       ),
+    })),
+  addTemplate: (data) =>
+    set((s) => ({
+      templates: [
+        ...s.templates,
+        { ...data, id: `ntf-${Date.now()}`, updated_at: new Date().toISOString() },
+      ],
+    })),
+  removeTemplate: (id) =>
+    set((s) => ({
+      templates: s.templates.filter((t) => t.id !== id),
     })),
 }));
 
