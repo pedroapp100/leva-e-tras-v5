@@ -46,14 +46,14 @@ const useIntegracaoStore = create<IntegracaoStore>((set) => ({
   integracoes: [
     {
       id: "int-whatsapp",
-      nome: "WhatsApp Business API",
-      descricao: "Envie notificações de status de entrega para os clientes via WhatsApp.",
+      nome: "WhatsApp via Baileys (QR Code)",
+      descricao: "Conecte seu WhatsApp pessoal ou comercial via QR Code para enviar notificações de entrega aos clientes.",
       categoria: "comunicacao",
       icone: "whatsapp",
       status: "desconectado",
       ativo: false,
       api_key: "",
-      config: { phone_number_id: "", business_account_id: "" },
+      config: { instance_name: "", webhook_url: "" },
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
