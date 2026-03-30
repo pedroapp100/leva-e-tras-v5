@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, ClipboardList, Clock, CheckCircle, Truck, Eye, UserPlus, Play, X, Trash2, Pencil, CheckCheck, Calculator } from "lucide-react";
+import { Plus, ClipboardList, Clock, CheckCircle, Truck, Eye, UserPlus, Play, X, Trash2, Pencil, CheckCheck, Calculator, ClipboardCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ const LaunchSolicitacaoDialog = lazy(() => import("./solicitacoes/LaunchSolicita
 const ViewSolicitacaoDialog = lazy(() => import("./solicitacoes/ViewSolicitacaoDialog").then(m => ({ default: m.ViewSolicitacaoDialog })));
 const AssignDriverDialog = lazy(() => import("./solicitacoes/AssignDriverDialog").then(m => ({ default: m.AssignDriverDialog })));
 const ConciliacaoDialog = lazy(() => import("./solicitacoes/ConciliacaoDialog").then(m => ({ default: m.ConciliacaoDialog })));
+const AdminConciliacaoDialog = lazy(() => import("./solicitacoes/AdminConciliacaoDialog").then(m => ({ default: m.AdminConciliacaoDialog })));
 import { JustificationDialog } from "@/components/shared/JustificationDialog";
 
 const statusVariant = (s: StatusSolicitacao): "default" | "secondary" | "outline" | "destructive" => {
@@ -62,6 +63,7 @@ export default function SolicitacoesPage() {
   const [conciliacaoTarget, setConciliacaoTarget] = useState<Solicitacao | null>(null);
   const [justifyTarget, setJustifyTarget] = useState<{ sol: Solicitacao; action: "cancelar" | "rejeitar" } | null>(null);
   const [simuladorOpen, setSimuladorOpen] = useState(false);
+  const [adminConciliacaoTarget, setAdminConciliacaoTarget] = useState<Solicitacao | null>(null);
 
   const filtered = useMemo(() => {
     return solicitacoes.filter((s) => {
@@ -266,7 +268,8 @@ export default function SolicitacoesPage() {
         )}
         {sol.status === "concluida" && (
           <PermissionGuard permission="solicitacoes.edit">
-            <ActionButton tooltip="Conciliação financeira" icon={Pencil} onClick={() => setConciliacaoTarget(sol)} variant="info" />
+            <ActionButton tooltip="Conciliação ADM" icon={ClipboardCheck} onClick={() => setAdminConciliacaoTarget(sol)} variant="success" />
+            <ActionButton tooltip="Editar conciliação" icon={Pencil} onClick={() => setConciliacaoTarget(sol)} variant="info" />
           </PermissionGuard>
         )}
         {["pendente", "aceita", "em_andamento"].includes(sol.status) && (
@@ -430,6 +433,14 @@ export default function SolicitacoesPage() {
             onConcluir={() => { handleConcluir(conciliacaoTarget); setConciliacaoTarget(null); }}
             isEditing={conciliacaoTarget.status === "concluida"}
             isConcluding={conciliacaoTarget.status === "em_andamento"}
+          />
+        )}
+        {adminConciliacaoTarget && (
+          <AdminConciliacaoDialog
+            open={!!adminConciliacaoTarget}
+            onOpenChange={(open) => !open && setAdminConciliacaoTarget(null)}
+            solicitacao={adminConciliacaoTarget}
+            onConfirm={() => setAdminConciliacaoTarget(null)}
           />
         )}
       </Suspense>
