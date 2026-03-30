@@ -30,7 +30,7 @@ export function ProtectedRoute({ children, allowedRoles, requiredPermission }: P
   }
 
   if (!user) {
-    return <>{children}</>;
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {
