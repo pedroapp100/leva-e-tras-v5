@@ -256,7 +256,9 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose, isDriverView = fal
             </div>
             <div><span className="text-muted-foreground">Entregador</span><p className="font-medium">{getEntregadorName(solicitacao.entregador_id)}</p></div>
             <div><span className="text-muted-foreground">Tipo</span><p><TipoOperacaoBadge tipoOperacao={solicitacao.tipo_operacao} /></p></div>
-            <div><span className="text-muted-foreground">Taxas</span><p className="font-medium tabular-nums">{fmt(solicitacao.valor_total_taxas)}</p></div>
+            {!isDriverView && (
+              <div><span className="text-muted-foreground">Taxas</span><p className="font-medium tabular-nums">{fmt(solicitacao.valor_total_taxas)}</p></div>
+            )}
           </div>
 
           <div className="text-sm">
