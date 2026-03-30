@@ -368,9 +368,7 @@ export default function EntregasPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{getClienteName(r.cliente_id)}</span>
-                  {(() => {
-                    return <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />;
-                  })()}
+                  <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <MapPin className="h-3.5 w-3.5" />
