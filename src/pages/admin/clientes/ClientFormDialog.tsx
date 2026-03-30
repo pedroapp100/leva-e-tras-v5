@@ -37,6 +37,7 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
   const [numEntregas, setNumEntregas] = useState<number | "">("");
   const [diaSemana, setDiaSemana] = useState<DiaSemana | "">("");
   const [diaMes, setDiaMes] = useState<number | "">("");
+  const [senha, setSenha] = useState("");
 
   useEffect(() => {
     if (editing) {
