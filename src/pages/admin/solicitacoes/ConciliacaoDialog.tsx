@@ -39,7 +39,7 @@ const getBairroName = (id: string) => MOCK_BAIRROS.find((b) => b.id === id)?.nom
 const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const formasAtivas = MOCK_FORMAS_PAGAMENTO.filter((f) => f.enabled);
 
-export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clienteId, solicitacaoId, isEditing = false, isConcluding = false }: ConciliacaoDialogProps) {
+export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clienteId, solicitacaoId, isEditing = false, isConcluding = false, isDriverView = false }: ConciliacaoDialogProps) {
   const { addPagamentos } = useGlobalStore();
   const cliente = useMemo(() => clienteId ? MOCK_CLIENTES.find((c) => c.id === clienteId) : null, [clienteId]);
   const isPrePago = cliente?.modalidade === "pre_pago";
