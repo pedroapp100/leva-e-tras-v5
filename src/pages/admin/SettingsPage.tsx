@@ -1,7 +1,7 @@
 import { PageContainer } from "@/components/shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Globe, CreditCard, Shield, DollarSign, Receipt, Calculator, Clock, Users } from "lucide-react";
+import { MapPin, Globe, CreditCard, Shield, DollarSign, Receipt, Calculator, Clock, Users, Webhook } from "lucide-react";
 import { BairrosTab } from "./settings/BairrosTab";
 import { RegioesTab } from "./settings/RegioesTab";
 import { FormasPagamentoTab } from "./settings/FormasPagamentoTab";
@@ -10,6 +10,7 @@ import { TabelaPrecosTab } from "./settings/TabelaPrecosTab";
 import { TaxasExtrasTab } from "./settings/TaxasExtrasTab";
 import { TiposOperacaoTab } from "./settings/TiposOperacaoTab";
 import { UsuariosTab } from "./settings/UsuariosTab";
+import { WebhooksTab } from "./settings/WebhooksTab";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { useSearchParams } from "react-router-dom";
 
@@ -23,6 +24,7 @@ const tabs = [
   { value: "precos", label: "Tabela de Preços", icon: DollarSign },
   { value: "taxas_extras", label: "Taxas Extras", icon: Receipt },
   { value: "simulador", label: "Simulador", icon: Calculator },
+  { value: "webhooks", label: "Webhooks", icon: Webhook },
 ];
 
 export default function SettingsPage() {
@@ -62,6 +64,7 @@ export default function SettingsPage() {
             <TabsContent value="precos" className="mt-4" data-onboarding="price-table"><TabelaPrecosTab initialClienteId={clienteId} /></TabsContent>
             <TabsContent value="taxas_extras" className="mt-4"><TaxasExtrasTab /></TabsContent>
             <TabsContent value="simulador" className="mt-4"><SimuladorOperacoes showClienteSelector /></TabsContent>
+            <TabsContent value="webhooks" className="mt-4"><WebhooksTab /></TabsContent>
           </Tabs>
         </CardContent>
       </Card>
