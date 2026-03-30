@@ -129,7 +129,7 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
 
         <div className="space-y-6 py-2">
           {/* Info do Cliente */}
-          {cliente && (
+          {cliente && !isDriverView && (
             <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -157,6 +157,15 @@ export function ConciliacaoDialog({ open, onOpenChange, rotas, onConcluir, clien
                 </Alert>
               )}
             </div>
+          )}
+
+          {isDriverView && (
+            <Alert className="border-primary/30 bg-primary/5">
+              <Info className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-xs">
+                Registre os valores que você recebeu em cada rota, separando por meio de pagamento (Dinheiro, PIX, Cartão).
+              </AlertDescription>
+            </Alert>
           )}
 
           {rotas.map((rota, i) => (
