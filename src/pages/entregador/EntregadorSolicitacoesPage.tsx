@@ -211,11 +211,6 @@ export default function EntregadorSolicitacoesPage() {
       ),
     },
     {
-      key: "valor_total_taxas",
-      header: "Taxas",
-      cell: (r) => <span className="tabular-nums font-medium">{fmt(r.valor_total_taxas)}</span>,
-    },
-    {
       key: "status",
       header: "Status",
       cell: (r) => <StatusBadge status={r.status} label={STATUS_SOLICITACAO_LABELS[r.status]} />,
@@ -292,7 +287,6 @@ export default function EntregadorSolicitacoesPage() {
                     <Badge variant="secondary" className="tabular-nums text-xs">
                       {getRotasBySolicitacao(r.id).length} rotas
                     </Badge>
-                    <span className="tabular-nums font-medium text-foreground">{fmt(r.valor_total_taxas)}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between border-t border-border pt-2">
@@ -306,7 +300,7 @@ export default function EntregadorSolicitacoesPage() {
 
       {/* Dialogs */}
       <Suspense fallback={null}>
-        <ViewSolicitacaoDialog solicitacao={viewSolicitacao} onClose={() => setViewSolicitacao(null)} />
+        <ViewSolicitacaoDialog solicitacao={viewSolicitacao} onClose={() => setViewSolicitacao(null)} isDriverView />
         {conciliacaoTarget && (
           <ConciliacaoDialog
             open={!!conciliacaoTarget}
@@ -315,6 +309,7 @@ export default function EntregadorSolicitacoesPage() {
             clienteId={conciliacaoTarget.cliente_id}
             solicitacaoId={conciliacaoTarget.id}
             isConcluding={conciliacaoTarget.status === "em_andamento"}
+            isDriverView
             onConcluir={() => {
               handleConcluir(conciliacaoTarget);
               setConciliacaoTarget(null);

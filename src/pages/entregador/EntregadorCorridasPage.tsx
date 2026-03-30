@@ -16,7 +16,7 @@ import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import type { Solicitacao, StatusSolicitacao } from "@/types/database";
 import {
   Truck, Play, CheckCheck, MapPin, Package,
-  ClipboardList, Eye, DollarSign, Navigation
+  ClipboardList, Eye, Navigation
 } from "lucide-react";
 import { ViewSolicitacaoDialog } from "@/pages/admin/solicitacoes/ViewSolicitacaoDialog";
 import { toast } from "sonner";
@@ -215,11 +215,6 @@ export default function EntregadorCorridasPage() {
                           {" • "}{formatDateBR(sol.data_solicitacao)}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {sol.valor_total_taxas != null && (
-                          <span className="text-base font-bold tabular-nums">{formatCurrency(sol.valor_total_taxas)}</span>
-                        )}
-                      </div>
                     </div>
 
                     {/* Ponto de coleta */}
@@ -239,8 +234,7 @@ export default function EntregadorCorridasPage() {
                             <span className="text-muted-foreground truncate">{rota.responsavel}</span>
                             {rota.receber_do_cliente && rota.valor_a_receber && (
                               <Badge variant="outline" className="ml-auto text-xs shrink-0">
-                                <DollarSign className="h-3 w-3 mr-0.5" />
-                                {fmt(rota.valor_a_receber)}
+                                Cobrar: {fmt(rota.valor_a_receber)}
                               </Badge>
                             )}
                           </div>
@@ -273,7 +267,7 @@ export default function EntregadorCorridasPage() {
       </Card>
 
       {/* View Dialog */}
-      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} />
+      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} isDriverView />
 
       {/* Conciliação Dialog */}
       {conciliacaoTarget && (
@@ -284,6 +278,7 @@ export default function EntregadorCorridasPage() {
             rotas={getRotasBySolicitacao(conciliacaoTarget.id)}
             clienteId={conciliacaoTarget.cliente_id}
             isConcluding
+            isDriverView
             onConcluir={() => handleConcluir(conciliacaoTarget)}
           />
         </Suspense>

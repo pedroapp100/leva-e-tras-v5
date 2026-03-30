@@ -19,6 +19,7 @@ const FATURAR_ID = "__faturar__";
 interface ViewSolicitacaoDialogProps {
   solicitacao: Solicitacao | null;
   onClose: () => void;
+  isDriverView?: boolean;
 }
 
 const getBairroName = (id: string) => MOCK_BAIRROS.find((b) => b.id === id)?.nome ?? id;
@@ -200,7 +201,7 @@ function RotaConciliationCard({ rota, pagamentos, isFaturado }: { rota: Rota; pa
 
 /* ── Main Dialog ── */
 
-export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoDialogProps) {
+export function ViewSolicitacaoDialog({ solicitacao, onClose, isDriverView = false }: ViewSolicitacaoDialogProps) {
   const { getRotasBySolicitacao, getPagamentosByRota } = useGlobalStore();
   const rotas = solicitacao ? getRotasBySolicitacao(solicitacao.id) : [];
   const clienteName = solicitacao ? getClienteName(solicitacao.cliente_id) : "";
@@ -255,7 +256,9 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoD
             </div>
             <div><span className="text-muted-foreground">Entregador</span><p className="font-medium">{getEntregadorName(solicitacao.entregador_id)}</p></div>
             <div><span className="text-muted-foreground">Tipo</span><p><TipoOperacaoBadge tipoOperacao={solicitacao.tipo_operacao} /></p></div>
-            <div><span className="text-muted-foreground">Taxas</span><p className="font-medium tabular-nums">{fmt(solicitacao.valor_total_taxas)}</p></div>
+            {!isDriverView && (
+              <div><span className="text-muted-foreground">Taxas</span><p className="font-medium tabular-nums">{fmt(solicitacao.valor_total_taxas)}</p></div>
+            )}
           </div>
 
           <div className="text-sm">
@@ -295,20 +298,49 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoD
                   </div>
 
                   {/* ── Modo Operacional (pendente/aceita/em_andamento) ── */}
-                  {!isConcluida && (
+                  {!isConcluida && !isDriverView && (
                     <>
                       <RotaContactCard rota={rota} clienteName={clienteName} />
                       <RotaPaymentPreview rota={rota} isFaturado={!!isFaturado} isPrePago={!!isPrePago} />
                     </>
                   )}
+                  {!isConcluida && isDriverView && (
+                    <>
+                      <RotaContactCard rota={rota} clienteName={clienteName} />
+                      {rota.receber_do_cliente && (
+                        <div className="rounded-md border border-border bg-muted/30 p-3 space-y-1.5">
+                          <span className="flex items-center gap-1.5 font-medium text-xs uppercase tracking-wide">
+                            <Store className="h-3.5 w-3.5 text-status-pending" />
+                            Cobrar do Cliente
+                          </span>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">Valor a receber</span>
+                            <span className="tabular-nums font-medium">{fmt(rota.valor_a_receber)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
 
                   {/* ── Modo Conciliação (concluída) ── */}
-                  {isConcluida && (
+                  {isConcluida && !isDriverView && (
                     <RotaConciliationCard
                       rota={rota}
                       pagamentos={pagamentosPorRota[rota.id] || []}
                       isFaturado={!!isFaturado}
                     />
+                  )}
+                  {isConcluida && isDriverView && rota.receber_do_cliente && (
+                    <div className="rounded-md border border-border bg-muted/30 p-3 space-y-1.5">
+                      <span className="flex items-center gap-1.5 font-medium text-xs uppercase tracking-wide">
+                        <Store className="h-3.5 w-3.5 text-status-pending" />
+                        Cobrar do Cliente
+                      </span>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Valor cobrado</span>
+                        <span className="tabular-nums font-medium">{fmt(rota.valor_a_receber)}</span>
+                      </div>
+                    </div>
                   )}
 
                   {rota.observacoes && <p className="text-xs text-muted-foreground italic">{rota.observacoes}</p>}
@@ -318,7 +350,7 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoD
           </div>
 
           {/* Resumo de Conciliação (só para concluída) */}
-          {isConcluida && conciliacao && (
+          {isConcluida && conciliacao && !isDriverView && (
             <>
               <Separator />
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-2">
@@ -349,6 +381,22 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoD
                     * {isFaturado ? "Operação faturada" : "Cliente pré-pago"} — taxa não somada ao total do entregador.
                   </p>
                 )}
+              </div>
+            </>
+          )}
+
+          {isConcluida && conciliacao && isDriverView && conciliacao.totalLoja > 0 && (
+            <>
+              <Separator />
+              <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-2">
+                <h4 className="text-sm font-semibold mb-2">Resumo — Valores Cobrados</h4>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Store className="h-3.5 w-3.5" />
+                    Total cobrado do cliente
+                  </span>
+                  <span className="tabular-nums font-medium">{fmt(conciliacao.totalLoja)}</span>
+                </div>
               </div>
             </>
           )}

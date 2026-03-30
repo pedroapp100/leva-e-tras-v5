@@ -56,7 +56,7 @@ export default function EntregadorHistoricoPage() {
     { key: "cliente_id", header: "Cliente", cell: (s) => <span className="text-sm text-muted-foreground">{getClienteName(s.cliente_id)}</span> },
     { key: "ponto_coleta", header: "Coleta", cell: (s) => <span className="text-sm text-muted-foreground truncate max-w-[200px] block">{s.ponto_coleta}</span> },
     { key: "data_solicitacao", header: "Data", sortable: true, cell: (s) => <span className="text-sm">{formatDateBR(s.data_solicitacao)}</span> },
-    { key: "valor_total_taxas", header: "Valor", sortable: true, cell: (s) => s.valor_total_taxas != null ? <span className="font-semibold tabular-nums">{formatCurrency(s.valor_total_taxas)}</span> : <span className="text-muted-foreground">—</span> },
+    
     { key: "status", header: "Status", cell: (s) => <StatusBadge status={s.status} /> },
     {
       key: "actions" as any,
@@ -93,9 +93,6 @@ export default function EntregadorHistoricoPage() {
           </div>
         </div>
         <div className="text-right shrink-0 space-y-2">
-          {s.valor_total_taxas != null && (
-            <span className="text-base font-bold tabular-nums text-foreground">{formatCurrency(s.valor_total_taxas)}</span>
-          )}
           <Button variant="ghost" size="sm" onClick={() => setViewSol(s)}>
             <Eye className="h-4 w-4 mr-1" /> Ver
           </Button>
@@ -114,11 +111,10 @@ export default function EntregadorHistoricoPage() {
             const cfg = {
               title: "Histórico de Entregas",
               subtitle: `${entregas.length} entregas`,
-              headers: ["Código", "Cliente", "Coleta", "Data", "Valor", "Status"],
+              headers: ["Código", "Cliente", "Coleta", "Data", "Status"],
               rows: entregas.map((s) => [
                 s.codigo, getClienteName(s.cliente_id), s.ponto_coleta,
                 formatDateBR(s.data_solicitacao),
-                s.valor_total_taxas != null ? formatCurrency(s.valor_total_taxas) : "—",
                 s.status,
               ]),
               filename: "historico-entregas",
@@ -128,11 +124,10 @@ export default function EntregadorHistoricoPage() {
           onExportExcel={() => {
             exportCSV({
               title: "Histórico de Entregas",
-              headers: ["Código", "Cliente", "Coleta", "Data", "Valor", "Status"],
+              headers: ["Código", "Cliente", "Coleta", "Data", "Status"],
               rows: entregas.map((s) => [
                 s.codigo, getClienteName(s.cliente_id), s.ponto_coleta,
                 formatDateBR(s.data_solicitacao),
-                s.valor_total_taxas != null ? formatCurrency(s.valor_total_taxas) : "—",
                 s.status,
               ]),
               filename: "historico-entregas",
@@ -174,7 +169,7 @@ export default function EntregadorHistoricoPage() {
         </CardContent>
       </Card>
 
-      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} />
+      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} isDriverView />
     </PageContainer>
   );
 }
