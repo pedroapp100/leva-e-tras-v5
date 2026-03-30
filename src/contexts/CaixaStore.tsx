@@ -6,7 +6,7 @@ import { useLogStore } from "@/contexts/LogStore";
 
 interface CaixaStoreContextType {
   caixas: CaixaEntregador[];
-  abrirCaixa: (entregadorId: string, trocoInicial: number) => void;
+  abrirCaixa: (entregadorId: string, trocoInicial: number) => boolean;
   fecharCaixa: (caixaId: string, valorDevolvido: number, observacoes: string) => void;
   editarCaixa: (caixaId: string, trocoInicial: number, observacoes: string) => void;
   justificarDivergencia: (caixaId: string, justificativa: string) => void;
