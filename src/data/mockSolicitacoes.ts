@@ -88,7 +88,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-007", codigo: "LT-20260314-00007", cliente_id: "cli-002", entregador_id: "ent-001",
-    status: "cancelada", tipo_operacao: "standard", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
+    status: "cancelada", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
     data_solicitacao: "2026-03-14T16:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 14.00, valor_total_repasse: null, justificativa: "Cliente cancelou por indisponibilidade",
     historico: [
