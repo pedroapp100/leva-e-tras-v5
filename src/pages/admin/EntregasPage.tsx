@@ -101,7 +101,7 @@ export default function EntregasPage() {
     const tipos = [...new Set(entregas.map((e) => e.tipo_operacao))];
     return tipos.map((t) => ({
       value: t,
-      label: TIPO_OPERACAO_LABELS[t as keyof typeof TIPO_OPERACAO_LABELS] ?? t,
+      label: getTipoOperacaoLabel(t),
     }));
   }, [entregas]);
 
