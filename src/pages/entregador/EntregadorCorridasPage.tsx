@@ -267,7 +267,7 @@ export default function EntregadorCorridasPage() {
       </Card>
 
       {/* View Dialog */}
-      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} />
+      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} isDriverView />
 
       {/* Conciliação Dialog */}
       {conciliacaoTarget && (
