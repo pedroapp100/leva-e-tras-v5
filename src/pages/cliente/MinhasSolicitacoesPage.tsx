@@ -16,6 +16,7 @@ import type { StatusSolicitacao, Solicitacao } from "@/types/database";
 import { MapPin, Calendar, Eye, X } from "lucide-react";
 import { ViewSolicitacaoDialog } from "@/pages/admin/solicitacoes/ViewSolicitacaoDialog";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 
 const CLIENTE_ID = "cli-001";
 
