@@ -6,7 +6,7 @@ import { useLogStore } from "@/contexts/LogStore";
 
 interface CaixaStoreContextType {
   caixas: CaixaEntregador[];
-  abrirCaixa: (entregadorId: string, trocoInicial: number) => void;
+  abrirCaixa: (entregadorId: string, trocoInicial: number) => boolean;
   fecharCaixa: (caixaId: string, valorDevolvido: number, observacoes: string) => void;
   editarCaixa: (caixaId: string, trocoInicial: number, observacoes: string) => void;
   justificarDivergencia: (caixaId: string, justificativa: string) => void;
@@ -24,6 +24,14 @@ export function CaixaStoreProvider({ children }: { children: ReactNode }) {
   const abrirCaixa = useCallback((entregadorId: string, trocoInicial: number) => {
     const ent = MOCK_ENTREGADORES.find((e) => e.id === entregadorId);
     const hoje = new Date().toISOString().split("T")[0];
+
+    // Validação anti-duplicata: impede abertura se já existe caixa aberto no mesmo dia
+    const jaAberto = caixas.find(
+      (c) => c.entregador_id === entregadorId && c.status === "aberto" && c.data === hoje
+    );
+    if (jaAberto) {
+      return false;
+    }
     const novo: CaixaEntregador = {
       id: `caixa-${Date.now()}`,
       entregador_id: entregadorId,
@@ -48,7 +56,8 @@ export function CaixaStoreProvider({ children }: { children: ReactNode }) {
       descricao: `Caixa aberto para ${ent?.nome} com troco de ${formatCurrency(trocoInicial)}`,
       detalhes: { troco_inicial: trocoInicial },
     });
-  }, [addLog]);
+    return true;
+  }, [addLog, caixas]);
 
   const fecharCaixa = useCallback((caixaId: string, valorDevolvido: number, observacoes: string) => {
     setCaixas((prev) =>
