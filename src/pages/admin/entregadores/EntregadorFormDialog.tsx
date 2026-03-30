@@ -47,6 +47,7 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       setNome(""); setDocumento(""); setEmail(""); setTelefone("");
       setCidade("Fortaleza"); setBairro(""); setVeiculo("moto");
       setStatus("ativo"); setTipoComissao("percentual"); setValorComissao(0);
+      setSenha("");
     }
   }, [editing, open]);
 
