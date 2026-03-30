@@ -297,6 +297,7 @@ export function NotificacoesTab() {
       canal: "whatsapp",
       status: "ativo",
       variaveis: [],
+      historico_testes: [],
     });
     toast.success("Novo evento de notificação criado com sucesso!");
     setCreateOpen(false);
