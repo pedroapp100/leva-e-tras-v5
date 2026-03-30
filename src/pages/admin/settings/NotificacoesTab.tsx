@@ -863,6 +863,70 @@ export function NotificacoesTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* History Dialog */}
+      <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Histórico de Testes — {historyTemplate?.evento_label}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            {historyTemplate && historyTemplate.historico_testes.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Clock className="h-10 w-10 mx-auto mb-2 opacity-40" />
+                <p className="text-sm">Nenhum envio de teste registrado.</p>
+                <p className="text-xs mt-1">Envie um teste para começar a registrar o histórico.</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead>Data/Hora</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {historyTemplate?.historico_testes.map((rec) => (
+                    <TableRow key={rec.id}>
+                      <TableCell className="font-mono text-sm">
+                        {formatPhone(rec.telefone)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {formatDateTimeBR(rec.data)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {rec.status === "sucesso" ? (
+                          <Badge variant="secondary" className="gap-1 bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400">
+                            <CheckCircle2 className="h-3 w-3" /> Sucesso
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="gap-1 bg-destructive/10 text-destructive">
+                            <XCircle className="h-3 w-3" /> Falha
+                          </Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Fechar</Button>
+            </DialogClose>
+            {historyTemplate && (
+              <Button onClick={() => { setHistoryOpen(false); openTestSend(historyTemplate); }} className="gap-2">
+                <Send className="h-4 w-4" /> Novo Teste
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
