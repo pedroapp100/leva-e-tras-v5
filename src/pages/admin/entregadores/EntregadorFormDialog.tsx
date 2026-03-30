@@ -15,7 +15,7 @@ interface EntregadorFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editing: Entregador | null;
-  onSave: (data: Entregador) => void;
+  onSave: (data: Entregador, senha?: string) => void;
 }
 
 export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: EntregadorFormDialogProps) {
