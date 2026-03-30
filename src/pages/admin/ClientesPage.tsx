@@ -58,13 +58,38 @@ export default function ClientesPage() {
   const openCreate = () => { setEditing(null); setFormOpen(true); };
   const openEdit = (c: Cliente) => { setEditing(c); setFormOpen(true); };
 
+  const { addUser, findByEmail } = useUserStore();
+
   const handleSave = (data: Cliente) => {
     if (editing) {
       setClientes((prev) => prev.map((c) => (c.id === editing.id ? { ...data, id: editing.id } : c)));
       toast.success("Cliente atualizado com sucesso!");
     } else {
-      setClientes((prev) => [...prev, { ...data, id: `cli-${Date.now()}` }]);
-      toast.success("Cliente cadastrado com sucesso!");
+      const newId = `cli-${Date.now()}`;
+      setClientes((prev) => [...prev, { ...data, id: newId }]);
+
+      // Auto-criar conta de acesso se email ainda não existe
+      if (!findByEmail(data.email)) {
+        const defaultPassword = "123456";
+        addUser({
+          id: `user-${newId}`,
+          email: data.email,
+          password: defaultPassword,
+          nome: data.nome,
+          role: "cliente",
+          cargo_id: null,
+          status: "ativo",
+          avatarUrl: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        toast.success(
+          `Cliente cadastrado! Credenciais de acesso: Email: ${data.email} | Senha: ${defaultPassword}`,
+          { duration: 10000 }
+        );
+      } else {
+        toast.success("Cliente cadastrado com sucesso!");
+      }
     }
     setFormOpen(false);
   };
