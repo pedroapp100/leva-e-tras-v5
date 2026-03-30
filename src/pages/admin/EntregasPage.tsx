@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { PageContainer, MetricCard, DataTable, SearchInput, StatusBadge, ExportDropdown } from "@/components/shared";
 import type { Column } from "@/components/shared/DataTable";
 import type { Rota } from "@/types/database";
-import { TIPO_OPERACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge, getTipoOperacaoLabel } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName } from "@/data/mockSolicitacoes";
 import { MOCK_BAIRROS } from "@/data/mockSettings";
 import { useGlobalStore } from "@/contexts/GlobalStore";
