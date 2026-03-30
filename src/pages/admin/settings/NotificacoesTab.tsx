@@ -428,6 +428,19 @@ export function NotificacoesTab() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="h-8 w-8 rounded-full text-green-600 hover:bg-green-600/10 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); openTestSend(r); }}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Enviar teste</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10 transition-colors"
                   onClick={(e) => { e.stopPropagation(); handleDelete(r); }}
                 >
