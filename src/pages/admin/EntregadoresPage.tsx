@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Plus, Users, UserCheck, Package, Clock, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { useUserStore } from "@/data/mockUsers";
 import { EntregadorFormDialog } from "./entregadores/EntregadorFormDialog";
 
 export default function EntregadoresPage() {
@@ -51,13 +52,38 @@ export default function EntregadoresPage() {
   const openCreate = () => { setEditing(null); setFormOpen(true); };
   const openEdit = (e: Entregador) => { setEditing(e); setFormOpen(true); };
 
+  const { addUser, findByEmail } = useUserStore();
+
   const handleSave = (data: Entregador) => {
     if (editing) {
       setEntregadores((prev) => prev.map((e) => (e.id === editing.id ? { ...data, id: editing.id } : e)));
       toast.success("Entregador atualizado com sucesso!");
     } else {
-      setEntregadores((prev) => [...prev, { ...data, id: `ent-${Date.now()}` }]);
-      toast.success("Entregador cadastrado com sucesso!");
+      const newId = `ent-${Date.now()}`;
+      setEntregadores((prev) => [...prev, { ...data, id: newId }]);
+
+      // Auto-criar conta de acesso se email ainda não existe
+      if (!findByEmail(data.email)) {
+        const defaultPassword = "123456";
+        addUser({
+          id: `user-${newId}`,
+          email: data.email,
+          password: defaultPassword,
+          nome: data.nome,
+          role: "entregador",
+          cargo_id: null,
+          status: "ativo",
+          avatarUrl: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        toast.success(
+          `Entregador cadastrado! Credenciais de acesso: Email: ${data.email} | Senha: ${defaultPassword}`,
+          { duration: 10000 }
+        );
+      } else {
+        toast.success("Entregador cadastrado com sucesso!");
+      }
     }
     setFormOpen(false);
   };
