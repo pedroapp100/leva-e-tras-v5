@@ -369,16 +369,7 @@ export default function EntregasPage() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{getClienteName(r.cliente_id)}</span>
                   {(() => {
-                    const tipoStyles: Record<string, string> = {
-                      standard: "bg-primary/10 text-primary border-primary/25",
-                      express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-                      retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-                    };
-                    return (
-                      <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>
-                        {TIPO_OPERACAO_LABELS[r.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? r.tipo_operacao}
-                      </Badge>
-                    );
+                    return <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />;
                   })()}
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
