@@ -26,6 +26,7 @@ const tabs = [
   { value: "precos", label: "Tabela de Preços", icon: DollarSign },
   { value: "taxas_extras", label: "Taxas Extras", icon: Receipt },
   { value: "simulador", label: "Simulador", icon: Calculator },
+  { value: "notificacoes", label: "Notificações", icon: Bell },
   { value: "webhooks", label: "Webhooks", icon: Webhook },
   { value: "integracoes", label: "Integrações", icon: Plug },
 ];
