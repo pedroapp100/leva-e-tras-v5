@@ -19,6 +19,7 @@ const FATURAR_ID = "__faturar__";
 interface ViewSolicitacaoDialogProps {
   solicitacao: Solicitacao | null;
   onClose: () => void;
+  isDriverView?: boolean;
 }
 
 const getBairroName = (id: string) => MOCK_BAIRROS.find((b) => b.id === id)?.nome ?? id;
