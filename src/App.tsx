@@ -49,6 +49,7 @@ import EntregadorSolicitacoesPage from "./pages/entregador/EntregadorSolicitacoe
 import EntregadorHistoricoPage from "./pages/entregador/EntregadorHistoricoPage";
 import EntregadorFinanceiroPage from "./pages/entregador/EntregadorFinanceiroPage";
 import EntregadorPerfilPage from "./pages/entregador/EntregadorPerfilPage";
+import EntregadorCaixaPage from "./pages/entregador/EntregadorCaixaPage";
 
 // Not found
 import NotFound from "./pages/NotFound";
@@ -116,6 +117,7 @@ const App = () => (
                     <Route path="solicitacoes" element={<EntregadorSolicitacoesPage />} />
                     <Route path="historico" element={<EntregadorHistoricoPage />} />
                     <Route path="financeiro" element={<EntregadorFinanceiroPage />} />
+                    <Route path="caixa" element={<EntregadorCaixaPage />} />
                     <Route path="perfil" element={<EntregadorPerfilPage />} />
                   </Route>
 

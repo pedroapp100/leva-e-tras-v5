@@ -5,7 +5,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { OnboardingRoleSync } from "@/onboarding/OnboardingRoleSync";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
-import { LayoutDashboard, ClipboardList, DollarSign, User, LogOut, ChevronRight, Truck } from "lucide-react";
+import { LayoutDashboard, ClipboardList, DollarSign, User, LogOut, ChevronRight, Truck, Wallet } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
@@ -24,6 +24,7 @@ const driverItems = [
   { title: "Solicitações", url: "/entregador/solicitacoes", icon: ClipboardList },
   { title: "Histórico", url: "/entregador/historico", icon: Truck },
   { title: "Meu Financeiro", url: "/entregador/financeiro", icon: DollarSign },
+  { title: "Meu Caixa", url: "/entregador/caixa", icon: Wallet },
 ];
 
 function DriverSidebar() {
