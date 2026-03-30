@@ -38,18 +38,31 @@ interface WebhookStore {
 }
 
 const EVENTOS_DISPONIVEIS = [
+  // ── Solicitação / Status ──
   { value: "solicitacao.criada", label: "Solicitação criada" },
-  { value: "solicitacao.atualizada", label: "Solicitação atualizada" },
+  { value: "solicitacao.aceita", label: "Solicitação aceita" },
+  { value: "solicitacao.rejeitada", label: "Solicitação rejeitada" },
+  { value: "solicitacao.em_andamento", label: "Solicitação em andamento" },
   { value: "solicitacao.concluida", label: "Solicitação concluída" },
   { value: "solicitacao.cancelada", label: "Solicitação cancelada" },
-  { value: "entrega.iniciada", label: "Entrega iniciada" },
+  { value: "solicitacao.atualizada", label: "Solicitação atualizada" },
+  // ── Entrega ──
+  { value: "entrega.entregador_atribuido", label: "Entregador atribuído" },
+  { value: "entrega.coletada", label: "Entrega coletada" },
+  { value: "entrega.em_transito", label: "Entrega em trânsito" },
+  { value: "entrega.chegou_destino", label: "Entrega chegou ao destino" },
   { value: "entrega.concluida", label: "Entrega concluída" },
+  { value: "entrega.tentativa_falha", label: "Tentativa de entrega falhou" },
+  // ── Financeiro ──
   { value: "fatura.gerada", label: "Fatura gerada" },
   { value: "fatura.paga", label: "Fatura paga" },
+  { value: "fatura.vencida", label: "Fatura vencida" },
+  { value: "pagamento.recebido", label: "Pagamento recebido" },
+  { value: "saldo.recarga", label: "Recarga de saldo (pré-pago)" },
+  // ── Cadastros ──
   { value: "cliente.criado", label: "Cliente criado" },
   { value: "cliente.atualizado", label: "Cliente atualizado" },
   { value: "entregador.criado", label: "Entregador criado" },
-  { value: "pagamento.recebido", label: "Pagamento recebido" },
 ];
 
 const useWebhookStore = create<WebhookStore>((set) => ({
