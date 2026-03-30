@@ -11,14 +11,24 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2, Send, Phone, CheckCircle2, Loader2 } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2, Send, Phone, CheckCircle2, Loader2, History, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { PhoneInput } from "@/components/shared/PhoneInput";
+import { formatDateTimeBR, formatPhone } from "@/lib/formatters";
 
 /* ── Types ── */
 type NotificacaoStatus = "ativo" | "inativo";
 type CanalEnvio = "whatsapp";
+type TestSendStatus = "sucesso" | "falha";
+
+interface TestSendRecord {
+  id: string;
+  telefone: string;
+  data: string;
+  status: TestSendStatus;
+}
 
 interface NotificacaoTemplate {
   id: string;
@@ -31,6 +41,7 @@ interface NotificacaoTemplate {
   status: NotificacaoStatus;
   variaveis: string[];
   updated_at: string;
+  historico_testes: TestSendRecord[];
 }
 
 /* ── Variáveis disponíveis por categoria ── */
@@ -72,89 +83,81 @@ const defaultTemplates: NotificacaoTemplate[] = [
   // Solicitação
   {
     id: "ntf-1", evento: "solicitacao.criada", evento_label: "Solicitação criada", categoria: "Solicitação",
-    titulo: "Nova solicitação", canal: "whatsapp", status: "ativo",
+    titulo: "Nova solicitação", canal: "whatsapp", status: "ativo", historico_testes: [
+      { id: "ts-1", telefone: "11999887766", data: "2026-03-28T14:30:00Z", status: "sucesso" },
+      { id: "ts-2", telefone: "11988776655", data: "2026-03-25T10:15:00Z", status: "falha" },
+    ],
     mensagem: "Olá {{cliente_nome}}! 👋\n\nSua solicitação *#{{solicitacao_id}}* foi criada com sucesso.\n\n📍 Coleta: {{endereco_coleta}}\n📍 Entrega: {{endereco_entrega}}\n💰 Valor: {{valor_total}}\n\nAcompanhe o status em tempo real!",
     variaveis: ["cliente_nome", "solicitacao_id", "endereco_coleta", "endereco_entrega", "valor_total"],
     updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-2", evento: "solicitacao.aceita", evento_label: "Solicitação aceita", categoria: "Solicitação",
-    titulo: "Solicitação aceita", canal: "whatsapp", status: "ativo",
+    titulo: "Solicitação aceita", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "✅ {{cliente_nome}}, sua solicitação *#{{solicitacao_id}}* foi aceita!\n\nEm breve um entregador será atribuído.",
-    variaveis: ["cliente_nome", "solicitacao_id"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "solicitacao_id"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-3", evento: "solicitacao.em_andamento", evento_label: "Solicitação em andamento", categoria: "Solicitação",
-    titulo: "Solicitação em andamento", canal: "whatsapp", status: "ativo",
+    titulo: "Solicitação em andamento", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "🚀 {{cliente_nome}}, sua solicitação *#{{solicitacao_id}}* está em andamento!\n\nO entregador já está a caminho.",
-    variaveis: ["cliente_nome", "solicitacao_id"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "solicitacao_id"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-4", evento: "solicitacao.concluida", evento_label: "Solicitação concluída", categoria: "Solicitação",
-    titulo: "Solicitação concluída", canal: "whatsapp", status: "ativo",
+    titulo: "Solicitação concluída", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "🎉 {{cliente_nome}}, sua solicitação *#{{solicitacao_id}}* foi concluída com sucesso!\n\nObrigado por usar nossos serviços! ⭐",
-    variaveis: ["cliente_nome", "solicitacao_id"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "solicitacao_id"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-5", evento: "solicitacao.cancelada", evento_label: "Solicitação cancelada", categoria: "Solicitação",
-    titulo: "Solicitação cancelada", canal: "whatsapp", status: "ativo",
+    titulo: "Solicitação cancelada", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "❌ {{cliente_nome}}, sua solicitação *#{{solicitacao_id}}* foi cancelada.\n\nEm caso de dúvidas, entre em contato conosco.",
-    variaveis: ["cliente_nome", "solicitacao_id"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "solicitacao_id"], updated_at: "2025-03-20T10:00:00Z",
   },
   // Entrega
   {
     id: "ntf-6", evento: "entrega.entregador_atribuido", evento_label: "Entregador atribuído", categoria: "Entrega",
-    titulo: "Entregador a caminho", canal: "whatsapp", status: "ativo",
+    titulo: "Entregador a caminho", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "🏍️ {{cliente_nome}}, o entregador *{{entregador_nome}}* foi atribuído à sua solicitação *#{{solicitacao_id}}*!\n\n📍 Coleta: {{endereco_coleta}}",
-    variaveis: ["cliente_nome", "entregador_nome", "solicitacao_id", "endereco_coleta"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "entregador_nome", "solicitacao_id", "endereco_coleta"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-7", evento: "entrega.coletada", evento_label: "Entrega coletada", categoria: "Entrega",
-    titulo: "Entrega coletada", canal: "whatsapp", status: "ativo",
+    titulo: "Entrega coletada", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "📦 {{cliente_nome}}, sua encomenda foi coletada!\n\nEntregador: *{{entregador_nome}}*\n📍 Destino: {{endereco_entrega}}",
-    variaveis: ["cliente_nome", "entregador_nome", "endereco_entrega"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "entregador_nome", "endereco_entrega"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-8", evento: "entrega.em_transito", evento_label: "Entrega em trânsito", categoria: "Entrega",
-    titulo: "Em trânsito", canal: "whatsapp", status: "ativo",
+    titulo: "Em trânsito", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "🚚 {{cliente_nome}}, sua entrega está a caminho!\n\n📍 Destino: {{endereco_entrega}}\n⏰ Previsão: {{previsao_entrega}}",
-    variaveis: ["cliente_nome", "endereco_entrega", "previsao_entrega"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "endereco_entrega", "previsao_entrega"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-9", evento: "entrega.concluida", evento_label: "Entrega concluída", categoria: "Entrega",
-    titulo: "Entrega concluída", canal: "whatsapp", status: "ativo",
+    titulo: "Entrega concluída", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "✅ {{cliente_nome}}, sua entrega foi realizada com sucesso!\n\nObrigado pela confiança! 🙏",
-    variaveis: ["cliente_nome"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-10", evento: "entrega.tentativa_falha", evento_label: "Tentativa de entrega falhou", categoria: "Entrega",
-    titulo: "Tentativa falhou", canal: "whatsapp", status: "ativo",
+    titulo: "Tentativa falhou", canal: "whatsapp", status: "ativo", historico_testes: [],
     mensagem: "⚠️ {{cliente_nome}}, não foi possível entregar no endereço {{endereco_entrega}}.\n\nEntraremos em contato para reagendar.",
-    variaveis: ["cliente_nome", "endereco_entrega"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "endereco_entrega"], updated_at: "2025-03-20T10:00:00Z",
   },
   // Financeiro
   {
     id: "ntf-11", evento: "fatura.gerada", evento_label: "Fatura gerada", categoria: "Financeiro",
-    titulo: "Nova fatura", canal: "whatsapp", status: "inativo",
+    titulo: "Nova fatura", canal: "whatsapp", status: "inativo", historico_testes: [],
     mensagem: "📄 {{cliente_nome}}, sua fatura *#{{fatura_id}}* foi gerada.\n\n💰 Valor: {{valor_fatura}}\n📅 Vencimento: {{data_vencimento}}",
-    variaveis: ["cliente_nome", "fatura_id", "valor_fatura", "data_vencimento"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "fatura_id", "valor_fatura", "data_vencimento"], updated_at: "2025-03-20T10:00:00Z",
   },
   {
     id: "ntf-12", evento: "fatura.vencida", evento_label: "Fatura vencida", categoria: "Financeiro",
-    titulo: "Fatura vencida", canal: "whatsapp", status: "inativo",
+    titulo: "Fatura vencida", canal: "whatsapp", status: "inativo", historico_testes: [],
     mensagem: "🔴 {{cliente_nome}}, sua fatura *#{{fatura_id}}* no valor de {{valor_fatura}} está vencida.\n\nRegularize para evitar suspensão do serviço.",
-    variaveis: ["cliente_nome", "fatura_id", "valor_fatura"],
-    updated_at: "2025-03-20T10:00:00Z",
+    variaveis: ["cliente_nome", "fatura_id", "valor_fatura"], updated_at: "2025-03-20T10:00:00Z",
   },
 ];
 
@@ -164,6 +167,7 @@ interface NotificacaoStore {
   updateTemplate: (id: string, data: Partial<Omit<NotificacaoTemplate, "id">>) => void;
   addTemplate: (data: Omit<NotificacaoTemplate, "id" | "updated_at">) => void;
   removeTemplate: (id: string) => void;
+  addTestRecord: (templateId: string, record: TestSendRecord) => void;
 }
 
 const useNotificacaoStore = create<NotificacaoStore>((set) => ({
@@ -178,12 +182,20 @@ const useNotificacaoStore = create<NotificacaoStore>((set) => ({
     set((s) => ({
       templates: [
         ...s.templates,
-        { ...data, id: `ntf-${Date.now()}`, updated_at: new Date().toISOString() },
+        { ...data, id: `ntf-${Date.now()}`, updated_at: new Date().toISOString(), historico_testes: [] },
       ],
     })),
   removeTemplate: (id) =>
     set((s) => ({
       templates: s.templates.filter((t) => t.id !== id),
+    })),
+  addTestRecord: (templateId, record) =>
+    set((s) => ({
+      templates: s.templates.map((t) =>
+        t.id === templateId
+          ? { ...t, historico_testes: [record, ...t.historico_testes] }
+          : t
+      ),
     })),
 }));
 
@@ -203,7 +215,7 @@ function MensagemPreview({ mensagem }: { mensagem: string }) {
 
 /* ── Main Component ── */
 export function NotificacoesTab() {
-  const { templates, updateTemplate, addTemplate, removeTemplate } = useNotificacaoStore();
+  const { templates, updateTemplate, addTemplate, removeTemplate, addTestRecord } = useNotificacaoStore();
 
   const [search, setSearch] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todos");
@@ -224,6 +236,8 @@ export function NotificacoesTab() {
   const [testPhone, setTestPhone] = useState("");
   const [testSending, setTestSending] = useState(false);
   const [testSent, setTestSent] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyTemplate, setHistoryTemplate] = useState<NotificacaoTemplate | null>(null);
 
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
@@ -283,6 +297,7 @@ export function NotificacoesTab() {
       canal: "whatsapp",
       status: "ativo",
       variaveis: [],
+      historico_testes: [],
     });
     toast.success("Novo evento de notificação criado com sucesso!");
     setCreateOpen(false);
@@ -340,12 +355,30 @@ export function NotificacoesTab() {
       toast.error("Informe um número de telefone válido.");
       return;
     }
+    if (!testTemplate) return;
     setTestSending(true);
+    const isSuccess = Math.random() > 0.15; // simulate occasional failure
     setTimeout(() => {
+      const record: TestSendRecord = {
+        id: `ts-${Date.now()}`,
+        telefone: testPhone,
+        data: new Date().toISOString(),
+        status: isSuccess ? "sucesso" : "falha",
+      };
+      addTestRecord(testTemplate.id, record);
       setTestSending(false);
       setTestSent(true);
-      toast.success("Mensagem de teste enviada com sucesso!");
+      if (isSuccess) {
+        toast.success("Mensagem de teste enviada com sucesso!");
+      } else {
+        toast.error("Falha ao enviar mensagem de teste. Tente novamente.");
+      }
     }, 2000);
+  }
+
+  function openHistory(t: NotificacaoTemplate) {
+    setHistoryTemplate(t);
+    setHistoryOpen(true);
   }
 
   const columns: Column<NotificacaoTemplate>[] = [
@@ -435,6 +468,19 @@ export function NotificacoesTab() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Enviar teste</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  onClick={(e) => { e.stopPropagation(); openHistory(r); }}
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Histórico de testes</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -548,6 +594,9 @@ export function NotificacoesTab() {
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-green-600 hover:bg-green-600/10" onClick={() => openTestSend(r)}>
                     <Send className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => openHistory(r)}>
+                    <History className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10" onClick={() => handleDelete(r)}>
                     <Trash2 className="h-4 w-4" />
@@ -811,6 +860,70 @@ export function NotificacoesTab() {
                 </>
               )}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* History Dialog */}
+      <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Histórico de Testes — {historyTemplate?.evento_label}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            {historyTemplate && historyTemplate.historico_testes.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Clock className="h-10 w-10 mx-auto mb-2 opacity-40" />
+                <p className="text-sm">Nenhum envio de teste registrado.</p>
+                <p className="text-xs mt-1">Envie um teste para começar a registrar o histórico.</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead>Data/Hora</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {historyTemplate?.historico_testes.map((rec) => (
+                    <TableRow key={rec.id}>
+                      <TableCell className="font-mono text-sm">
+                        {formatPhone(rec.telefone)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {formatDateTimeBR(rec.data)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {rec.status === "sucesso" ? (
+                          <Badge variant="secondary" className="gap-1 bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400">
+                            <CheckCircle2 className="h-3 w-3" /> Sucesso
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="gap-1 bg-destructive/10 text-destructive">
+                            <XCircle className="h-3 w-3" /> Falha
+                          </Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Fechar</Button>
+            </DialogClose>
+            {historyTemplate && (
+              <Button onClick={() => { setHistoryOpen(false); openTestSend(historyTemplate); }} className="gap-2">
+                <Send className="h-4 w-4" /> Novo Teste
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
