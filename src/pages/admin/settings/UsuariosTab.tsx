@@ -86,6 +86,10 @@ export function UsuariosTab() {
         toast.error("Defina uma senha para o novo usuário.");
         return;
       }
+      if (form.password.trim().length < 6) {
+        toast.error("A senha deve ter no mínimo 6 caracteres.");
+        return;
+      }
       const newUser: UserAccount = {
         id: `user-${Date.now()}`,
         email: form.email.trim().toLowerCase(),
@@ -284,7 +288,19 @@ export function UsuariosTab() {
             </div>
             <div className="space-y-2">
               <Label>{editingId ? "Nova Senha (deixe em branco para manter)" : "Senha"}</Label>
-              <Input type="password" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="••••••••" />
+              <Input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                placeholder="Mínimo 6 caracteres"
+                className={form.password && form.password.length < 6 ? "border-destructive focus-visible:ring-destructive" : ""}
+              />
+              {form.password && form.password.length < 6 && (
+                <p className="text-xs text-destructive">A senha deve ter no mínimo 6 caracteres.</p>
+              )}
+              {form.password && form.password.length >= 6 && (
+                <p className="text-xs text-green-600 dark:text-green-400">✓ Senha válida</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Cargo</Label>

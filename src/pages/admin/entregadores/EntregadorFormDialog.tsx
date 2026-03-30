@@ -60,6 +60,10 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       toast.error("Defina uma senha de acesso para o entregador.");
       return;
     }
+    if (!editing && senha.trim().length < 6) {
+      toast.error("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
     const now = new Date().toISOString();
     onSave({
       id: editing?.id ?? "",
@@ -188,7 +192,14 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
                   onChange={(e) => setSenha(e.target.value)}
                   placeholder="Mínimo 6 caracteres"
                   minLength={6}
+                  className={senha && senha.length < 6 ? "border-destructive focus-visible:ring-destructive" : ""}
                 />
+                {senha && senha.length < 6 && (
+                  <p className="text-xs text-destructive">A senha deve ter no mínimo 6 caracteres.</p>
+                )}
+                {senha && senha.length >= 6 && (
+                  <p className="text-xs text-green-600 dark:text-green-400">✓ Senha válida</p>
+                )}
                 <p className="text-xs text-muted-foreground">
                   O entregador usará o email cadastrado e esta senha para acessar o portal.
                 </p>
