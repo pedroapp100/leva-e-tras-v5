@@ -68,7 +68,7 @@ export function EntregadorFormDialog({ open, onOpenChange, editing, onSave }: En
       valor_comissao: valorComissao,
       created_at: editing?.created_at ?? now,
       updated_at: now,
-    });
+    }, !editing ? senha.trim() : undefined);
   };
 
   return (
