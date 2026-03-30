@@ -201,7 +201,7 @@ function RotaConciliationCard({ rota, pagamentos, isFaturado }: { rota: Rota; pa
 
 /* ── Main Dialog ── */
 
-export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoDialogProps) {
+export function ViewSolicitacaoDialog({ solicitacao, onClose, isDriverView = false }: ViewSolicitacaoDialogProps) {
   const { getRotasBySolicitacao, getPagamentosByRota } = useGlobalStore();
   const rotas = solicitacao ? getRotasBySolicitacao(solicitacao.id) : [];
   const clienteName = solicitacao ? getClienteName(solicitacao.cliente_id) : "";
