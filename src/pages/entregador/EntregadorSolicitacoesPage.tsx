@@ -300,7 +300,7 @@ export default function EntregadorSolicitacoesPage() {
 
       {/* Dialogs */}
       <Suspense fallback={null}>
-        <ViewSolicitacaoDialog solicitacao={viewSolicitacao} onClose={() => setViewSolicitacao(null)} />
+        <ViewSolicitacaoDialog solicitacao={viewSolicitacao} onClose={() => setViewSolicitacao(null)} isDriverView />
         {conciliacaoTarget && (
           <ConciliacaoDialog
             open={!!conciliacaoTarget}
@@ -309,6 +309,7 @@ export default function EntregadorSolicitacoesPage() {
             clienteId={conciliacaoTarget.cliente_id}
             solicitacaoId={conciliacaoTarget.id}
             isConcluding={conciliacaoTarget.status === "em_andamento"}
+            isDriverView
             onConcluir={() => {
               handleConcluir(conciliacaoTarget);
               setConciliacaoTarget(null);

@@ -83,9 +83,6 @@ export default function EntregadorDashboard() {
                       <p className="text-xs text-muted-foreground">{getClienteName(s.cliente_id)} • {formatDateBR(s.data_conclusao!)}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      {s.valor_total_taxas != null && (
-                        <span className="text-sm font-semibold tabular-nums">{formatCurrency(s.valor_total_taxas)}</span>
-                      )}
                       <StatusBadge status={s.status} />
                     </div>
                   </motion.div>

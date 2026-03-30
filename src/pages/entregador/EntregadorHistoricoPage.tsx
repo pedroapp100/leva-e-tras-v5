@@ -169,7 +169,7 @@ export default function EntregadorHistoricoPage() {
         </CardContent>
       </Card>
 
-      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} />
+      <ViewSolicitacaoDialog solicitacao={viewSol} onClose={() => setViewSol(null)} isDriverView />
     </PageContainer>
   );
 }

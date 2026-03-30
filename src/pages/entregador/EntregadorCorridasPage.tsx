@@ -16,7 +16,7 @@ import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import type { Solicitacao, StatusSolicitacao } from "@/types/database";
 import {
   Truck, Play, CheckCheck, MapPin, Package,
-  ClipboardList, Eye, DollarSign, Navigation
+  ClipboardList, Eye, Navigation
 } from "lucide-react";
 import { ViewSolicitacaoDialog } from "@/pages/admin/solicitacoes/ViewSolicitacaoDialog";
 import { toast } from "sonner";
