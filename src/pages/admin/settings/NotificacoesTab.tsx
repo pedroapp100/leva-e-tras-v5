@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2, Send, Phone, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { PhoneInput } from "@/components/shared/PhoneInput";
 
 /* ── Types ── */
 type NotificacaoStatus = "ativo" | "inativo";
