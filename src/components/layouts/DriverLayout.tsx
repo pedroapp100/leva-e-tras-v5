@@ -24,6 +24,7 @@ const driverItems = [
   { title: "Solicitações", url: "/entregador/solicitacoes", icon: ClipboardList },
   { title: "Histórico", url: "/entregador/historico", icon: Truck },
   { title: "Meu Financeiro", url: "/entregador/financeiro", icon: DollarSign },
+  { title: "Meu Caixa", url: "/entregador/caixa", icon: Wallet },
 ];
 
 function DriverSidebar() {
