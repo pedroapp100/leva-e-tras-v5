@@ -749,6 +749,68 @@ export function NotificacoesTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Test Send Dialog */}
+      <Dialog open={testOpen} onOpenChange={(open) => { setTestOpen(open); if (!open) setTestSent(false); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="h-5 w-5" />
+              Enviar Teste — {testTemplate?.evento_label}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                Número do WhatsApp
+              </Label>
+              <PhoneInput
+                value={testPhone}
+                onChange={setTestPhone}
+                placeholder="(99) 99999-9999"
+              />
+              <p className="text-xs text-muted-foreground">A mensagem de teste será enviada para este número com dados fictícios.</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Pré-visualização com dados de exemplo</Label>
+              <div className="bg-[#ece5dd] dark:bg-[#0b141a] rounded-lg p-4 flex items-end justify-end">
+                {testTemplate && <MensagemPreview mensagem={fillSampleData(testTemplate.mensagem)} />}
+              </div>
+            </div>
+
+            {testSent && (
+              <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3 text-sm text-green-700 dark:text-green-400">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                Mensagem de teste enviada com sucesso para ({testPhone.slice(0, 2)}) {testPhone.slice(2, 7)}-{testPhone.slice(7)}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Fechar</Button>
+            </DialogClose>
+            <Button
+              onClick={handleTestSend}
+              disabled={testSending || !testPhone || testPhone.length < 10}
+              className="gap-2"
+            >
+              {testSending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Enviar Teste
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
