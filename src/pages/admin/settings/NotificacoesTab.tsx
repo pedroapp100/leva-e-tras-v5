@@ -11,9 +11,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2 } from "lucide-react";
+import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2, Send, Phone, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { PhoneInput } from "@/components/shared/PhoneInput";
 
 /* ── Types ── */
 type NotificacaoStatus = "ativo" | "inativo";
@@ -218,6 +219,11 @@ export function NotificacoesTab() {
   const [newCategoria, setNewCategoria] = useState("Solicitação");
   const [newTitulo, setNewTitulo] = useState("");
   const [newMensagem, setNewMensagem] = useState("");
+  const [testOpen, setTestOpen] = useState(false);
+  const [testTemplate, setTestTemplate] = useState<NotificacaoTemplate | null>(null);
+  const [testPhone, setTestPhone] = useState("");
+  const [testSending, setTestSending] = useState(false);
+  const [testSent, setTestSent] = useState(false);
 
   const categorias = [...new Set(templates.map((t) => t.categoria))];
 
@@ -295,6 +301,53 @@ export function NotificacoesTab() {
     setNewMensagem((m) => m + varName);
   }
 
+  const SAMPLE_DATA: Record<string, string> = {
+    "{{cliente_nome}}": "Maria Silva",
+    "{{solicitacao_id}}": "4821",
+    "{{data_solicitacao}}": "30/03/2026",
+    "{{endereco_coleta}}": "Rua das Flores, 123 - Centro",
+    "{{endereco_entrega}}": "Av. Brasil, 456 - Jardim América",
+    "{{valor_total}}": "R$ 25,00",
+    "{{tipo_operacao}}": "Comercial",
+    "{{entregador_nome}}": "João Santos",
+    "{{previsao_entrega}}": "14:30",
+    "{{status_entrega}}": "Em trânsito",
+    "{{fatura_id}}": "1042",
+    "{{valor_fatura}}": "R$ 1.250,00",
+    "{{data_vencimento}}": "05/04/2026",
+    "{{valor_pago}}": "R$ 1.250,00",
+    "{{saldo_atual}}": "R$ 350,00",
+  };
+
+  function fillSampleData(msg: string): string {
+    let filled = msg;
+    for (const [key, val] of Object.entries(SAMPLE_DATA)) {
+      filled = filled.split(key).join(val);
+    }
+    return filled;
+  }
+
+  function openTestSend(t: NotificacaoTemplate) {
+    setTestTemplate(t);
+    setTestPhone("");
+    setTestSending(false);
+    setTestSent(false);
+    setTestOpen(true);
+  }
+
+  function handleTestSend() {
+    if (!testPhone || testPhone.length < 10) {
+      toast.error("Informe um número de telefone válido.");
+      return;
+    }
+    setTestSending(true);
+    setTimeout(() => {
+      setTestSending(false);
+      setTestSent(true);
+      toast.success("Mensagem de teste enviada com sucesso!");
+    }, 2000);
+  }
+
   const columns: Column<NotificacaoTemplate>[] = [
     {
       key: "evento_label",
@@ -340,7 +393,7 @@ export function NotificacoesTab() {
     {
       key: "actions",
       header: "Ações",
-      className: "w-28 text-right",
+      className: "w-36 text-right",
       cell: (r) => (
         <TooltipProvider delayDuration={200}>
           <div className="flex items-center justify-end gap-1">
@@ -369,6 +422,19 @@ export function NotificacoesTab() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Editar mensagem</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-green-600 hover:bg-green-600/10 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); openTestSend(r); }}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Enviar teste</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -479,6 +545,9 @@ export function NotificacoesTab() {
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-primary hover:bg-primary/10" onClick={() => openEdit(r)}>
                     <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-green-600 hover:bg-green-600/10" onClick={() => openTestSend(r)}>
+                    <Send className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-destructive hover:bg-destructive/10" onClick={() => handleDelete(r)}>
                     <Trash2 className="h-4 w-4" />
@@ -679,6 +748,68 @@ export function NotificacoesTab() {
             </DialogClose>
             <Button onClick={handleCreate}>
               <Plus className="mr-2 h-4 w-4" /> Criar Evento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Test Send Dialog */}
+      <Dialog open={testOpen} onOpenChange={(open) => { setTestOpen(open); if (!open) setTestSent(false); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="h-5 w-5" />
+              Enviar Teste — {testTemplate?.evento_label}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                Número do WhatsApp
+              </Label>
+              <PhoneInput
+                value={testPhone}
+                onChange={setTestPhone}
+                placeholder="(99) 99999-9999"
+              />
+              <p className="text-xs text-muted-foreground">A mensagem de teste será enviada para este número com dados fictícios.</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Pré-visualização com dados de exemplo</Label>
+              <div className="bg-[#ece5dd] dark:bg-[#0b141a] rounded-lg p-4 flex items-end justify-end">
+                {testTemplate && <MensagemPreview mensagem={fillSampleData(testTemplate.mensagem)} />}
+              </div>
+            </div>
+
+            {testSent && (
+              <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3 text-sm text-green-700 dark:text-green-400">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                Mensagem de teste enviada com sucesso para ({testPhone.slice(0, 2)}) {testPhone.slice(2, 7)}-{testPhone.slice(7)}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Fechar</Button>
+            </DialogClose>
+            <Button
+              onClick={handleTestSend}
+              disabled={testSending || !testPhone || testPhone.length < 10}
+              className="gap-2"
+            >
+              {testSending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Enviar Teste
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
