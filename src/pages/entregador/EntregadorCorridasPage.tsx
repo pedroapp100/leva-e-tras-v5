@@ -234,8 +234,7 @@ export default function EntregadorCorridasPage() {
                             <span className="text-muted-foreground truncate">{rota.responsavel}</span>
                             {rota.receber_do_cliente && rota.valor_a_receber && (
                               <Badge variant="outline" className="ml-auto text-xs shrink-0">
-                                <DollarSign className="h-3 w-3 mr-0.5" />
-                                {fmt(rota.valor_a_receber)}
+                                Cobrar: {fmt(rota.valor_a_receber)}
                               </Badge>
                             )}
                           </div>
