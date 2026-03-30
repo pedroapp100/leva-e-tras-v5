@@ -378,7 +378,7 @@ export function NotificacoesTab() {
   }
 
   function openHistory(t: NotificacaoTemplate) {
-    setHistoryTemplate(t);
+    setHistoryTemplateId(t.id);
     setHistoryOpen(true);
   }
 
