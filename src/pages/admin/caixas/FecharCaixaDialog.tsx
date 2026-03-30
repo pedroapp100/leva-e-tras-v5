@@ -57,7 +57,7 @@ export function FecharCaixaDialog({ open, onOpenChange, caixa, onConfirm }: Fech
           </div>
 
           {valorDevolvido > 0 && (
-            <div className={`rounded-lg p-3 text-sm font-medium ${diferenca === 0 ? "bg-green-500/10 text-green-700 dark:text-green-400" : "bg-destructive/10 text-destructive"}`}>
+            <div className={`rounded-lg p-3 text-sm font-medium ${diferenca === 0 ? "bg-status-completed/10 text-status-completed" : "bg-destructive/10 text-destructive"}`}>
               Diferença: {formatCurrency(diferenca)}
               {diferenca === 0 && " ✓ Caixa bateu!"}
               {diferenca < 0 && " — Faltando"}

@@ -58,7 +58,7 @@ export function CaixaDetailsModal({ open, onOpenChange, caixa }: CaixaDetailsMod
                 </div>
                 <div>
                   <span className="text-muted-foreground">Diferença</span>
-                  <p className={`font-bold ${caixa.diferenca === 0 ? "text-green-600 dark:text-green-400" : "text-destructive"}`}>
+                  <p className={`font-bold ${caixa.diferenca === 0 ? "text-status-completed" : "text-destructive"}`}>
                     {formatCurrency(caixa.diferenca ?? 0)}
                   </p>
                 </div>
