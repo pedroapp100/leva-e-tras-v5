@@ -56,7 +56,8 @@ export function CaixaStoreProvider({ children }: { children: ReactNode }) {
       descricao: `Caixa aberto para ${ent?.nome} com troco de ${formatCurrency(trocoInicial)}`,
       detalhes: { troco_inicial: trocoInicial },
     });
-  }, [addLog]);
+    return true;
+  }, [addLog, caixas]);
 
   const fecharCaixa = useCallback((caixaId: string, valorDevolvido: number, observacoes: string) => {
     setCaixas((prev) =>
