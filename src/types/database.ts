@@ -15,7 +15,7 @@ export type StatusSolicitacao =
   | "cancelada"
   | "rejeitada";
 
-export type TipoOperacao = "standard" | "express" | "retorno";
+export type TipoOperacao = string; // Dynamic — references TipoOperacaoConfig.id
 
 export type Modalidade = "pre_pago" | "faturado";
 
@@ -385,11 +385,7 @@ export const STATUS_GERAL_LABELS: Record<StatusGeral, string> = {
   Vencida: "Vencida",
 };
 
-export const TIPO_OPERACAO_LABELS: Record<TipoOperacao, string> = {
-  standard: "Standard",
-  express: "Express",
-  retorno: "Retorno",
-};
+// TIPO_OPERACAO_LABELS removed — use getTipoOperacaoLabel() from TipoOperacaoBadge instead
 
 export const TIPO_VEICULO_LABELS: Record<TipoVeiculo, string> = {
   moto: "Moto",

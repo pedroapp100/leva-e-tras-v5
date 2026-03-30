@@ -20,7 +20,7 @@ export const MOCK_ROTAS: Rota[] = [
 export const MOCK_SOLICITACOES: Solicitacao[] = [
   {
     id: "sol-001", codigo: "LT-20260315-00001", cliente_id: "cli-001", entregador_id: "ent-001",
-    status: "concluida", tipo_operacao: "standard", ponto_coleta: "Rua das Flores, 123 - Centro",
+    status: "concluida", tipo_operacao: "tipo-comercial", ponto_coleta: "Rua das Flores, 123 - Centro",
     data_solicitacao: "2026-03-15T08:30:00Z", data_inicio: "2026-03-15T09:00:00Z", data_conclusao: "2026-03-15T10:15:00Z",
     valor_total_taxas: 22.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -33,7 +33,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-002", codigo: "LT-20260315-00002", cliente_id: "cli-002", entregador_id: "ent-002",
-    status: "em_andamento", tipo_operacao: "standard", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
+    status: "em_andamento", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
     data_solicitacao: "2026-03-15T09:15:00Z", data_inicio: "2026-03-15T09:45:00Z", data_conclusao: null,
     valor_total_taxas: 8.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -45,7 +45,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-003", codigo: "LT-20260315-00003", cliente_id: "cli-003", entregador_id: "ent-003",
-    status: "aceita", tipo_operacao: "express", ponto_coleta: "Rua Barão de Aracati, 200 - Meireles",
+    status: "aceita", tipo_operacao: "tipo-noturno", ponto_coleta: "Rua Barão de Aracati, 200 - Meireles",
     data_solicitacao: "2026-03-15T10:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 23.50, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -56,7 +56,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-004", codigo: "LT-20260315-00004", cliente_id: "cli-004", entregador_id: "ent-001",
-    status: "aceita", tipo_operacao: "standard", ponto_coleta: "Av. Washington Soares, 1000 - Messejana",
+    status: "aceita", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Washington Soares, 1000 - Messejana",
     data_solicitacao: "2026-03-15T10:30:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 15.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -67,7 +67,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-005", codigo: "LT-20260314-00005", cliente_id: "cli-001", entregador_id: "ent-004",
-    status: "concluida", tipo_operacao: "retorno", ponto_coleta: "Rua das Flores, 123 - Centro",
+    status: "concluida", tipo_operacao: "tipo-fds", ponto_coleta: "Rua das Flores, 123 - Centro",
     data_solicitacao: "2026-03-14T14:00:00Z", data_inicio: "2026-03-14T14:20:00Z", data_conclusao: "2026-03-14T15:30:00Z",
     valor_total_taxas: 9.50, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -78,7 +78,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-006", codigo: "LT-20260315-00006", cliente_id: "cli-005", entregador_id: null,
-    status: "pendente", tipo_operacao: "express", ponto_coleta: "Rua Padre Valdevino, 800 - Joaquim Távora",
+    status: "pendente", tipo_operacao: "tipo-feriado", ponto_coleta: "Rua Padre Valdevino, 800 - Joaquim Távora",
     data_solicitacao: "2026-03-15T11:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 16.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -88,7 +88,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-007", codigo: "LT-20260314-00007", cliente_id: "cli-002", entregador_id: "ent-001",
-    status: "cancelada", tipo_operacao: "standard", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
+    status: "cancelada", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Santos Dumont, 500 - Aldeota",
     data_solicitacao: "2026-03-14T16:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: 14.00, valor_total_repasse: null, justificativa: "Cliente cancelou por indisponibilidade",
     historico: [
@@ -99,7 +99,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-008", codigo: "LT-20260315-00008", cliente_id: "cli-003", entregador_id: "ent-006",
-    status: "em_andamento", tipo_operacao: "standard", ponto_coleta: "Rua Barão de Aracati, 200 - Meireles",
+    status: "em_andamento", tipo_operacao: "tipo-noturno", ponto_coleta: "Rua Barão de Aracati, 200 - Meireles",
     data_solicitacao: "2026-03-15T11:30:00Z", data_inicio: "2026-03-15T12:00:00Z", data_conclusao: null,
     valor_total_taxas: 9.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -110,7 +110,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-009", codigo: "LT-20260315-00009", cliente_id: "cli-004", entregador_id: "ent-001",
-    status: "em_andamento", tipo_operacao: "standard", ponto_coleta: "Av. Washington Soares, 1000 - Messejana",
+    status: "em_andamento", tipo_operacao: "tipo-comercial", ponto_coleta: "Av. Washington Soares, 1000 - Messejana",
     data_solicitacao: "2026-03-15T12:00:00Z", data_inicio: "2026-03-15T12:15:00Z", data_conclusao: null,
     valor_total_taxas: 8.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -122,7 +122,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-010", codigo: "LT-20260314-00010", cliente_id: "cli-005", entregador_id: "ent-002",
-    status: "concluida", tipo_operacao: "express", ponto_coleta: "Rua Padre Valdevino, 800 - Joaquim Távora",
+    status: "concluida", tipo_operacao: "tipo-fds", ponto_coleta: "Rua Padre Valdevino, 800 - Joaquim Távora",
     data_solicitacao: "2026-03-14T09:00:00Z", data_inicio: "2026-03-14T09:20:00Z", data_conclusao: "2026-03-14T10:45:00Z",
     valor_total_taxas: 12.00, valor_total_repasse: null, justificativa: null,
     historico: [
@@ -133,7 +133,7 @@ export const MOCK_SOLICITACOES: Solicitacao[] = [
   },
   {
     id: "sol-011", codigo: "LT-20260314-00011", cliente_id: "cli-001", entregador_id: "ent-003",
-    status: "rejeitada", tipo_operacao: "standard", ponto_coleta: "Rua das Flores, 123 - Centro",
+    status: "rejeitada", tipo_operacao: "tipo-comercial", ponto_coleta: "Rua das Flores, 123 - Centro",
     data_solicitacao: "2026-03-14T11:00:00Z", data_inicio: null, data_conclusao: null,
     valor_total_taxas: null, valor_total_repasse: null, justificativa: "Endereço fora da área de cobertura",
     historico: [

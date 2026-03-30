@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Solicitacao, Rota, PagamentoSolicitacao } from "@/types/database";
-import { STATUS_SOLICITACAO_LABELS, TIPO_OPERACAO_LABELS } from "@/types/database";
+import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
 import { MOCK_BAIRROS, MOCK_REGIOES, MOCK_FORMAS_PAGAMENTO } from "@/data/mockSettings";
@@ -13,11 +14,7 @@ import { MapPin, Phone, User, Clock, DollarSign, MessageCircle, Store, Building2
 
 const FATURAR_ID = "__faturar__";
 
-const tipoStyles: Record<string, string> = {
-  standard: "bg-primary/10 text-primary border-primary/25",
-  express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-  retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-};
+// tipoStyles removed — now using TipoOperacaoBadge component
 
 interface ViewSolicitacaoDialogProps {
   solicitacao: Solicitacao | null;
@@ -257,7 +254,7 @@ export function ViewSolicitacaoDialog({ solicitacao, onClose }: ViewSolicitacaoD
               </p>
             </div>
             <div><span className="text-muted-foreground">Entregador</span><p className="font-medium">{getEntregadorName(solicitacao.entregador_id)}</p></div>
-            <div><span className="text-muted-foreground">Tipo</span><p><Badge variant="outline" className={tipoStyles[solicitacao.tipo_operacao] || ""}>{TIPO_OPERACAO_LABELS[solicitacao.tipo_operacao]}</Badge></p></div>
+            <div><span className="text-muted-foreground">Tipo</span><p><TipoOperacaoBadge tipoOperacao={solicitacao.tipo_operacao} /></p></div>
             <div><span className="text-muted-foreground">Taxas</span><p className="font-medium tabular-nums">{fmt(solicitacao.valor_total_taxas)}</p></div>
           </div>
 

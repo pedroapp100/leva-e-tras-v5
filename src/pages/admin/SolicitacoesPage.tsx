@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import { PageContainer, MetricCard, DataTable, SearchInput, StatusBadge, PermissionGuard } from "@/components/shared";
 import type { Column } from "@/components/shared/DataTable";
 import type { Solicitacao, StatusSolicitacao, Rota } from "@/types/database";
-import { STATUS_SOLICITACAO_LABELS, TIPO_OPERACAO_LABELS } from "@/types/database";
+import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName, STATUS_TABS } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
 import { DatePickerWithRange } from "@/components/shared/DatePickerWithRange";
@@ -288,14 +289,7 @@ export default function SolicitacoesPage() {
     },
     {
       key: "tipo_operacao", header: "Tipo",
-      cell: (r) => {
-        const tipoStyles: Record<string, string> = {
-          standard: "bg-primary/10 text-primary border-primary/25",
-          express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-          retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-        };
-        return <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>{TIPO_OPERACAO_LABELS[r.tipo_operacao]}</Badge>;
-      },
+      cell: (r) => <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />,
     },
     {
       key: "entregador_id", header: "Entregador",
@@ -398,14 +392,7 @@ export default function SolicitacoesPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{getClienteName(r.cliente_id)}</span>
-                  {(() => {
-                    const tipoStyles: Record<string, string> = {
-                      standard: "bg-primary/10 text-primary border-primary/25",
-                      express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-                      retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-                    };
-                    return <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>{TIPO_OPERACAO_LABELS[r.tipo_operacao]}</Badge>;
-                  })()}
+                  <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>{getEntregadorName(r.entregador_id)}</span>

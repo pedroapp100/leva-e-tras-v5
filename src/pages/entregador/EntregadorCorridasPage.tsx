@@ -11,7 +11,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency, formatDateBR } from "@/lib/formatters";
 import { MOCK_SOLICITACOES, getClienteName, getRotasBySolicitacao } from "@/data/mockSolicitacoes";
 import { MOCK_BAIRROS } from "@/data/mockSettings";
-import { STATUS_SOLICITACAO_LABELS, TIPO_OPERACAO_LABELS } from "@/types/database";
+import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import type { Solicitacao, StatusSolicitacao } from "@/types/database";
 import {
   Truck, Play, CheckCheck, MapPin, Package,
@@ -138,11 +139,7 @@ export default function EntregadorCorridasPage() {
     });
   };
 
-  const tipoStyles: Record<string, string> = {
-    standard: "bg-primary/10 text-primary border-primary/25",
-    express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-    retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-  };
+  // tipoStyles removed — now using TipoOperacaoBadge
 
   const tabCounts = {
     ativas: minhas.filter((s) => s.status === "aceita" || s.status === "em_andamento").length,
@@ -211,9 +208,7 @@ export default function EntregadorCorridasPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-mono text-sm font-semibold">{sol.codigo}</span>
                           <StatusBadge status={sol.status} label={STATUS_SOLICITACAO_LABELS[sol.status]} />
-                          <Badge variant="outline" className={tipoStyles[sol.tipo_operacao] || ""}>
-                            {TIPO_OPERACAO_LABELS[sol.tipo_operacao]}
-                          </Badge>
+                          <TipoOperacaoBadge tipoOperacao={sol.tipo_operacao} />
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">
                           <span className="font-medium text-foreground">{getClienteName(sol.cliente_id)}</span>

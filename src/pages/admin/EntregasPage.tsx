@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { PageContainer, MetricCard, DataTable, SearchInput, StatusBadge, ExportDropdown } from "@/components/shared";
 import type { Column } from "@/components/shared/DataTable";
 import type { Rota } from "@/types/database";
-import { TIPO_OPERACAO_LABELS } from "@/types/database";
+import { TipoOperacaoBadge, getTipoOperacaoLabel } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName } from "@/data/mockSolicitacoes";
 import { MOCK_BAIRROS } from "@/data/mockSettings";
 import { useGlobalStore } from "@/contexts/GlobalStore";
@@ -88,7 +88,7 @@ export default function EntregasPage() {
         codigo: sol?.codigo ?? "—",
         cliente_id: sol?.cliente_id ?? "",
         entregador_id: sol?.entregador_id,
-        tipo_operacao: sol?.tipo_operacao ?? "standard",
+        tipo_operacao: sol?.tipo_operacao ?? "",
         data_solicitacao: sol?.data_solicitacao ?? "",
         data_conclusao: sol?.data_conclusao,
         bairro_nome: getBairroName(rota.bairro_destino_id),
@@ -101,7 +101,7 @@ export default function EntregasPage() {
     const tipos = [...new Set(entregas.map((e) => e.tipo_operacao))];
     return tipos.map((t) => ({
       value: t,
-      label: TIPO_OPERACAO_LABELS[t as keyof typeof TIPO_OPERACAO_LABELS] ?? t,
+      label: getTipoOperacaoLabel(t),
     }));
   }, [entregas]);
 
@@ -206,18 +206,7 @@ export default function EntregasPage() {
     {
       key: "tipo_operacao",
       header: "Tipo",
-      cell: (r) => {
-        const tipoStyles: Record<string, string> = {
-          standard: "bg-primary/10 text-primary border-primary/25",
-          express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-          retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-        };
-        return (
-          <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>
-            {TIPO_OPERACAO_LABELS[r.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? r.tipo_operacao}
-          </Badge>
-        );
-      },
+      cell: (r) => <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />,
     },
     {
       key: "taxa_resolvida",
@@ -277,7 +266,7 @@ export default function EntregasPage() {
       e.bairro_nome,
       e.rota.responsavel || "—",
       getEntregadorName(e.entregador_id),
-      TIPO_OPERACAO_LABELS[e.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? e.tipo_operacao,
+      getTipoOperacaoLabel(e.tipo_operacao),
       e.rota.taxa_resolvida != null ? formatCurrency(e.rota.taxa_resolvida) : "—",
       e.rota.receber_do_cliente && e.rota.valor_a_receber != null ? formatCurrency(e.rota.valor_a_receber) : "—",
       STATUS_ROTA_LABELS[e.rota.status],
@@ -379,18 +368,7 @@ export default function EntregasPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{getClienteName(r.cliente_id)}</span>
-                  {(() => {
-                    const tipoStyles: Record<string, string> = {
-                      standard: "bg-primary/10 text-primary border-primary/25",
-                      express: "bg-status-pending/10 text-status-pending border-status-pending/25",
-                      retorno: "bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25",
-                    };
-                    return (
-                      <Badge variant="outline" className={tipoStyles[r.tipo_operacao] || ""}>
-                        {TIPO_OPERACAO_LABELS[r.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? r.tipo_operacao}
-                      </Badge>
-                    );
-                  })()}
+                  <TipoOperacaoBadge tipoOperacao={r.tipo_operacao} />
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <MapPin className="h-3.5 w-3.5" />
@@ -472,7 +450,7 @@ export default function EntregasPage() {
                 <div>
                   <p className="text-muted-foreground">Tipo Operação</p>
                   <p className="font-medium">
-                    {TIPO_OPERACAO_LABELS[viewEntrega.tipo_operacao as keyof typeof TIPO_OPERACAO_LABELS] ?? viewEntrega.tipo_operacao}
+                    {getTipoOperacaoLabel(viewEntrega.tipo_operacao)}
                   </p>
                 </div>
                 <div>
