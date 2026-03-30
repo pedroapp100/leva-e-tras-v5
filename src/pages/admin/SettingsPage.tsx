@@ -10,6 +10,7 @@ import { TabelaPrecosTab } from "./settings/TabelaPrecosTab";
 import { TaxasExtrasTab } from "./settings/TaxasExtrasTab";
 import { TiposOperacaoTab } from "./settings/TiposOperacaoTab";
 import { UsuariosTab } from "./settings/UsuariosTab";
+import { WebhooksTab } from "./settings/WebhooksTab";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { useSearchParams } from "react-router-dom";
 
