@@ -584,6 +584,102 @@ export function NotificacoesTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Dialog */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Novo Evento de Notificação
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Categoria</Label>
+                <Select value={newCategoria} onValueChange={setNewCategoria}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(VARIAVEIS_POR_CATEGORIA).map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Nome do evento *</Label>
+                <Input
+                  value={newEvento}
+                  onChange={(e) => setNewEvento(e.target.value)}
+                  placeholder="Ex: Solicitação reagendada"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Título da notificação *</Label>
+                <Input
+                  value={newTitulo}
+                  onChange={(e) => setNewTitulo(e.target.value)}
+                  placeholder="Ex: Reagendamento confirmado"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Mensagem *</Label>
+                <Textarea
+                  value={newMensagem}
+                  onChange={(e) => setNewMensagem(e.target.value)}
+                  placeholder="Digite a mensagem..."
+                  className="min-h-[140px] font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground">Use *texto* para negrito. Emojis são suportados.</p>
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                  Variáveis disponíveis
+                </Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {(VARIAVEIS_POR_CATEGORIA[newCategoria] || []).map((v) => (
+                    <TooltipProvider key={v.var} delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="text-xs h-7 font-mono"
+                            onClick={() => insertNewVariable(v.var)}
+                          >
+                            {v.var}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{v.desc}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <Label>Pré-visualização</Label>
+              <div className="bg-[#ece5dd] dark:bg-[#0b141a] rounded-lg p-4 min-h-[250px] flex items-end justify-end">
+                <MensagemPreview mensagem={newMensagem || "Sua mensagem aparecerá aqui..."} />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">As variáveis serão substituídas pelos dados reais no envio.</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancelar</Button>
+            </DialogClose>
+            <Button onClick={handleCreate}>
+              <Plus className="mr-2 h-4 w-4" /> Criar Evento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
