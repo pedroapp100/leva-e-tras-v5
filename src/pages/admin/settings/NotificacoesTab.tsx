@@ -11,10 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2, Send, Phone, CheckCircle2, Loader2 } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pencil, X, MessageSquare, Eye, Info, Plus, Trash2, Send, Phone, CheckCircle2, Loader2, History, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { PhoneInput } from "@/components/shared/PhoneInput";
+import { formatDateTimeBR, formatPhone } from "@/lib/formatters";
 
 /* ── Types ── */
 type NotificacaoStatus = "ativo" | "inativo";
