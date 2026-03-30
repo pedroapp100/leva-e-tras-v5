@@ -34,6 +34,7 @@ import LogsPage from "./pages/admin/LogsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import EntregasPage from "./pages/admin/EntregasPage";
+import CaixasEntregadoresPage from "./pages/admin/CaixasEntregadoresPage";
 
 // Cliente pages
 import ClienteDashboard from "./pages/cliente/ClienteDashboard";
@@ -92,6 +93,7 @@ const App = () => (
                     <Route path="clientes" element={<ClientesPage />} />
                     <Route path="entregadores" element={<EntregadoresPage />} />
                     <Route path="entregas" element={<EntregasPage />} />
+                    <Route path="caixas-entregadores" element={<CaixasEntregadoresPage />} />
                     <Route path="faturas" element={<FaturasPage />} />
                     <Route path="financeiro" element={<FinanceiroPage />} />
                     <Route path="relatorios" element={<RelatoriosPage />} />

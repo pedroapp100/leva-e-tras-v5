@@ -11,6 +11,7 @@ import {
   LogOut,
   ChevronRight,
   ScrollText,
+  Wallet,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -36,6 +37,7 @@ const navItems = [
   { title: "Clientes", url: "/admin/clientes", icon: Users },
   { title: "Entregadores", url: "/admin/entregadores", icon: Truck },
   { title: "Entregas", url: "/admin/entregas", icon: Package },
+  { title: "Caixas", url: "/admin/caixas-entregadores", icon: Wallet },
   { title: "Faturas", url: "/admin/faturas", icon: FileText },
   { title: "Financeiro", url: "/admin/financeiro", icon: DollarSign },
   { title: "Relatórios", url: "/admin/relatorios", icon: BarChart3 },

@@ -25,6 +25,10 @@ const statusConfig: Record<string, { bg: string; text: string; border: string; d
   ativo: { bg: "bg-status-completed/10", text: "text-status-completed", border: "border-status-completed/25", dot: "bg-status-completed" },
   inativo: { bg: "bg-muted", text: "text-muted-foreground", border: "border-border", dot: "bg-muted-foreground" },
   bloqueado: { bg: "bg-destructive/10", text: "text-destructive", border: "border-destructive/25", dot: "bg-destructive" },
+  // Caixa entregador
+  aberto: { bg: "bg-status-in-progress/10", text: "text-status-in-progress", border: "border-status-in-progress/25", dot: "bg-status-in-progress" },
+  fechado: { bg: "bg-status-completed/10", text: "text-status-completed", border: "border-status-completed/25", dot: "bg-status-completed" },
+  divergente: { bg: "bg-destructive/10", text: "text-destructive", border: "border-destructive/25", dot: "bg-destructive" },
 };
 
 const fallbackConfig = { bg: "bg-muted", text: "text-muted-foreground", border: "border-border", dot: "bg-muted-foreground" };
@@ -39,6 +43,9 @@ const statusLabelMap: Record<string, string> = {
   ativo: "Ativo",
   inativo: "Inativo",
   bloqueado: "Bloqueado",
+  aberto: "Aberto",
+  fechado: "Fechado",
+  divergente: "Divergente",
 };
 
 interface StatusBadgeProps {
