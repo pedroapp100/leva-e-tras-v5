@@ -62,6 +62,7 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
       setEndereco(""); setBairro(""); setCidade(""); setUf("CE");
       setChavePix(""); setStatus("ativo"); setModalidade("pre_pago");
       setFaturamentoAuto(false); setFrequencia(""); setNumEntregas(""); setDiaSemana(""); setDiaMes("");
+      setSenha("");
     }
   }, [editing, open]);
 
