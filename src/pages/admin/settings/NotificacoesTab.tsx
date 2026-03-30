@@ -215,7 +215,7 @@ function MensagemPreview({ mensagem }: { mensagem: string }) {
 
 /* ── Main Component ── */
 export function NotificacoesTab() {
-  const { templates, updateTemplate, addTemplate, removeTemplate } = useNotificacaoStore();
+  const { templates, updateTemplate, addTemplate, removeTemplate, addTestRecord } = useNotificacaoStore();
 
   const [search, setSearch] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState<string>("todos");
