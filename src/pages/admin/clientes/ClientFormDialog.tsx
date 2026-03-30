@@ -71,6 +71,10 @@ export function ClientFormDialog({ open, onOpenChange, editing, onSave }: Client
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
+    if (!editing && !senha.trim()) {
+      toast.error("Defina uma senha de acesso para o cliente.");
+      return;
+    }
 
     const now = new Date().toISOString();
     onSave({
