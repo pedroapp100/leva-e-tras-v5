@@ -12,8 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/formatters";
-import { MOCK_CAIXAS, type CaixaEntregador, type StatusCaixa } from "@/data/mockCaixas";
-import { MOCK_ENTREGADORES } from "@/data/mockEntregadores";
+import type { CaixaEntregador } from "@/data/mockCaixas";
+import { useCaixaStore } from "@/contexts/CaixaStore";
 import { AbrirCaixaDialog } from "./caixas/AbrirCaixaDialog";
 import { FecharCaixaDialog } from "./caixas/FecharCaixaDialog";
 import { EditarCaixaDialog } from "./caixas/EditarCaixaDialog";
@@ -32,14 +32,14 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export default function CaixasEntregadoresPage() {
-  const [caixas, setCaixas] = useState<CaixaEntregador[]>(MOCK_CAIXAS);
+  const { caixas, abrirCaixa, fecharCaixa, editarCaixa, justificarDivergencia } = useCaixaStore();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [abrirOpen, setAbrirOpen] = useState(false);
-  const [fecharCaixa, setFecharCaixa] = useState<CaixaEntregador | null>(null);
-  const [editarCaixa, setEditarCaixa] = useState<CaixaEntregador | null>(null);
-  const [justificarCaixa, setJustificarCaixa] = useState<CaixaEntregador | null>(null);
-  const [detailsCaixa, setDetailsCaixa] = useState<CaixaEntregador | null>(null);
+  const [fecharTarget, setFecharTarget] = useState<CaixaEntregador | null>(null);
+  const [editarTarget, setEditarTarget] = useState<CaixaEntregador | null>(null);
+  const [justificarTarget, setJustificarTarget] = useState<CaixaEntregador | null>(null);
+  const [detailsTarget, setDetailsTarget] = useState<CaixaEntregador | null>(null);
 
   const filtered = useMemo(() => {
     return caixas.filter((c) => {
@@ -63,72 +63,22 @@ export default function CaixasEntregadoresPage() {
   const openEntregadorIds = caixas.filter((c) => c.status === "aberto" && c.data === hoje).map((c) => c.entregador_id);
 
   const handleAbrirCaixa = (entregadorId: string, trocoInicial: number) => {
-    const ent = MOCK_ENTREGADORES.find((e) => e.id === entregadorId);
-    const novo: CaixaEntregador = {
-      id: `caixa-${Date.now()}`,
-      entregador_id: entregadorId,
-      entregador_nome: ent?.nome ?? entregadorId,
-      data: hoje,
-      troco_inicial: trocoInicial,
-      recebimentos: [],
-      total_recebido: 0,
-      total_esperado: trocoInicial,
-      valor_devolvido: null,
-      diferenca: null,
-      status: "aberto",
-      observacoes: null,
-      created_at: new Date().toISOString(),
-      closed_at: null,
-    };
-    setCaixas((prev) => [novo, ...prev]);
-    toast.success(`Caixa aberto para ${ent?.nome} com troco de ${formatCurrency(trocoInicial)}`);
+    abrirCaixa(entregadorId, trocoInicial);
+    toast.success("Caixa aberto com sucesso!");
   };
 
   const handleFecharCaixa = (caixaId: string, valorDevolvido: number, observacoes: string) => {
-    setCaixas((prev) =>
-      prev.map((c) => {
-        if (c.id !== caixaId) return c;
-        const diferenca = valorDevolvido - c.total_esperado;
-        return {
-          ...c,
-          valor_devolvido: valorDevolvido,
-          diferenca,
-          status: diferenca === 0 ? "fechado" as StatusCaixa : "divergente" as StatusCaixa,
-          observacoes: observacoes || c.observacoes,
-          closed_at: new Date().toISOString(),
-        };
-      })
-    );
+    fecharCaixa(caixaId, valorDevolvido, observacoes);
     toast.success("Caixa fechado com sucesso");
   };
 
   const handleEditarCaixa = (caixaId: string, trocoInicial: number, observacoes: string) => {
-    setCaixas((prev) =>
-      prev.map((c) => {
-        if (c.id !== caixaId) return c;
-        const novoEsperado = trocoInicial + c.total_recebido;
-        const novaDiferenca = c.valor_devolvido !== null ? c.valor_devolvido - novoEsperado : null;
-        let novoStatus = c.status;
-        if (c.status !== "aberto" && novaDiferenca !== null) {
-          novoStatus = novaDiferenca === 0 ? "fechado" : "divergente";
-        }
-        return {
-          ...c,
-          troco_inicial: trocoInicial,
-          total_esperado: novoEsperado,
-          diferenca: novaDiferenca,
-          status: novoStatus,
-          observacoes: observacoes || c.observacoes,
-        };
-      })
-    );
+    editarCaixa(caixaId, trocoInicial, observacoes);
     toast.success("Caixa atualizado com sucesso");
   };
 
   const handleJustificar = (caixaId: string, justificativa: string) => {
-    setCaixas((prev) =>
-      prev.map((c) => c.id === caixaId ? { ...c, observacoes: justificativa } : c)
-    );
+    justificarDivergencia(caixaId, justificativa);
     toast.success("Justificativa registrada com sucesso");
   };
 
@@ -142,7 +92,6 @@ export default function CaixasEntregadoresPage() {
         </Button>
       }
     >
-      {/* Metrics */}
       <motion.div variants={stagger} initial="hidden" animate="show" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <motion.div variants={fadeUp}>
           <MetricCard title="Caixas Abertos" value={metrics.abertos} icon={Wallet} subtitle="Hoje" />
@@ -158,7 +107,6 @@ export default function CaixasEntregadoresPage() {
         </motion.div>
       </motion.div>
 
-      {/* Filters */}
       <Card>
         <CardContent className="pt-4 pb-2">
           <div className="flex flex-col sm:flex-row gap-3">
@@ -179,7 +127,6 @@ export default function CaixasEntregadoresPage() {
         </CardContent>
       </Card>
 
-      {/* Table */}
       {filtered.length === 0 ? (
         <EmptyState icon={Wallet} title="Nenhum caixa encontrado" subtitle="Abra um novo caixa para um entregador." />
       ) : (
@@ -218,43 +165,36 @@ export default function CaixasEntregadoresPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-1">
-                        {/* Ver detalhes — sempre visível */}
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsCaixa(c)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsTarget(c)}>
                               <Eye className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Ver detalhes</TooltipContent>
                         </Tooltip>
-
-                        {/* Editar — sempre visível */}
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarCaixa(c)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarTarget(c)}>
                               <Pencil className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Editar caixa</TooltipContent>
                         </Tooltip>
-
-                        {/* Fechar — só para abertos */}
                         {c.status === "aberto" && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-status-pending hover:text-status-pending/80" onClick={() => setFecharCaixa(c)}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-status-pending hover:text-status-pending/80" onClick={() => setFecharTarget(c)}>
                                 <Lock className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Fechar caixa</TooltipContent>
                           </Tooltip>
                         )}
-
-                        {/* Justificar divergência — só para divergentes */}
                         {c.status === "divergente" && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarCaixa(c)}>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarTarget(c)}>
                                 <FileWarning className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
@@ -271,12 +211,11 @@ export default function CaixasEntregadoresPage() {
         </Card>
       )}
 
-      {/* Dialogs */}
       <AbrirCaixaDialog open={abrirOpen} onOpenChange={setAbrirOpen} onConfirm={handleAbrirCaixa} existingEntregadorIds={openEntregadorIds} />
-      <FecharCaixaDialog open={!!fecharCaixa} onOpenChange={(o) => !o && setFecharCaixa(null)} caixa={fecharCaixa} onConfirm={handleFecharCaixa} />
-      <EditarCaixaDialog open={!!editarCaixa} onOpenChange={(o) => !o && setEditarCaixa(null)} caixa={editarCaixa} onConfirm={handleEditarCaixa} />
-      <JustificativaDivergenciaDialog open={!!justificarCaixa} onOpenChange={(o) => !o && setJustificarCaixa(null)} caixa={justificarCaixa} onConfirm={handleJustificar} />
-      <CaixaDetailsModal open={!!detailsCaixa} onOpenChange={(o) => !o && setDetailsCaixa(null)} caixa={detailsCaixa} />
+      <FecharCaixaDialog open={!!fecharTarget} onOpenChange={(o) => !o && setFecharTarget(null)} caixa={fecharTarget} onConfirm={handleFecharCaixa} />
+      <EditarCaixaDialog open={!!editarTarget} onOpenChange={(o) => !o && setEditarTarget(null)} caixa={editarTarget} onConfirm={handleEditarCaixa} />
+      <JustificativaDivergenciaDialog open={!!justificarTarget} onOpenChange={(o) => !o && setJustificarTarget(null)} caixa={justificarTarget} onConfirm={handleJustificar} />
+      <CaixaDetailsModal open={!!detailsTarget} onOpenChange={(o) => !o && setDetailsTarget(null)} caixa={detailsTarget} />
     </PageContainer>
   );
 }

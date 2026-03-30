@@ -8,6 +8,7 @@ import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
 import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName, getEntregadorName, STATUS_TABS } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { useConcluirComCaixa } from "@/hooks/useConcluirComCaixa";
 import { DatePickerWithRange } from "@/components/shared/DatePickerWithRange";
 import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,8 @@ const fmtDate = (d: string) => new Date(d).toLocaleDateString("pt-BR");
 
 export default function SolicitacoesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { solicitacoes, addSolicitacao, updateSolicitacao, getRotasBySolicitacao, addPagamentos, concluirSolicitacaoComFatura } = useGlobalStore();
+  const { solicitacoes, addSolicitacao, updateSolicitacao, getRotasBySolicitacao, addPagamentos } = useGlobalStore();
+  const concluirComCaixa = useConcluirComCaixa();
   const { addNotification } = useNotifications();
 
   // Initialize state from URL params
@@ -202,7 +204,7 @@ export default function SolicitacoesPage() {
   };
 
   const handleConcluir = (sol: Solicitacao) => {
-    concluirSolicitacaoComFatura(sol.id);
+    concluirComCaixa(sol.id);
     toast.success("Solicitação concluída!");
   };
 

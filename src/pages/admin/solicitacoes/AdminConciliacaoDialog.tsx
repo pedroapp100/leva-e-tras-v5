@@ -4,6 +4,7 @@ import { MOCK_FORMAS_PAGAMENTO, MOCK_BAIRROS } from "@/data/mockSettings";
 import { MOCK_CLIENTES } from "@/data/mockClientes";
 import { getClienteName, getEntregadorName } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { useConcluirComCaixa } from "@/hooks/useConcluirComCaixa";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -48,8 +49,8 @@ export function AdminConciliacaoDialog({
     getRotasBySolicitacao,
     getPagamentosBySolicitacao,
     addPagamentos,
-    concluirSolicitacaoComFatura,
   } = useGlobalStore();
+  const concluirComCaixa = useConcluirComCaixa();
 
   const rotas = getRotasBySolicitacao(solicitacao.id);
   const driverPagamentos = getPagamentosBySolicitacao(solicitacao.id);
@@ -200,7 +201,7 @@ export function AdminConciliacaoDialog({
 
     // Generate invoice if not already concluded
     if (solicitacao.status === "em_andamento") {
-      concluirSolicitacaoComFatura(solicitacao.id);
+      concluirComCaixa(solicitacao.id);
     }
 
     onConfirm();

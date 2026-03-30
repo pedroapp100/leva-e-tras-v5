@@ -7,6 +7,7 @@ import { STATUS_SOLICITACAO_LABELS } from "@/types/database";
 import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
 import { getClienteName } from "@/data/mockSolicitacoes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
+import { useConcluirComCaixa } from "@/hooks/useConcluirComCaixa";
 import { DatePickerWithRange } from "@/components/shared/DatePickerWithRange";
 import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,8 @@ const STATUS_TABS_DRIVER = [
 
 export default function EntregadorSolicitacoesPage() {
   const { addNotification } = useNotifications();
-  const { solicitacoes, updateSolicitacao, getRotasBySolicitacao, concluirSolicitacaoComFatura } = useGlobalStore();
+  const { solicitacoes, updateSolicitacao, getRotasBySolicitacao } = useGlobalStore();
+  const concluirComCaixa = useConcluirComCaixa();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("todas");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -120,7 +122,7 @@ export default function EntregadorSolicitacoesPage() {
   };
 
   const handleConcluir = (sol: Solicitacao) => {
-    concluirSolicitacaoComFatura(sol.id);
+    concluirComCaixa(sol.id);
     toast.success("Entrega concluída com sucesso! ✅");
     addNotification({
       title: "Entrega concluída",

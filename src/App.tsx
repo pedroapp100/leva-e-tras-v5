@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth, ROLE_REDIRECTS } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { GlobalStoreProvider } from "@/contexts/GlobalStore";
+import { CaixaStoreProvider } from "@/contexts/CaixaStore";
 import { LogStoreProvider } from "@/contexts/LogStore";
 import { UserStoreProvider } from "@/data/mockUsers";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
@@ -73,6 +74,7 @@ const App = () => (
           <AuthProvider>
             <LogStoreProvider>
             <GlobalStoreProvider>
+            <CaixaStoreProvider>
             <OnboardingProvider>
               <WelcomeModal />
               <OnboardingOverlay />
@@ -135,6 +137,7 @@ const App = () => (
                 </>
               </ErrorBoundary>
             </OnboardingProvider>
+            </CaixaStoreProvider>
             </GlobalStoreProvider>
             </LogStoreProvider>
           </AuthProvider>

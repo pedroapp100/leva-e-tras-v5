@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Wallet, ArrowDownUp, Hash, Eye } from "lucide-react";
 import { PageContainer } from "@/components/shared/PageContainer";
@@ -11,8 +11,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatters";
-import { MOCK_CAIXAS, type CaixaEntregador } from "@/data/mockCaixas";
-import { useState } from "react";
+import type { CaixaEntregador } from "@/data/mockCaixas";
+import { useCaixaStore } from "@/contexts/CaixaStore";
 import { CaixaDetailsModal } from "@/pages/admin/caixas/CaixaDetailsModal";
 
 const ENTREGADOR_ID = "ent-001";
@@ -21,14 +21,11 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
 const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 
 export default function EntregadorCaixaPage() {
+  const { getCaixasByEntregador, getCaixaAberto } = useCaixaStore();
   const [detailsCaixa, setDetailsCaixa] = useState<CaixaEntregador | null>(null);
 
-  const meusCaixas = useMemo(
-    () => MOCK_CAIXAS.filter((c) => c.entregador_id === ENTREGADOR_ID).sort((a, b) => b.data.localeCompare(a.data)),
-    []
-  );
-
-  const caixaAberto = meusCaixas.find((c) => c.status === "aberto") ?? null;
+  const meusCaixas = getCaixasByEntregador(ENTREGADOR_ID);
+  const caixaAberto = getCaixaAberto(ENTREGADOR_ID) ?? null;
 
   const metrics = useMemo(() => {
     const totalRecebidoHoje = caixaAberto?.total_recebido ?? 0;
@@ -47,7 +44,6 @@ export default function EntregadorCaixaPage() {
 
   return (
     <PageContainer title="Meu Caixa" subtitle="Controle de troco e recebimentos em dinheiro.">
-      {/* Caixa aberto do dia */}
       {caixaAberto && (
         <>
           <motion.div variants={stagger} initial="hidden" animate="show" className="grid gap-4 sm:grid-cols-3">
@@ -62,7 +58,6 @@ export default function EntregadorCaixaPage() {
             </motion.div>
           </motion.div>
 
-          {/* Recebimentos do dia */}
           {caixaAberto.recebimentos.length > 0 && (
             <Card>
               <CardHeader>
@@ -98,7 +93,6 @@ export default function EntregadorCaixaPage() {
         </>
       )}
 
-      {/* Histórico de caixas */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Histórico de Caixas</CardTitle>
