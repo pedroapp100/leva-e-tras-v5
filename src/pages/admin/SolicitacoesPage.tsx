@@ -268,7 +268,8 @@ export default function SolicitacoesPage() {
         )}
         {sol.status === "concluida" && (
           <PermissionGuard permission="solicitacoes.edit">
-            <ActionButton tooltip="Conciliação financeira" icon={Pencil} onClick={() => setConciliacaoTarget(sol)} variant="info" />
+            <ActionButton tooltip="Conciliação ADM" icon={ClipboardCheck} onClick={() => setAdminConciliacaoTarget(sol)} variant="success" />
+            <ActionButton tooltip="Editar conciliação" icon={Pencil} onClick={() => setConciliacaoTarget(sol)} variant="info" />
           </PermissionGuard>
         )}
         {["pendente", "aceita", "em_andamento"].includes(sol.status) && (
