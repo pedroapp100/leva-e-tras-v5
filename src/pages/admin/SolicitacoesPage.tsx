@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, ClipboardList, Clock, CheckCircle, Truck, Eye, UserPlus, Play, X, Trash2, Pencil, CheckCheck, Calculator } from "lucide-react";
+import { Plus, ClipboardList, Clock, CheckCircle, Truck, Eye, UserPlus, Play, X, Trash2, Pencil, CheckCheck, Calculator, ClipboardCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { toast } from "sonner";
