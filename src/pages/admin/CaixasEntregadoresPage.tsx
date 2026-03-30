@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus, Eye, Lock } from "lucide-react";
+import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus, Eye, Lock, Pencil, FileWarning } from "lucide-react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { MetricCard } from "@/components/shared/MetricCard";
 import { SearchInput } from "@/components/shared/SearchInput";
@@ -16,6 +16,8 @@ import { MOCK_CAIXAS, type CaixaEntregador, type StatusCaixa } from "@/data/mock
 import { MOCK_ENTREGADORES } from "@/data/mockEntregadores";
 import { AbrirCaixaDialog } from "./caixas/AbrirCaixaDialog";
 import { FecharCaixaDialog } from "./caixas/FecharCaixaDialog";
+import { EditarCaixaDialog } from "./caixas/EditarCaixaDialog";
+import { JustificativaDivergenciaDialog } from "./caixas/JustificativaDivergenciaDialog";
 import { CaixaDetailsModal } from "./caixas/CaixaDetailsModal";
 import { toast } from "sonner";
 
@@ -29,13 +31,14 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "divergente", label: "Divergente" },
 ];
 
-
 export default function CaixasEntregadoresPage() {
   const [caixas, setCaixas] = useState<CaixaEntregador[]>(MOCK_CAIXAS);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [abrirOpen, setAbrirOpen] = useState(false);
   const [fecharCaixa, setFecharCaixa] = useState<CaixaEntregador | null>(null);
+  const [editarCaixa, setEditarCaixa] = useState<CaixaEntregador | null>(null);
+  const [justificarCaixa, setJustificarCaixa] = useState<CaixaEntregador | null>(null);
   const [detailsCaixa, setDetailsCaixa] = useState<CaixaEntregador | null>(null);
 
   const filtered = useMemo(() => {
@@ -56,7 +59,6 @@ export default function CaixasEntregadoresPage() {
     return { abertos: abertos.length, divergentes: divergentes.length, totalTroco, totalRecebidoHoje };
   }, [caixas]);
 
-  // Today's open caixa entregador ids
   const hoje = new Date().toISOString().split("T")[0];
   const openEntregadorIds = caixas.filter((c) => c.status === "aberto" && c.data === hoje).map((c) => c.entregador_id);
 
@@ -98,6 +100,36 @@ export default function CaixasEntregadoresPage() {
       })
     );
     toast.success("Caixa fechado com sucesso");
+  };
+
+  const handleEditarCaixa = (caixaId: string, trocoInicial: number, observacoes: string) => {
+    setCaixas((prev) =>
+      prev.map((c) => {
+        if (c.id !== caixaId) return c;
+        const novoEsperado = trocoInicial + c.total_recebido;
+        const novaDiferenca = c.valor_devolvido !== null ? c.valor_devolvido - novoEsperado : null;
+        let novoStatus = c.status;
+        if (c.status !== "aberto" && novaDiferenca !== null) {
+          novoStatus = novaDiferenca === 0 ? "fechado" : "divergente";
+        }
+        return {
+          ...c,
+          troco_inicial: trocoInicial,
+          total_esperado: novoEsperado,
+          diferenca: novaDiferenca,
+          status: novoStatus,
+          observacoes: observacoes || c.observacoes,
+        };
+      })
+    );
+    toast.success("Caixa atualizado com sucesso");
+  };
+
+  const handleJustificar = (caixaId: string, justificativa: string) => {
+    setCaixas((prev) =>
+      prev.map((c) => c.id === caixaId ? { ...c, observacoes: justificativa } : c)
+    );
+    toast.success("Justificativa registrada com sucesso");
   };
 
   return (
@@ -186,6 +218,7 @@ export default function CaixasEntregadoresPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-1">
+                        {/* Ver detalhes — sempre visível */}
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsCaixa(c)}>
@@ -194,6 +227,18 @@ export default function CaixasEntregadoresPage() {
                           </TooltipTrigger>
                           <TooltipContent>Ver detalhes</TooltipContent>
                         </Tooltip>
+
+                        {/* Editar — sempre visível */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarCaixa(c)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar caixa</TooltipContent>
+                        </Tooltip>
+
+                        {/* Fechar — só para abertos */}
                         {c.status === "aberto" && (
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -202,6 +247,18 @@ export default function CaixasEntregadoresPage() {
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Fechar caixa</TooltipContent>
+                          </Tooltip>
+                        )}
+
+                        {/* Justificar divergência — só para divergentes */}
+                        {c.status === "divergente" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarCaixa(c)}>
+                                <FileWarning className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Relatar motivo da falta</TooltipContent>
                           </Tooltip>
                         )}
                       </div>
@@ -217,6 +274,8 @@ export default function CaixasEntregadoresPage() {
       {/* Dialogs */}
       <AbrirCaixaDialog open={abrirOpen} onOpenChange={setAbrirOpen} onConfirm={handleAbrirCaixa} existingEntregadorIds={openEntregadorIds} />
       <FecharCaixaDialog open={!!fecharCaixa} onOpenChange={(o) => !o && setFecharCaixa(null)} caixa={fecharCaixa} onConfirm={handleFecharCaixa} />
+      <EditarCaixaDialog open={!!editarCaixa} onOpenChange={(o) => !o && setEditarCaixa(null)} caixa={editarCaixa} onConfirm={handleEditarCaixa} />
+      <JustificativaDivergenciaDialog open={!!justificarCaixa} onOpenChange={(o) => !o && setJustificarCaixa(null)} caixa={justificarCaixa} onConfirm={handleJustificar} />
       <CaixaDetailsModal open={!!detailsCaixa} onOpenChange={(o) => !o && setDetailsCaixa(null)} caixa={detailsCaixa} />
     </PageContainer>
   );
