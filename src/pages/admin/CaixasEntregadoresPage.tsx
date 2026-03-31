@@ -191,7 +191,7 @@ export default function CaixasEntregadoresPage() {
       ),
     },
     { key: "status", header: "Status", cell: (c) => <StatusBadge status={c.status} /> },
-    { key: "acoes", header: "Ações", cell: (c) => renderActions(c, false) },
+    { key: "acoes", header: "Ações", className: "text-center", cell: (c) => renderActions(c, true) },
   ];
 
   // --- Mobile card renderers ---
