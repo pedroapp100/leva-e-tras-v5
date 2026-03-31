@@ -241,7 +241,7 @@ export default function EntregasPage() {
     {
       key: "actions",
       header: "",
-      className: "w-12 text-right",
+      className: "w-12 text-center",
       cell: (r) => (
         <Button
           variant="ghost"

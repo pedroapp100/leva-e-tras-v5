@@ -246,7 +246,7 @@ export default function SolicitacoesPage() {
 
   const renderActions = (sol: Solicitacao) => (
     <TooltipProvider delayDuration={200}>
-      <div data-onboarding="request-actions" className="flex items-center justify-end gap-1">
+      <div data-onboarding="request-actions" className="flex items-center justify-center gap-1">
         <ActionButton tooltip="Visualizar" icon={Eye} onClick={() => setViewSolicitacao(sol)} variant="info" />
         {sol.status === "pendente" && (
           <>
@@ -320,7 +320,7 @@ export default function SolicitacoesPage() {
       cell: (r) => <span className="tabular-nums text-sm text-muted-foreground">{fmtDate(r.data_solicitacao)}</span>,
     },
     {
-      key: "actions", header: "Ações", className: "w-36 text-right",
+      key: "actions", header: "Ações", className: "w-36 text-center",
       cell: (r) => renderActions(r),
     },
   ];

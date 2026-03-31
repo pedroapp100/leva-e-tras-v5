@@ -77,9 +77,9 @@ export function ReceitasTab({ receitas, onUpdate, faturas = [] }: ReceitasTabPro
     },
     { key: "observacao", header: "Obs.", cell: (r) => <span className="text-sm text-muted-foreground">{r.observacao || "—"}</span> },
     {
-      key: "acoes", header: "Ações",
+      key: "acoes", header: "Ações", className: "text-center",
       cell: (r) => (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-center gap-1">
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); handleEdit(r); }}>
             <Pencil className="h-4 w-4" />
           </Button>
@@ -123,7 +123,7 @@ export function ReceitasTab({ receitas, onUpdate, faturas = [] }: ReceitasTabPro
       cell: (f) => <Badge variant={STATUS_VARIANT[f.status_geral] || "outline"}>{f.status_geral}</Badge>,
     },
     {
-      key: "acoes", header: "Ações",
+      key: "acoes", header: "Ações", className: "text-center",
       cell: (f) => (
         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); setViewingFatura(f); }}>
           <Eye className="h-4 w-4" />

@@ -133,9 +133,10 @@ export default function FaturasPage() {
     {
       key: "acoes",
       header: "Ações",
+      className: "text-center",
       cell: (f) => (
         <TooltipProvider delayDuration={200}>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

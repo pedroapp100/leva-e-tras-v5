@@ -69,7 +69,7 @@ export function DespesasTab({ despesas, onUpdate }: DespesasTabProps) {
       cell: (d) => <Badge variant={STATUS_DESPESA_VARIANT[d.status]}>{d.status}</Badge>,
     },
     {
-      key: "acoes", header: "Ações",
+      key: "acoes", header: "Ações", className: "text-center",
       cell: (d) =>
         d.status !== "Pago" ? (
           <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={(e) => { e.stopPropagation(); setDespesaPagar(d); }}>
