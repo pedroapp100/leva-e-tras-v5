@@ -124,9 +124,8 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <PageContainer title="Dashboard" subtitle="Visão geral das operações logísticas.">
-        <LoadingSkeleton type="card" columns={5} />
-        <div className="mt-6">
-          <LoadingSkeleton type="list" rows={5} />
+        <div className="flex items-center justify-center py-20">
+          <BrandedLoader size="lg" text="Carregando dashboard..." />
         </div>
       </PageContainer>
     );
