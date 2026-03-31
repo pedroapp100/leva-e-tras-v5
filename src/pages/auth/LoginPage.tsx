@@ -18,7 +18,6 @@ const loginSchema = z.object({
 });
 
 const MAX_ATTEMPTS_DISPLAY = 5;
-const LOGIN_TRANSITION_MS = 4000;
 
 const features = [
   { icon: Package, title: "Gestão de Entregas", desc: "Controle total das suas operações last-mile" },
