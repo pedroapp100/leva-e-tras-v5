@@ -19,7 +19,8 @@ const fadeUp = {
 
 export default function ClienteDashboard() {
   const { solicitacoes, faturas, getClienteSaldo } = useGlobalStore();
-  const cliente = useMemo(() => MOCK_CLIENTES.find((c) => c.id === CLIENTE_ID), []);
+  const { clienteId, cliente } = useClienteId();
+  const CLIENTE_ID = clienteId;
   const isPrePago = cliente?.modalidade === "pre_pago";
 
   const metrics = useMemo(() => {

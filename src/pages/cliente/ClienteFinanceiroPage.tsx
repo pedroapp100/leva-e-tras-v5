@@ -27,7 +27,7 @@ const fadeUp = {
 
 export default function ClienteFinanceiroPage() {
   const { faturas: allFaturasGlobal } = useGlobalStore();
-  const cliente = useMemo(() => MOCK_CLIENTES.find((c) => c.id === CLIENTE_ID), []);
+  const { clienteId: CLIENTE_ID, cliente } = useClienteId();
   const isPrePago = cliente?.modalidade === "pre_pago";
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
