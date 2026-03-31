@@ -17,8 +17,7 @@ import { MapPin, Calendar, Eye, X } from "lucide-react";
 import { ViewSolicitacaoDialog } from "@/pages/admin/solicitacoes/ViewSolicitacaoDialog";
 import { useGlobalStore } from "@/contexts/GlobalStore";
 import { TipoOperacaoBadge } from "@/components/shared/TipoOperacaoBadge";
-
-const CLIENTE_ID = "cli-001";
+import { useClienteId } from "@/hooks/useClienteId";
 
 export default function MinhasSolicitacoesPage() {
   const { solicitacoes } = useGlobalStore();

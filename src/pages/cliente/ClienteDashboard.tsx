@@ -8,10 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { formatCurrency, formatDateBR } from "@/lib/formatters";
 import { getEntregadorName } from "@/data/mockSolicitacoes";
-import { MOCK_CLIENTES } from "@/data/mockClientes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
-
-const CLIENTE_ID = "cli-001"; // Mock: logged-in client (João Silva - pré-pago)
+import { useClienteId } from "@/hooks/useClienteId";
 
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 const fadeUp = {
