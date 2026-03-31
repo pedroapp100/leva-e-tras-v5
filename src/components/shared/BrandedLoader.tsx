@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Truck, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import { MotoIcon } from "@/components/shared/MotoIcon";
 
 interface BrandedLoaderProps {
@@ -14,7 +14,7 @@ interface BrandedLoaderProps {
 }
 
 /**
- * Loader animado "Leva e Traz" — caminhão percorrendo uma estrada com pacotes.
+ * Loader animado "Leva e Traz" — motocicleta percorrendo uma estrada com pacotes.
  */
 export function BrandedLoader({
   fullPage = false,
@@ -23,9 +23,9 @@ export function BrandedLoader({
   className,
 }: BrandedLoaderProps) {
   const sizeConfig = {
-    sm: { width: "w-48", truck: 18, pkg: 10, roadH: "h-0.5", textSize: "text-xs", gap: "gap-2", dotSize: "h-1 w-1" },
-    md: { width: "w-64", truck: 28, pkg: 14, roadH: "h-0.5", textSize: "text-sm", gap: "gap-3", dotSize: "h-1.5 w-1.5" },
-    lg: { width: "w-80", truck: 36, pkg: 18, roadH: "h-1", textSize: "text-base", gap: "gap-4", dotSize: "h-2 w-2" },
+    sm: { width: "w-48", moto: 18, pkg: 10, roadH: "h-0.5", textSize: "text-xs", gap: "gap-2", dotSize: "h-1 w-1" },
+    md: { width: "w-64", moto: 28, pkg: 14, roadH: "h-0.5", textSize: "text-sm", gap: "gap-3", dotSize: "h-1.5 w-1.5" },
+    lg: { width: "w-80", moto: 36, pkg: 18, roadH: "h-1", textSize: "text-base", gap: "gap-4", dotSize: "h-2 w-2" },
   };
 
   const s = sizeConfig[size];
@@ -34,7 +34,7 @@ export function BrandedLoader({
     <div className={cn("flex flex-col items-center", s.gap, className)}>
       {/* Animation container */}
       <div className={cn("relative", s.width)}>
-        {/* Floating packages behind truck */}
+        {/* Floating packages behind the motorcycle */}
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
@@ -59,7 +59,7 @@ export function BrandedLoader({
           </motion.div>
         ))}
 
-        {/* Truck driving across */}
+        {/* Motorcycle driving across */}
         <motion.div
           className="relative z-10"
           animate={{
@@ -71,9 +71,9 @@ export function BrandedLoader({
             ease: [0.45, 0.05, 0.55, 0.95],
           }}
         >
-          {/* Truck body bounce */}
+          {/* Motorcycle body bounce */}
           <motion.div
-            animate={{ y: [0, -2, 0, -1, 0] }}
+            animate={{ y: [0, -2, 0, -1, 0], rotate: [0, -1.5, 0, 1.5, 0] }}
             transition={{
               duration: 0.6,
               repeat: Infinity,
@@ -81,7 +81,10 @@ export function BrandedLoader({
             }}
           >
             <div className="inline-flex items-center justify-center rounded-lg bg-primary p-1.5 shadow-lg shadow-primary/30">
-              <Truck size={s.truck} className="text-primary-foreground" />
+              <MotoIcon
+                className="text-primary-foreground"
+                style={{ width: s.moto, height: s.moto }}
+              />
             </div>
           </motion.div>
 
@@ -156,7 +159,7 @@ export function BrandedLoader({
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.18 }}
         >
           {loader}
         </motion.div>
