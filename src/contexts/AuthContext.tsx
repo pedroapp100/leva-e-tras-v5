@@ -23,7 +23,6 @@ interface LoginAttempt {
 const MAX_ATTEMPTS = 5;
 const BLOCK_WINDOW_MS = 5 * 60 * 1000; // 5 minutos
 const LOGIN_FEEDBACK_DELAY_MS = 200;
-const LOGIN_TRANSITION_MS = 3800;
 
 // ── Error mapping PT-BR ──
 const ERROR_MESSAGES: Record<string, string> = {
