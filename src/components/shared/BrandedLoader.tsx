@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Truck, Package } from "lucide-react";
+import { Truck, Package, Bike } from "lucide-react";
 
 interface BrandedLoaderProps {
   /** Full-page centered loader */
