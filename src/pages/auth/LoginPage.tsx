@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, Mail, Lock, AlertCircle, Truck, Package, MapPin, BarChart3, Shield, Sun, Moon } from "lucide-react";
+import { Mail, Lock, AlertCircle, Package, MapPin, BarChart3, Shield, Sun, Moon } from "lucide-react";
 import { ButtonSpinner } from "@/components/shared/BrandedLoader";
+import { MotoIcon } from "@/components/shared/MotoIcon";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -90,7 +91,7 @@ export default function LoginPage() {
               className="flex items-center gap-3"
             >
               <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/25">
-                <Truck className="h-7 w-7 text-primary-foreground" />
+                <MotoIcon className="h-7 w-7 text-primary-foreground" />
               </div>
               <div>
                 <span className="text-xl font-bold tracking-tight block">Leva e Traz</span>
@@ -180,7 +181,7 @@ export default function LoginPage() {
                 <ButtonSpinner />
               ) : (
                 <>
-                  <LogIn className="mr-2 h-5 w-5" />
+                  <MotoIcon className="mr-2 h-5 w-5" />
                   Entrar na plataforma
                 </>
               )}
@@ -245,7 +246,7 @@ export default function LoginPage() {
               className="mx-auto"
             >
               <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mx-auto shadow-2xl shadow-primary/30 rotate-3 hover:rotate-0 transition-transform duration-500">
-                <Truck className="h-12 w-12 text-primary-foreground" />
+                <MotoIcon className="h-12 w-12 text-primary-foreground" />
               </div>
             </motion.div>
 
