@@ -135,7 +135,7 @@ export function DataTable<T extends { id?: string }>({
                     )}
                     onClick={() => col.sortable && handleSort(col.key)}
                   >
-                    <div className="flex items-center gap-1.5">
+                    <div className={cn("flex items-center gap-1.5", col.className?.includes("text-center") && "justify-center")}>
                       {col.header}
                       {col.sortable && (
                         sortKey === col.key ? (
