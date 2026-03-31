@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, CheckCircle2, Truck } from "lucide-react";
+import { ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
+import { MotoIcon } from "@/components/shared/MotoIcon";
 
 const emailSchema = z.string().email("Email inválido");
 
@@ -40,7 +41,7 @@ export default function ForgotPasswordPage() {
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-4">
             <div className="h-10 w-10 rounded-outer bg-primary flex items-center justify-center">
-              <Truck className="h-5 w-5 text-primary-foreground" />
+              <MotoIcon className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-xl font-semibold tracking-tight">Leva e Traz</span>
           </div>
