@@ -12,7 +12,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { MetricCard } from "@/components/shared/MetricCard";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { BrandedLoader } from "@/components/shared/BrandedLoader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { Badge } from "@/components/ui/badge";
