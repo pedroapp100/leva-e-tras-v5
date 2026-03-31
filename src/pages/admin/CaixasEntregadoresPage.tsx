@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus, Eye, Pencil, Lock, FileWarning } from "lucide-react";
+import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus, Eye, Pencil, Lock, FileWarning, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { MetricCard } from "@/components/shared/MetricCard";
 import { SearchInput } from "@/components/shared/SearchInput";
@@ -97,6 +98,18 @@ export default function CaixasEntregadoresPage() {
       return matchSearch && matchStatus && matchEntregador && matchDate;
     });
   }, [baseCaixas, search, statusFilter, entregadorFilter, dateRange, periodoFilter]);
+
+  // Group filtered caixas by date for histórico view
+  const groupedByDate = useMemo(() => {
+    if (periodoFilter !== "historico") return [];
+    const map = new Map<string, CaixaEntregador[]>();
+    filtered.forEach((c) => {
+      const group = map.get(c.data) || [];
+      group.push(c);
+      map.set(c.data, group);
+    });
+    return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [filtered, periodoFilter]);
 
   const handleAbrirCaixa = (entregadorId: string, trocoInicial: number) => {
     const success = abrirCaixa(entregadorId, trocoInicial);
@@ -195,77 +208,145 @@ export default function CaixasEntregadoresPage() {
       {/* Tabela */}
       {filtered.length === 0 ? (
         <EmptyState icon={Wallet} title="Nenhum caixa encontrado" subtitle={periodoFilter === "hoje" ? "Nenhum caixa aberto hoje. Abra um novo caixa." : "Ajuste os filtros para encontrar caixas anteriores."} />
-      ) : (
-        <Card>
-          <div className="rounded-md border-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Entregador</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead className="text-right">Troco</TableHead>
-                  <TableHead className="text-center">Entregas</TableHead>
-                  <TableHead className="text-right">Recebido</TableHead>
-                  <TableHead className="text-right">Esperado</TableHead>
-                  <TableHead className="text-right">Devolvido</TableHead>
-                  <TableHead className="text-right">Diferença</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-center">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">{c.entregador_nome}</TableCell>
-                    <TableCell className="tabular-nums">{new Date(c.data).toLocaleDateString("pt-BR")}</TableCell>
-                    <TableCell className="text-right tabular-nums">{formatCurrency(c.troco_inicial)}</TableCell>
-                    <TableCell className="text-center tabular-nums">{c.recebimentos.length}</TableCell>
-                    <TableCell className="text-right tabular-nums">{formatCurrency(c.total_recebido)}</TableCell>
-                    <TableCell className="text-right tabular-nums font-medium">{formatCurrency(c.total_esperado)}</TableCell>
-                    <TableCell className="text-right tabular-nums">{c.valor_devolvido !== null ? formatCurrency(c.valor_devolvido) : "—"}</TableCell>
-                    <TableCell className={`text-right tabular-nums font-medium ${c.diferenca === null ? "" : c.diferenca === 0 ? "text-status-completed" : "text-destructive"}`}>
-                      {c.diferenca !== null ? formatCurrency(c.diferenca) : "—"}
-                    </TableCell>
-                    <TableCell><StatusBadge status={c.status} /></TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-center gap-1">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsTarget(c)}><Eye className="h-4 w-4" /></Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Ver detalhes</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarTarget(c)}><Pencil className="h-4 w-4" /></Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Editar caixa</TooltipContent>
-                        </Tooltip>
-                        {c.status === "aberto" && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-status-pending hover:text-status-pending/80" onClick={() => setFecharTarget(c)}><Lock className="h-4 w-4" /></Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Fechar caixa</TooltipContent>
-                          </Tooltip>
-                        )}
-                        {c.status === "divergente" && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarTarget(c)}><FileWarning className="h-4 w-4" /></Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Relatar motivo da falta</TooltipContent>
-                          </Tooltip>
-                        )}
-                      </div>
-                    </TableCell>
+      ) : periodoFilter === "hoje" ? (
+          <Card>
+            <div className="rounded-md border-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Entregador</TableHead>
+                    <TableHead className="text-right">Troco</TableHead>
+                    <TableHead className="text-center">Entregas</TableHead>
+                    <TableHead className="text-right">Recebido</TableHead>
+                    <TableHead className="text-right">Esperado</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-center">Ações</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((c) => (
+                    <TableRow key={c.id}>
+                      <TableCell className="font-medium">{c.entregador_nome}</TableCell>
+                      <TableCell className="text-right tabular-nums">{formatCurrency(c.troco_inicial)}</TableCell>
+                      <TableCell className="text-center tabular-nums">{c.recebimentos.length}</TableCell>
+                      <TableCell className="text-right tabular-nums">{formatCurrency(c.total_recebido)}</TableCell>
+                      <TableCell className="text-right tabular-nums font-medium">{formatCurrency(c.total_esperado)}</TableCell>
+                      <TableCell><StatusBadge status={c.status} /></TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-center gap-1">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsTarget(c)}><Eye className="h-4 w-4" /></Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Ver detalhes</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarTarget(c)}><Pencil className="h-4 w-4" /></Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Editar caixa</TooltipContent>
+                          </Tooltip>
+                          {c.status === "aberto" && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-status-pending hover:text-status-pending/80" onClick={() => setFecharTarget(c)}><Lock className="h-4 w-4" /></Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Fechar caixa</TooltipContent>
+                            </Tooltip>
+                          )}
+                          {c.status === "divergente" && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarTarget(c)}><FileWarning className="h-4 w-4" /></Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Relatar motivo da falta</TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {groupedByDate.map(([date, items]) => (
+              <Collapsible key={date}>
+                <Card>
+                  <CollapsibleTrigger className="w-full">
+                    <CardContent className="flex items-center justify-between py-3 px-4 cursor-pointer hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <Wallet className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-semibold text-sm">
+                          {new Date(date + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", year: "2-digit" })}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {items.length} {items.length === 1 ? "caixa" : "caixas"}
+                        </span>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+                    </CardContent>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="border-t">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Entregador</TableHead>
+                            <TableHead className="text-right">Troco</TableHead>
+                            <TableHead className="text-center">Entregas</TableHead>
+                            <TableHead className="text-right">Recebido</TableHead>
+                            <TableHead className="text-right">Esperado</TableHead>
+                            <TableHead className="text-right">Devolvido</TableHead>
+                            <TableHead className="text-right">Diferença</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-center">Ações</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {items.map((c) => (
+                            <TableRow key={c.id}>
+                              <TableCell className="font-medium">{c.entregador_nome}</TableCell>
+                              <TableCell className="text-right tabular-nums">{formatCurrency(c.troco_inicial)}</TableCell>
+                              <TableCell className="text-center tabular-nums">{c.recebimentos.length}</TableCell>
+                              <TableCell className="text-right tabular-nums">{formatCurrency(c.total_recebido)}</TableCell>
+                              <TableCell className="text-right tabular-nums font-medium">{formatCurrency(c.total_esperado)}</TableCell>
+                              <TableCell className="text-right tabular-nums">{c.valor_devolvido !== null ? formatCurrency(c.valor_devolvido) : "—"}</TableCell>
+                              <TableCell className={`text-right tabular-nums font-medium ${c.diferenca === null ? "" : c.diferenca === 0 ? "text-status-completed" : "text-destructive"}`}>
+                                {c.diferenca !== null ? formatCurrency(c.diferenca) : "—"}
+                              </TableCell>
+                              <TableCell><StatusBadge status={c.status} /></TableCell>
+                              <TableCell>
+                                <div className="flex items-center justify-center gap-1">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsTarget(c)}><Eye className="h-4 w-4" /></Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Ver detalhes</TooltipContent>
+                                  </Tooltip>
+                                  {c.status === "divergente" && (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarTarget(c)}><FileWarning className="h-4 w-4" /></Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>Relatar motivo da falta</TooltipContent>
+                                    </Tooltip>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            ))}
           </div>
-        </Card>
-      )}
+        )}
 
       <AbrirCaixaDialog open={abrirOpen} onOpenChange={setAbrirOpen} onConfirm={handleAbrirCaixa} existingEntregadorIds={openEntregadorIds} />
       <FecharCaixaDialog open={!!fecharTarget} onOpenChange={(o) => !o && setFecharTarget(null)} caixa={fecharTarget} onConfirm={handleFecharCaixa} />
