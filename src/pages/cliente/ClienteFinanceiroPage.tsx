@@ -14,12 +14,10 @@ import { DataTable } from "@/components/shared/DataTable";
 import type { Column } from "@/components/shared/DataTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatDateBR } from "@/lib/formatters";
-import { MOCK_CLIENTES } from "@/data/mockClientes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
 import { cn } from "@/lib/utils";
 import { PrePagoFinanceiroView } from "./PrePagoFinanceiroView";
-
-const CLIENTE_ID = "cli-001";
+import { useClienteId } from "@/hooks/useClienteId";
 
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 const fadeUp = {
@@ -29,7 +27,7 @@ const fadeUp = {
 
 export default function ClienteFinanceiroPage() {
   const { faturas: allFaturasGlobal } = useGlobalStore();
-  const cliente = useMemo(() => MOCK_CLIENTES.find((c) => c.id === CLIENTE_ID), []);
+  const { clienteId: CLIENTE_ID, cliente } = useClienteId();
   const isPrePago = cliente?.modalidade === "pre_pago";
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");

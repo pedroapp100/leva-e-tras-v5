@@ -8,10 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { formatCurrency, formatDateBR } from "@/lib/formatters";
 import { getEntregadorName } from "@/data/mockSolicitacoes";
-import { MOCK_CLIENTES } from "@/data/mockClientes";
 import { useGlobalStore } from "@/contexts/GlobalStore";
-
-const CLIENTE_ID = "cli-001"; // Mock: logged-in client (João Silva - pré-pago)
+import { useClienteId } from "@/hooks/useClienteId";
 
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 const fadeUp = {
@@ -21,7 +19,8 @@ const fadeUp = {
 
 export default function ClienteDashboard() {
   const { solicitacoes, faturas, getClienteSaldo } = useGlobalStore();
-  const cliente = useMemo(() => MOCK_CLIENTES.find((c) => c.id === CLIENTE_ID), []);
+  const { clienteId, cliente } = useClienteId();
+  const CLIENTE_ID = clienteId;
   const isPrePago = cliente?.modalidade === "pre_pago";
 
   const metrics = useMemo(() => {

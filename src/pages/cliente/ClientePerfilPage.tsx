@@ -6,12 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/shared/PhoneInput";
-import { MOCK_CLIENTES } from "@/data/mockClientes";
-
-const CLIENTE_ID = "cli-001";
+import { useClienteId } from "@/hooks/useClienteId";
 
 export default function ClientePerfilPage() {
-  const cliente = MOCK_CLIENTES.find((c) => c.id === CLIENTE_ID)!;
+  const { cliente: clienteData } = useClienteId();
+  const cliente = clienteData!;
   const [form, setForm] = useState({
     nome: cliente.nome,
     email: cliente.email,

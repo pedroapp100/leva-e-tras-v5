@@ -52,6 +52,18 @@ const INITIAL_USERS: UserAccount[] = [
     updated_at: "2025-01-10T00:00:00Z",
   },
   {
+    id: "mock-cliente-002",
+    email: "faturado@levaetraz.com",
+    password: "faturado123",
+    nome: "Padaria Pão Quente",
+    role: "cliente",
+    cargo_id: null,
+    status: "ativo",
+    avatarUrl: null,
+    created_at: "2025-02-01T00:00:00Z",
+    updated_at: "2025-02-01T00:00:00Z",
+  },
+  {
     id: "mock-entregador-001",
     email: "entregador@levaetraz.com",
     password: "entregador123",

@@ -205,7 +205,8 @@ export default function LoginPage() {
             </p>
             <div className="text-sm text-muted-foreground space-y-1 font-mono">
               <p>admin@levaetraz.com / admin123</p>
-              <p>cliente@levaetraz.com / cliente123</p>
+              <p>cliente@levaetraz.com / cliente123 <span className="text-xs opacity-60">(pré-pago)</span></p>
+              <p>faturado@levaetraz.com / faturado123 <span className="text-xs opacity-60">(faturado)</span></p>
               <p>entregador@levaetraz.com / entregador123</p>
             </div>
           </div>
