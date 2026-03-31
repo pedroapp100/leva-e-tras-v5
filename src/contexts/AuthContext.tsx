@@ -106,6 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setUser(userWithPerms);
     setLoginAttempts({ count: 0, firstAttemptAt: 0 });
+    // Mantém o loader visível por mais tempo na transição
+    await new Promise((r) => setTimeout(r, 2800));
     setLoading(false);
     return { success: true, user: userWithPerms };
   }, [isBlocked, findByEmail]);
