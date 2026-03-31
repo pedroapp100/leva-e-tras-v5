@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogIn, Mail, Lock, AlertCircle, Truck, Package, MapPin, BarChart3, Shield, Sun, Moon } from "lucide-react";
+import { ButtonSpinner } from "@/components/shared/BrandedLoader";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -176,7 +177,7 @@ export default function LoginPage() {
               disabled={loading || isBlocked}
             >
               {loading ? (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <ButtonSpinner />
               ) : (
                 <>
                   <LogIn className="mr-2 h-5 w-5" />
