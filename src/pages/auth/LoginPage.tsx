@@ -177,7 +177,7 @@ export default function LoginPage() {
               disabled={loading || isBlocked}
             >
               {loading ? (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                <ButtonSpinner />
               ) : (
                 <>
                   <LogIn className="mr-2 h-5 w-5" />
