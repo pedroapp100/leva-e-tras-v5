@@ -173,7 +173,7 @@ export default function CaixasEntregadoresPage() {
     { key: "total_recebido", header: "Recebido", sortable: true, cell: (c) => <span className="tabular-nums">{formatCurrency(c.total_recebido)}</span> },
     { key: "total_esperado", header: "Esperado", sortable: true, cell: (c) => <span className="font-medium tabular-nums">{formatCurrency(c.total_esperado)}</span> },
     { key: "status", header: "Status", cell: (c) => <StatusBadge status={c.status} /> },
-    { key: "acoes", header: "Ações", cell: (c) => renderActions(c, true) },
+    { key: "acoes", header: "Ações", className: "text-center", cell: (c) => renderActions(c, true) },
   ];
 
   const historicoColumns: Column<CaixaEntregador>[] = [
