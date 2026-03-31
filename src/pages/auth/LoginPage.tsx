@@ -55,16 +55,10 @@ export default function LoginPage() {
       return;
     }
 
-    const transitionStart = performance.now();
     const { success, user, error: loginError } = await login(normalizedEmail, password);
     if (success && user) {
-      setIsTransitioning(true);
-      const elapsed = performance.now() - transitionStart;
-      const remaining = Math.max(0, LOGIN_TRANSITION_MS - elapsed);
-      await new Promise((r) => setTimeout(r, remaining));
       navigate(ROLE_REDIRECTS[user.role] || "/admin", { replace: true });
     } else {
-      setIsTransitioning(false);
       setError(loginError || "Erro desconhecido");
     }
   };
