@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 1200));
 
     const normalizedEmail = email.trim().toLowerCase();
     const account = findByEmail(normalizedEmail);
@@ -106,6 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setUser(userWithPerms);
     setLoginAttempts({ count: 0, firstAttemptAt: 0 });
+    // Mantém o loader visível por mais tempo na transição
+    await new Promise((r) => setTimeout(r, 2800));
     setLoading(false);
     return { success: true, user: userWithPerms };
   }, [isBlocked, findByEmail]);
