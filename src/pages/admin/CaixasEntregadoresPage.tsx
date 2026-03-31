@@ -1,10 +1,17 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus } from "lucide-react";
+import { Wallet, ArrowDownUp, AlertTriangle, CheckCircle, Plus, Eye, Pencil, Lock, FileWarning } from "lucide-react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { MetricCard } from "@/components/shared/MetricCard";
+import { SearchInput } from "@/components/shared/SearchInput";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { DatePickerWithRange } from "@/components/shared/DatePickerWithRange";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/formatters";
 import type { CaixaEntregador } from "@/data/mockCaixas";
 import { useCaixaStore } from "@/contexts/CaixaStore";
@@ -13,12 +20,23 @@ import { FecharCaixaDialog } from "./caixas/FecharCaixaDialog";
 import { EditarCaixaDialog } from "./caixas/EditarCaixaDialog";
 import { JustificativaDivergenciaDialog } from "./caixas/JustificativaDivergenciaDialog";
 import { CaixaDetailsModal } from "./caixas/CaixaDetailsModal";
-import { CaixasDoDiaTab } from "./caixas/CaixasDoDiaTab";
-import { HistoricoCaixasTab } from "./caixas/HistoricoCaixasTab";
 import { toast } from "sonner";
+import type { DateRange } from "react-day-picker";
 
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
 const fadeUp = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
+
+const STATUS_OPTIONS = [
+  { value: "todos", label: "Todos os Status" },
+  { value: "aberto", label: "Aberto" },
+  { value: "fechado", label: "Fechado" },
+  { value: "divergente", label: "Divergente" },
+];
+
+const PERIODO_OPTIONS = [
+  { value: "hoje", label: "Caixas do Dia" },
+  { value: "historico", label: "Histórico" },
+];
 
 export default function CaixasEntregadoresPage() {
   const { caixas, abrirCaixa, fecharCaixa, editarCaixa, justificarDivergencia } = useCaixaStore();
@@ -28,18 +46,57 @@ export default function CaixasEntregadoresPage() {
   const [justificarTarget, setJustificarTarget] = useState<CaixaEntregador | null>(null);
   const [detailsTarget, setDetailsTarget] = useState<CaixaEntregador | null>(null);
 
+  const [periodoFilter, setPeriodoFilter] = useState("hoje");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [entregadorFilter, setEntregadorFilter] = useState("todos");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+
+  const hoje = new Date().toISOString().split("T")[0];
+
   const metrics = useMemo(() => {
     const abertos = caixas.filter((c) => c.status === "aberto");
     const divergentes = caixas.filter((c) => c.status === "divergente");
     const totalTroco = abertos.reduce((s, c) => s + c.troco_inicial, 0);
     const totalRecebidoHoje = caixas
-      .filter((c) => c.data === new Date().toISOString().split("T")[0])
+      .filter((c) => c.data === hoje)
       .reduce((s, c) => s + c.total_recebido, 0);
     return { abertos: abertos.length, divergentes: divergentes.length, totalTroco, totalRecebidoHoje };
-  }, [caixas]);
+  }, [caixas, hoje]);
 
-  const hoje = new Date().toISOString().split("T")[0];
   const openEntregadorIds = caixas.filter((c) => c.status === "aberto" && c.data === hoje).map((c) => c.entregador_id);
+
+  const baseCaixas = useMemo(() => {
+    if (periodoFilter === "hoje") {
+      return caixas.filter((c) => c.data === hoje);
+    }
+    return caixas.filter((c) => c.status !== "aberto" || c.data !== hoje);
+  }, [caixas, periodoFilter, hoje]);
+
+  const uniqueEntregadores = useMemo(() => {
+    const map = new Map<string, string>();
+    baseCaixas.forEach((c) => map.set(c.entregador_id, c.entregador_nome));
+    return Array.from(map, ([id, nome]) => ({ id, nome })).sort((a, b) => a.nome.localeCompare(b.nome));
+  }, [baseCaixas]);
+
+  const filtered = useMemo(() => {
+    return baseCaixas.filter((c) => {
+      const matchSearch = c.entregador_nome.toLowerCase().includes(search.toLowerCase());
+      const matchStatus = statusFilter === "todos" || c.status === statusFilter;
+      const matchEntregador = entregadorFilter === "todos" || c.entregador_id === entregadorFilter;
+
+      let matchDate = true;
+      if (periodoFilter === "historico" && dateRange?.from) {
+        const caixaDate = new Date(c.data);
+        matchDate = caixaDate >= dateRange.from;
+        if (dateRange.to) {
+          matchDate = matchDate && caixaDate <= dateRange.to;
+        }
+      }
+
+      return matchSearch && matchStatus && matchEntregador && matchDate;
+    });
+  }, [baseCaixas, search, statusFilter, entregadorFilter, dateRange, periodoFilter]);
 
   const handleAbrirCaixa = (entregadorId: string, trocoInicial: number) => {
     const success = abrirCaixa(entregadorId, trocoInicial);
@@ -90,31 +147,125 @@ export default function CaixasEntregadoresPage() {
         </motion.div>
       </motion.div>
 
-      <Tabs defaultValue="hoje" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="hoje">Caixas do Dia</TabsTrigger>
-          <TabsTrigger value="historico">Histórico</TabsTrigger>
-        </TabsList>
+      {/* Filtros */}
+      <Card>
+        <CardContent className="pt-4 pb-2">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1">
+              <SearchInput value={search} onChange={setSearch} placeholder="Buscar por entregador..." />
+            </div>
+            <Select value={periodoFilter} onValueChange={setPeriodoFilter}>
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PERIODO_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={entregadorFilter} onValueChange={setEntregadorFilter}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos Entregadores</SelectItem>
+                {uniqueEntregadores.map((e) => (
+                  <SelectItem key={e.id} value={e.id}>{e.nome}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {periodoFilter === "historico" && (
+              <DatePickerWithRange value={dateRange} onChange={setDateRange} placeholder="Período" />
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-        <TabsContent value="hoje">
-          <CaixasDoDiaTab
-            caixas={caixas}
-            onView={setDetailsTarget}
-            onEdit={setEditarTarget}
-            onClose={setFecharTarget}
-            onJustify={setJustificarTarget}
-          />
-        </TabsContent>
-
-        <TabsContent value="historico">
-          <HistoricoCaixasTab
-            caixas={caixas}
-            onView={setDetailsTarget}
-            onEdit={setEditarTarget}
-            onJustify={setJustificarTarget}
-          />
-        </TabsContent>
-      </Tabs>
+      {/* Tabela */}
+      {filtered.length === 0 ? (
+        <EmptyState icon={Wallet} title="Nenhum caixa encontrado" subtitle={periodoFilter === "hoje" ? "Nenhum caixa aberto hoje. Abra um novo caixa." : "Ajuste os filtros para encontrar caixas anteriores."} />
+      ) : (
+        <Card>
+          <div className="rounded-md border-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Entregador</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead className="text-right">Troco</TableHead>
+                  <TableHead className="text-center">Entregas</TableHead>
+                  <TableHead className="text-right">Recebido</TableHead>
+                  <TableHead className="text-right">Esperado</TableHead>
+                  <TableHead className="text-right">Devolvido</TableHead>
+                  <TableHead className="text-right">Diferença</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-center">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((c) => (
+                  <TableRow key={c.id}>
+                    <TableCell className="font-medium">{c.entregador_nome}</TableCell>
+                    <TableCell className="tabular-nums">{new Date(c.data).toLocaleDateString("pt-BR")}</TableCell>
+                    <TableCell className="text-right tabular-nums">{formatCurrency(c.troco_inicial)}</TableCell>
+                    <TableCell className="text-center tabular-nums">{c.recebimentos.length}</TableCell>
+                    <TableCell className="text-right tabular-nums">{formatCurrency(c.total_recebido)}</TableCell>
+                    <TableCell className="text-right tabular-nums font-medium">{formatCurrency(c.total_esperado)}</TableCell>
+                    <TableCell className="text-right tabular-nums">{c.valor_devolvido !== null ? formatCurrency(c.valor_devolvido) : "—"}</TableCell>
+                    <TableCell className={`text-right tabular-nums font-medium ${c.diferenca === null ? "" : c.diferenca === 0 ? "text-status-completed" : "text-destructive"}`}>
+                      {c.diferenca !== null ? formatCurrency(c.diferenca) : "—"}
+                    </TableCell>
+                    <TableCell><StatusBadge status={c.status} /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDetailsTarget(c)}><Eye className="h-4 w-4" /></Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Ver detalhes</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarTarget(c)}><Pencil className="h-4 w-4" /></Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar caixa</TooltipContent>
+                        </Tooltip>
+                        {c.status === "aberto" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-status-pending hover:text-status-pending/80" onClick={() => setFecharTarget(c)}><Lock className="h-4 w-4" /></Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Fechar caixa</TooltipContent>
+                          </Tooltip>
+                        )}
+                        {c.status === "divergente" && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive/80" onClick={() => setJustificarTarget(c)}><FileWarning className="h-4 w-4" /></Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Relatar motivo da falta</TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+      )}
 
       <AbrirCaixaDialog open={abrirOpen} onOpenChange={setAbrirOpen} onConfirm={handleAbrirCaixa} existingEntregadorIds={openEntregadorIds} />
       <FecharCaixaDialog open={!!fecharTarget} onOpenChange={(o) => !o && setFecharTarget(null)} caixa={fecharTarget} onConfirm={handleFecharCaixa} />
