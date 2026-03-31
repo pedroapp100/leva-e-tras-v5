@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Lock, CheckCircle2, Truck } from "lucide-react";
+import { Lock, CheckCircle2 } from "lucide-react";
+import { MotoIcon } from "@/components/shared/MotoIcon";
 
 const passwordSchema = z
   .object({

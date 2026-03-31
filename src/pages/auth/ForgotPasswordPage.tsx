@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, CheckCircle2, Truck } from "lucide-react";
+import { ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
+import { MotoIcon } from "@/components/shared/MotoIcon";
 
 const emailSchema = z.string().email("Email inválido");
 
