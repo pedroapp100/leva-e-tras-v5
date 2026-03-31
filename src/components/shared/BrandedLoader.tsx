@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Truck, Package, Bike } from "lucide-react";
+import { Truck, Package } from "lucide-react";
+import { MotoIcon } from "@/components/shared/MotoIcon";
 
 interface BrandedLoaderProps {
   /** Full-page centered loader */
@@ -173,19 +174,24 @@ export function ButtonSpinner({ className }: { className?: string }) {
   return (
     <motion.div
       className={cn("flex items-center gap-2", className)}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 2 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
     >
       <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+        animate={{
+          x: [0, 2, 0, -2, 0],
+          y: [0, -1, 0, -1, 0],
+          rotate: [0, -4, 0, 4, 0],
+        }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       >
-        <Bike size={18} className="text-primary-foreground" />
+        <MotoIcon className="h-[18px] w-[18px] text-primary-foreground" />
       </motion.div>
       <motion.span
         className="text-primary-foreground text-sm font-medium"
-        animate={{ opacity: [1, 0.5, 1] }}
-        transition={{ duration: 1.2, repeat: Infinity }}
+        animate={{ opacity: [1, 0.65, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       >
         Entrando...
       </motion.span>
