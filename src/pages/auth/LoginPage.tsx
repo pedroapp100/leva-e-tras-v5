@@ -180,7 +180,7 @@ export default function LoginPage() {
               className="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               disabled={loading || isBlocked}
             >
-              {loading ? (
+              {loading || isTransitioning ? (
                 <ButtonSpinner />
               ) : (
                 <>
