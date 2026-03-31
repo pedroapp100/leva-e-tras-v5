@@ -11,29 +11,22 @@ export function MotoIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.9"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={cn("shrink-0", className)}
       aria-hidden={props["aria-label"] ? undefined : true}
       {...props}
     >
-      {/* Roda traseira */}
-      <circle cx="5.5" cy="17.5" r="3.5" />
-      {/* Roda dianteira */}
-      <circle cx="18.5" cy="17.5" r="3.5" />
-      {/* Corpo / chassi */}
-      <path d="M9 17.5l3-7h3l2 3.5" />
-      {/* Guidão */}
-      <path d="M15 10.5l4 1.5" />
-      {/* Banco */}
-      <path d="M7 14h5" />
-      {/* Escapamento */}
-      <path d="M5.5 14l-2-2" />
-      {/* Farol */}
-      <path d="M19 13.5l1.5-1" />
-      {/* Motor */}
-      <path d="M11 14l1 3.5" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="18" cy="18" r="3" />
+      <path d="M9 18h4" />
+      <path d="M10.2 14.2h4.3l2.1 3.8" />
+      <path d="M10.2 14.2 8.6 11.8H6.4" />
+      <path d="M14.5 14.2 17.3 12.6 19 13.8" />
+      <path d="M11.8 14.2 10.6 18" />
+      <path d="M7.4 15.1 6 18" />
+      <path d="M17.9 18H20" />
     </svg>
   );
 }

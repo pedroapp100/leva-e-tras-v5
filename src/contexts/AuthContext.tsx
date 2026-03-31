@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from "react";
 import type { Role } from "@/types/database";
 import { getPermissionsForRole } from "@/lib/permissions";
 import { useUserStore } from "@/data/mockUsers";
@@ -22,6 +22,8 @@ interface LoginAttempt {
 
 const MAX_ATTEMPTS = 5;
 const BLOCK_WINDOW_MS = 5 * 60 * 1000; // 5 minutos
+const LOGIN_FEEDBACK_DELAY_MS = 200;
+const LOGIN_TRANSITION_MS = 3800;
 
 // ── Error mapping PT-BR ──
 const ERROR_MESSAGES: Record<string, string> = {
@@ -60,6 +62,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState<LoginAttempt>({ count: 0, firstAttemptAt: 0 });
+  const transitionTimeoutRef = useRef<number | null>(null);
+
+  const clearTransitionTimeout = useCallback(() => {
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearTransitionTimeout();
+    };
+  }, [clearTransitionTimeout]);
 
   const isBlocked = (() => {
     if (loginAttempts.count < MAX_ATTEMPTS) return false;
@@ -74,8 +90,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: ERROR_MESSAGES.too_many_attempts };
     }
 
+    clearTransitionTimeout();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    await new Promise((r) => setTimeout(r, LOGIN_FEEDBACK_DELAY_MS));
 
     const normalizedEmail = email.trim().toLowerCase();
     const account = findByEmail(normalizedEmail);
@@ -106,15 +123,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setUser(userWithPerms);
     setLoginAttempts({ count: 0, firstAttemptAt: 0 });
-    // Mantém o loader visível por mais tempo na transição
-    await new Promise((r) => setTimeout(r, 2800));
-    setLoading(false);
+
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      setLoading(false);
+      transitionTimeoutRef.current = null;
+    }, LOGIN_TRANSITION_MS);
+
     return { success: true, user: userWithPerms };
-  }, [isBlocked, findByEmail]);
+  }, [clearTransitionTimeout, isBlocked, findByEmail]);
 
   const logout = useCallback(() => {
+    clearTransitionTimeout();
+    setLoading(false);
     setUser(null);
-  }, []);
+  }, [clearTransitionTimeout]);
 
   const changeCargo = useCallback((cargoId: string) => {
     setUser(prev => {
