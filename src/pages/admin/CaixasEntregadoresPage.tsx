@@ -208,8 +208,7 @@ export default function CaixasEntregadoresPage() {
       {/* Tabela */}
       {filtered.length === 0 ? (
         <EmptyState icon={Wallet} title="Nenhum caixa encontrado" subtitle={periodoFilter === "hoje" ? "Nenhum caixa aberto hoje. Abra um novo caixa." : "Ajuste os filtros para encontrar caixas anteriores."} />
-      ) : (
-        {periodoFilter === "hoje" ? (
+      ) : periodoFilter === "hoje" ? (
           <Card>
             <div className="rounded-md border-0">
               <Table>
