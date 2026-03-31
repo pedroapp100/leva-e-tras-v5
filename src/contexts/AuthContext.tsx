@@ -23,7 +23,6 @@ interface LoginAttempt {
 const MAX_ATTEMPTS = 5;
 const BLOCK_WINDOW_MS = 5 * 60 * 1000; // 5 minutos
 const LOGIN_FEEDBACK_DELAY_MS = 200;
-const LOGIN_TRANSITION_MS = 3800;
 
 // ── Error mapping PT-BR ──
 const ERROR_MESSAGES: Record<string, string> = {
@@ -124,10 +123,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userWithPerms);
     setLoginAttempts({ count: 0, firstAttemptAt: 0 });
 
-    transitionTimeoutRef.current = window.setTimeout(() => {
-      setLoading(false);
-      transitionTimeoutRef.current = null;
-    }, LOGIN_TRANSITION_MS);
+    // Clear loading immediately so ProtectedRoute doesn't show a second loader
+    setLoading(false);
 
     return { success: true, user: userWithPerms };
   }, [clearTransitionTimeout, isBlocked, findByEmail]);
