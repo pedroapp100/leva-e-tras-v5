@@ -99,6 +99,18 @@ export default function CaixasEntregadoresPage() {
     });
   }, [baseCaixas, search, statusFilter, entregadorFilter, dateRange, periodoFilter]);
 
+  // Group filtered caixas by date for histórico view
+  const groupedByDate = useMemo(() => {
+    if (periodoFilter !== "historico") return [];
+    const map = new Map<string, CaixaEntregador[]>();
+    filtered.forEach((c) => {
+      const group = map.get(c.data) || [];
+      group.push(c);
+      map.set(c.data, group);
+    });
+    return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [filtered, periodoFilter]);
+
   const handleAbrirCaixa = (entregadorId: string, trocoInicial: number) => {
     const success = abrirCaixa(entregadorId, trocoInicial);
     if (success) {
