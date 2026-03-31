@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Truck } from "lucide-react";
+import { motion } from "framer-motion";
+import { Truck, Package } from "lucide-react";
 
 interface BrandedLoaderProps {
   /** Full-page centered loader */
@@ -12,7 +13,7 @@ interface BrandedLoaderProps {
 }
 
 /**
- * Loader personalizado "Leva e Traz" com animação de caminhão + progress ring.
+ * Loader animado "Leva e Traz" — caminhão percorrendo uma estrada com pacotes.
  */
 export function BrandedLoader({
   fullPage = false,
@@ -20,60 +21,130 @@ export function BrandedLoader({
   size = "md",
   className,
 }: BrandedLoaderProps) {
-  const sizeMap = {
-    sm: { ring: "h-10 w-10", icon: "h-4 w-4", text: "text-xs", gap: "gap-2" },
-    md: { ring: "h-16 w-16", icon: "h-6 w-6", text: "text-sm", gap: "gap-3" },
-    lg: { ring: "h-24 w-24", icon: "h-10 w-10", text: "text-base", gap: "gap-4" },
+  const sizeConfig = {
+    sm: { width: "w-48", truck: 18, pkg: 10, roadH: "h-0.5", textSize: "text-xs", gap: "gap-2", dotSize: "h-1 w-1" },
+    md: { width: "w-64", truck: 28, pkg: 14, roadH: "h-0.5", textSize: "text-sm", gap: "gap-3", dotSize: "h-1.5 w-1.5" },
+    lg: { width: "w-80", truck: 36, pkg: 18, roadH: "h-1", textSize: "text-base", gap: "gap-4", dotSize: "h-2 w-2" },
   };
 
-  const s = sizeMap[size];
+  const s = sizeConfig[size];
 
   const loader = (
     <div className={cn("flex flex-col items-center", s.gap, className)}>
-      {/* Animated ring + icon */}
-      <div className="relative">
-        {/* Spinning ring */}
-        <svg
-          className={cn("animate-spin", s.ring)}
-          viewBox="0 0 50 50"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Background track */}
-          <circle
-            cx="25"
-            cy="25"
-            r="20"
-            stroke="hsl(var(--muted))"
-            strokeWidth="3"
-          />
-          {/* Animated arc */}
-          <circle
-            cx="25"
-            cy="25"
-            r="20"
-            stroke="hsl(var(--primary))"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray="80 126"
-            className="origin-center"
-          />
-        </svg>
+      {/* Animation container */}
+      <div className={cn("relative", s.width)}>
+        {/* Floating packages behind truck */}
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="absolute bottom-3"
+            initial={{ opacity: 0, x: -10, y: 0 }}
+            animate={{
+              opacity: [0, 0.7, 0.7, 0],
+              x: ["0%", "100%"],
+              y: [0, -8, -4, 0],
+            }}
+            transition={{
+              duration: 2.5,
+              delay: i * 0.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <Package
+              size={s.pkg}
+              className="text-primary/40"
+            />
+          </motion.div>
+        ))}
 
-        {/* Center icon (truck bouncing) */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Truck
-            className={cn(s.icon, "text-primary animate-bounce")}
-            style={{ animationDuration: "1.5s" }}
-          />
+        {/* Truck driving across */}
+        <motion.div
+          className="relative z-10"
+          animate={{
+            x: ["0%", "85%", "0%"],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: [0.45, 0.05, 0.55, 0.95],
+          }}
+        >
+          {/* Truck body bounce */}
+          <motion.div
+            animate={{ y: [0, -2, 0, -1, 0] }}
+            transition={{
+              duration: 0.6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <div className="inline-flex items-center justify-center rounded-lg bg-primary p-1.5 shadow-lg shadow-primary/30">
+              <Truck size={s.truck} className="text-primary-foreground" />
+            </div>
+          </motion.div>
+
+          {/* Exhaust particles */}
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={`smoke-${i}`}
+              className={cn("absolute rounded-full bg-muted-foreground/20", s.dotSize)}
+              style={{ bottom: "20%", left: -4 - i * 3 }}
+              animate={{
+                opacity: [0.4, 0],
+                scale: [0.5, 1.5],
+                x: [-2, -12],
+                y: [0, -6],
+              }}
+              transition={{
+                duration: 0.8,
+                delay: i * 0.2,
+                repeat: Infinity,
+                ease: "easeOut",
+              }}
+            />
+          ))}
+        </motion.div>
+
+        {/* Road */}
+        <div className={cn("w-full rounded-full bg-border mt-1", s.roadH)} />
+
+        {/* Road dashes */}
+        <div className="relative w-full mt-0.5 overflow-hidden h-px">
+          <motion.div
+            className="flex gap-2 absolute"
+            animate={{ x: [0, -20] }}
+            transition={{ duration: 0.4, repeat: Infinity, ease: "linear" }}
+          >
+            {Array.from({ length: 30 }).map((_, i) => (
+              <div key={i} className="h-px w-2 bg-muted-foreground/30 shrink-0" />
+            ))}
+          </motion.div>
         </div>
       </div>
 
-      {/* Text */}
+      {/* Animated text with dots */}
       {text && (
-        <span className={cn(s.text, "text-muted-foreground font-medium animate-pulse")}>
-          {text}
-        </span>
+        <div className={cn("flex items-center", s.gap)}>
+          <span className={cn(s.textSize, "text-muted-foreground font-medium")}>
+            {text}
+          </span>
+          <span className="flex gap-0.5">
+            {[0, 1, 2].map((i) => (
+              <motion.span
+                key={i}
+                className={cn("rounded-full bg-primary", s.dotSize)}
+                animate={{ opacity: [0.2, 1, 0.2] }}
+                transition={{
+                  duration: 1,
+                  delay: i * 0.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </span>
+        </div>
       )}
     </div>
   );
@@ -81,10 +152,43 @@ export function BrandedLoader({
   if (fullPage) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        {loader}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          {loader}
+        </motion.div>
       </div>
     );
   }
 
   return loader;
+}
+
+/**
+ * Spinner inline para botões (ex: botão de login).
+ */
+export function ButtonSpinner({ className }: { className?: string }) {
+  return (
+    <motion.div
+      className={cn("flex items-center gap-2", className)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+      >
+        <Truck size={18} className="text-primary-foreground" />
+      </motion.div>
+      <motion.span
+        className="text-primary-foreground text-sm font-medium"
+        animate={{ opacity: [1, 0.5, 1] }}
+        transition={{ duration: 1.2, repeat: Infinity }}
+      >
+        Entrando...
+      </motion.span>
+    </motion.div>
+  );
 }
