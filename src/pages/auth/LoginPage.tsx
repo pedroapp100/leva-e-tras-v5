@@ -56,6 +56,8 @@ export default function LoginPage() {
 
     const { success, user, error: loginError } = await login(normalizedEmail, password);
     if (success && user) {
+      setIsTransitioning(true);
+      await new Promise((r) => setTimeout(r, 4000));
       navigate(ROLE_REDIRECTS[user.role] || "/admin", { replace: true });
     } else {
       setError(loginError || "Erro desconhecido");
