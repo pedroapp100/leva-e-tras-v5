@@ -12,7 +12,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { MetricCard } from "@/components/shared/MetricCard";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { BrandedLoader } from "@/components/shared/BrandedLoader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { Badge } from "@/components/ui/badge";
@@ -124,9 +124,8 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <PageContainer title="Dashboard" subtitle="Visão geral das operações logísticas.">
-        <LoadingSkeleton type="card" columns={5} />
-        <div className="mt-6">
-          <LoadingSkeleton type="list" rows={5} />
+        <div className="flex items-center justify-center py-20">
+          <BrandedLoader size="lg" text="Carregando dashboard..." />
         </div>
       </PageContainer>
     );

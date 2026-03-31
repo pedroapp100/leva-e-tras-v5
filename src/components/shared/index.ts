@@ -17,4 +17,5 @@ export { PageContainer } from "./PageContainer";
 export { DatePickerWithRange } from "./DatePickerWithRange";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { PageLoadingFallback } from "./PageLoadingFallback";
+export { BrandedLoader } from "./BrandedLoader";
 export { TipoOperacaoBadge, getTipoOperacaoLabel, getTipoOperacaoCor } from "./TipoOperacaoBadge";
