@@ -123,10 +123,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userWithPerms);
     setLoginAttempts({ count: 0, firstAttemptAt: 0 });
 
-    transitionTimeoutRef.current = window.setTimeout(() => {
-      setLoading(false);
-      transitionTimeoutRef.current = null;
-    }, LOGIN_TRANSITION_MS);
+    // Clear loading immediately so ProtectedRoute doesn't show a second loader
+    setLoading(false);
 
     return { success: true, user: userWithPerms };
   }, [clearTransitionTimeout, isBlocked, findByEmail]);
