@@ -179,13 +179,10 @@ export default function LoginPage() {
               className="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               disabled={loading || isBlocked}
             >
-              {loading || isTransitioning ? (
+              {loading ? (
                 <ButtonSpinner />
               ) : (
-                <>
-                  <MotoIcon className="mr-2 h-5 w-5" />
-                  Entrar na plataforma
-                </>
+                "Entrar na plataforma"
               )}
             </Button>
 
