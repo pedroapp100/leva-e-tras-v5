@@ -18,7 +18,6 @@ const loginSchema = z.object({
 });
 
 const MAX_ATTEMPTS_DISPLAY = 5;
-const LOGIN_TRANSITION_MS = 4000;
 
 const features = [
   { icon: Package, title: "Gestão de Entregas", desc: "Controle total das suas operações last-mile" },
@@ -36,7 +35,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,16 +53,10 @@ export default function LoginPage() {
       return;
     }
 
-    const transitionStart = performance.now();
     const { success, user, error: loginError } = await login(normalizedEmail, password);
     if (success && user) {
-      setIsTransitioning(true);
-      const elapsed = performance.now() - transitionStart;
-      const remaining = Math.max(0, LOGIN_TRANSITION_MS - elapsed);
-      await new Promise((r) => setTimeout(r, remaining));
       navigate(ROLE_REDIRECTS[user.role] || "/admin", { replace: true });
     } else {
-      setIsTransitioning(false);
       setError(loginError || "Erro desconhecido");
     }
   };
@@ -185,13 +177,10 @@ export default function LoginPage() {
               className="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               disabled={loading || isBlocked}
             >
-              {loading || isTransitioning ? (
+              {loading ? (
                 <ButtonSpinner />
               ) : (
-                <>
-                  <MotoIcon className="mr-2 h-5 w-5" />
-                  Entrar na plataforma
-                </>
+                "Entrar na plataforma"
               )}
             </Button>
 
