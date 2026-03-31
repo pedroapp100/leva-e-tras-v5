@@ -18,6 +18,7 @@ const loginSchema = z.object({
 });
 
 const MAX_ATTEMPTS_DISPLAY = 5;
+const LOGIN_TRANSITION_MS = 4000;
 
 const features = [
   { icon: Package, title: "Gestão de Entregas", desc: "Controle total das suas operações last-mile" },
@@ -54,12 +55,16 @@ export default function LoginPage() {
       return;
     }
 
+    const transitionStart = performance.now();
     const { success, user, error: loginError } = await login(normalizedEmail, password);
     if (success && user) {
       setIsTransitioning(true);
-      await new Promise((r) => setTimeout(r, 4000));
+      const elapsed = performance.now() - transitionStart;
+      const remaining = Math.max(0, LOGIN_TRANSITION_MS - elapsed);
+      await new Promise((r) => setTimeout(r, remaining));
       navigate(ROLE_REDIRECTS[user.role] || "/admin", { replace: true });
     } else {
+      setIsTransitioning(false);
       setError(loginError || "Erro desconhecido");
     }
   };

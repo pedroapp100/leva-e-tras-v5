@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,7 +12,6 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { MetricCard } from "@/components/shared/MetricCard";
-import { BrandedLoader } from "@/components/shared/BrandedLoader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { Badge } from "@/components/ui/badge";
@@ -25,14 +24,6 @@ import { MOCK_SOLICITACOES } from "@/data/mockSolicitacoes";
 
 // Simulate loading
 function useDashboardData() {
-  const [loading, setLoading] = useState(true);
-
-  // Simulate async load
-  useState(() => {
-    const t = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(t);
-  });
-
   const metrics = useMemo(() => {
     // Contas a Pagar
     const contasAPagar = MOCK_DESPESAS
@@ -104,7 +95,7 @@ function useDashboardData() {
       .slice(0, 10);
   }, []);
 
-  return { loading, metrics, recentTransactions };
+  return { metrics, recentTransactions };
 }
 
 const stagger = {
@@ -118,18 +109,8 @@ const fadeUp = {
 };
 
 export default function AdminDashboard() {
-  const { loading, metrics, recentTransactions } = useDashboardData();
+  const { metrics, recentTransactions } = useDashboardData();
   const navigate = useNavigate();
-
-  if (loading) {
-    return (
-      <PageContainer title="Dashboard" subtitle="Visão geral das operações logísticas.">
-        <div className="flex items-center justify-center py-20">
-          <BrandedLoader size="lg" text="Carregando dashboard..." />
-        </div>
-      </PageContainer>
-    );
-  }
 
   const hasData =
     metrics.contasAPagar > 0 ||
