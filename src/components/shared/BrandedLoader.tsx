@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Truck, Package } from "lucide-react";
+import { Truck, Package, Bike } from "lucide-react";
 
 interface BrandedLoaderProps {
   /** Full-page centered loader */
@@ -180,7 +180,7 @@ export function ButtonSpinner({ className }: { className?: string }) {
         animate={{ rotate: 360 }}
         transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
       >
-        <Truck size={18} className="text-primary-foreground" />
+        <Bike size={18} className="text-primary-foreground" />
       </motion.div>
       <motion.span
         className="text-primary-foreground text-sm font-medium"
