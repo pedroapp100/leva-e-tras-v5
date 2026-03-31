@@ -320,7 +320,7 @@ export default function SolicitacoesPage() {
       cell: (r) => <span className="tabular-nums text-sm text-muted-foreground">{fmtDate(r.data_solicitacao)}</span>,
     },
     {
-      key: "actions", header: "Ações", className: "w-36 text-right",
+      key: "actions", header: "Ações", className: "w-36 text-center",
       cell: (r) => renderActions(r),
     },
   ];
