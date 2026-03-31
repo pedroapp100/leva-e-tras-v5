@@ -35,6 +35,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +56,8 @@ export default function LoginPage() {
 
     const { success, user, error: loginError } = await login(normalizedEmail, password);
     if (success && user) {
+      setIsTransitioning(true);
+      await new Promise((r) => setTimeout(r, 4000));
       navigate(ROLE_REDIRECTS[user.role] || "/admin", { replace: true });
     } else {
       setError(loginError || "Erro desconhecido");
@@ -177,7 +180,7 @@ export default function LoginPage() {
               className="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
               disabled={loading || isBlocked}
             >
-              {loading ? (
+              {loading || isTransitioning ? (
                 <ButtonSpinner />
               ) : (
                 <>
