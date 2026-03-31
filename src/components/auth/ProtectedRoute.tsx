@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePermissions } from "@/hooks/usePermissions";
+import { BrandedLoader } from "@/components/shared/BrandedLoader";
 import type { Role } from "@/types/database";
 
 interface ProtectedRouteProps {
