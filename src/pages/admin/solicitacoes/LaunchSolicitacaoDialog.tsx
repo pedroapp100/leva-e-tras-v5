@@ -107,7 +107,7 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
 
   const resetForm = () => {
     setStep(0); setTipoColeta(""); setClienteId(""); setTipoOperacao(tiposAtivos[0]?.id ?? ""); setPontoColeta(""); setEntregadorId(""); setObservacoes("");
-    setRetroativoEnabled(false); setDataRetroativa(undefined);
+    setRetroativoEnabled(false); setDataRetroativa(undefined); setRetroativoConcluida(false);
     setRotas([emptyRota()]);
   };
 
