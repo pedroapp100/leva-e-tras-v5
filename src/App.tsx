@@ -34,6 +34,7 @@ import RelatoriosPage from "./pages/admin/RelatoriosPage";
 import LogsPage from "./pages/admin/LogsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
+import Index from "./pages/Index";
 import EntregasPage from "./pages/admin/EntregasPage";
 import CaixasEntregadoresPage from "./pages/admin/CaixasEntregadoresPage";
 
