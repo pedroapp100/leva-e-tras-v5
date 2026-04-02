@@ -398,6 +398,55 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                 />
               </div>
+
+              {/* Lançamento Retroativo */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <History className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <Label className="text-sm font-medium">Lançamento Retroativo</Label>
+                      <p className="text-xs text-muted-foreground">Criar solicitação com data passada</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={retroativoEnabled}
+                    onCheckedChange={(checked) => {
+                      setRetroativoEnabled(checked);
+                      if (!checked) setDataRetroativa(undefined);
+                    }}
+                  />
+                </div>
+                {retroativoEnabled && (
+                  <div className="space-y-2">
+                    <Label className="text-sm">Data da Solicitação *</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !dataRetroativa && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {dataRetroativa ? format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={dataRetroativa}
+                          onSelect={setDataRetroativa}
+                          disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
