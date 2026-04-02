@@ -256,12 +256,12 @@ export default function SolicitacoesPage() {
       ...s,
       entregador_id: newEntregadorId,
       status: "aceita" as StatusSolicitacao,
-      data_inicio: null,
+      data_inicio: s.status === "em_andamento" ? null : s.data_inicio,
       historico: [
         ...s.historico,
         {
           tipo: "aceita",
-          status_anterior: "em_andamento",
+          status_anterior: s.status,
           status_novo: "aceita",
           timestamp: new Date().toISOString(),
           descricao: `Transferida de ${previousName} para ${newName}: ${transferMotivo}`,
