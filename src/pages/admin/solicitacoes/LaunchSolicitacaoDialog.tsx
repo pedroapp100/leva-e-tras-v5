@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { MOCK_CLIENTES } from "@/data/mockClientes";
 import { MOCK_BAIRROS, MOCK_TAXAS_EXTRAS, MOCK_FORMAS_PAGAMENTO, MOCK_TIPOS_OPERACAO } from "@/data/mockSettings";
 import { useGlobalStore } from "@/contexts/GlobalStore";
@@ -6,11 +8,15 @@ import { MOCK_ENTREGADORES } from "@/data/mockEntregadores";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Plus, CheckCircle, ChevronRight, ChevronLeft, Briefcase, Store, Package, RotateCcw, MapPin, CircleCheckBig, MapPinned, Receipt, Wallet } from "lucide-react";
+import { Plus, CheckCircle, ChevronRight, ChevronLeft, Briefcase, Store, Package, RotateCcw, MapPin, CircleCheckBig, MapPinned, Receipt, Wallet, CalendarIcon, History } from "lucide-react";
 import { toast } from "sonner";
 import { RotaCard, getRotaSubtotalOperacao, getRotaTotalEntregador } from "./RotaCard";
 import type { RotaForm } from "./RotaCard";
@@ -70,7 +76,7 @@ const TIPOS_COLETA = [
 interface LaunchSolicitacaoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { clienteId: string; tipoOperacao: string; tipoColeta: TipoColeta; pontoColeta: string; entregadorId?: string; rotas: RotaForm[] }) => void;
+  onSubmit: (data: { clienteId: string; tipoOperacao: string; tipoColeta: TipoColeta; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; rotas: RotaForm[] }) => void;
 }
 
 export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: LaunchSolicitacaoDialogProps) {
@@ -93,12 +99,14 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
   const [pontoColeta, setPontoColeta] = useState("");
   const [entregadorId, setEntregadorId] = useState("");
   const [observacoes, setObservacoes] = useState("");
-
+  const [retroativoEnabled, setRetroativoEnabled] = useState(false);
+  const [dataRetroativa, setDataRetroativa] = useState<Date | undefined>();
   // Step 2
   const [rotas, setRotas] = useState<RotaForm[]>([emptyRota()]);
 
   const resetForm = () => {
     setStep(0); setTipoColeta(""); setClienteId(""); setTipoOperacao(tiposAtivos[0]?.id ?? ""); setPontoColeta(""); setEntregadorId(""); setObservacoes("");
+    setRetroativoEnabled(false); setDataRetroativa(undefined);
     setRotas([emptyRota()]);
   };
 
@@ -204,7 +212,16 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
   };
 
   const handleSubmit = () => {
-    onSubmit({ clienteId, tipoOperacao, tipoColeta: tipoColeta as TipoColeta, pontoColeta, entregadorId: entregadorId || undefined, rotas });
+    if (retroativoEnabled && !dataRetroativa) {
+      toast.error("Selecione a data retroativa.");
+      return;
+    }
+    onSubmit({
+      clienteId, tipoOperacao, tipoColeta: tipoColeta as TipoColeta, pontoColeta,
+      entregadorId: entregadorId || undefined,
+      dataRetroativa: retroativoEnabled && dataRetroativa ? dataRetroativa.toISOString() : undefined,
+      rotas,
+    });
     resetForm();
     onOpenChange(false);
   };
@@ -390,6 +407,55 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                 />
               </div>
+
+              {/* Lançamento Retroativo */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <History className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <Label className="text-sm font-medium">Lançamento Retroativo</Label>
+                      <p className="text-xs text-muted-foreground">Criar solicitação com data passada</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={retroativoEnabled}
+                    onCheckedChange={(checked) => {
+                      setRetroativoEnabled(checked);
+                      if (!checked) setDataRetroativa(undefined);
+                    }}
+                  />
+                </div>
+                {retroativoEnabled && (
+                  <div className="space-y-2">
+                    <Label className="text-sm">Data da Solicitação *</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !dataRetroativa && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {dataRetroativa ? format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={dataRetroativa}
+                          onSelect={setDataRetroativa}
+                          disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -458,8 +524,19 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                       <span className="text-muted-foreground">Entregador</span>
                       <span className="font-medium">{entregadoresAtivos.find((e) => e.id === entregadorId)?.nome}</span>
                     </>
-                  )}
+                   )}
                   <span className="text-muted-foreground">Rotas</span><span>{rotas.length}</span>
+                  {retroativoEnabled && dataRetroativa && (
+                    <>
+                      <span className="text-muted-foreground">Data Retroativa</span>
+                      <span className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] h-5 border-amber-500/30 text-amber-600">
+                          <History className="h-3 w-3 mr-1" /> Retroativo
+                        </Badge>
+                        {format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR })}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 
