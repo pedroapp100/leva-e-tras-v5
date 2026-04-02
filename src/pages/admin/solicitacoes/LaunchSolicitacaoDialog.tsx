@@ -221,6 +221,7 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
       clienteId, tipoOperacao, tipoColeta: tipoColeta as TipoColeta, pontoColeta,
       entregadorId: entregadorId || undefined,
       dataRetroativa: retroativoEnabled && dataRetroativa ? dataRetroativa.toISOString() : undefined,
+      retroativoConcluida: retroativoEnabled && retroativoConcluida ? true : undefined,
       rotas,
     });
     resetForm();
