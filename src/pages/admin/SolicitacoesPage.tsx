@@ -62,6 +62,9 @@ export default function SolicitacoesPage() {
   const [launchOpen, setLaunchOpen] = useState(false);
   const [viewSolicitacao, setViewSolicitacao] = useState<Solicitacao | null>(null);
   const [assignTarget, setAssignTarget] = useState<Solicitacao | null>(null);
+  const [transferTarget, setTransferTarget] = useState<Solicitacao | null>(null);
+  const [transferJustify, setTransferJustify] = useState<Solicitacao | null>(null);
+  const [transferMotivo, setTransferMotivo] = useState("");
   const [conciliacaoTarget, setConciliacaoTarget] = useState<Solicitacao | null>(null);
   const [justifyTarget, setJustifyTarget] = useState<{ sol: Solicitacao; action: "cancelar" | "rejeitar" } | null>(null);
   const [simuladorOpen, setSimuladorOpen] = useState(false);
