@@ -13,8 +13,8 @@ interface AssignDriverDialogProps {
   excludeEntregadorId?: string | null;
 }
 
-export function AssignDriverDialog({ open, onOpenChange, onAssign }: AssignDriverDialogProps) {
-  const ativos = MOCK_ENTREGADORES.filter((e) => e.status === "ativo");
+export function AssignDriverDialog({ open, onOpenChange, onAssign, excludeEntregadorId }: AssignDriverDialogProps) {
+  const ativos = MOCK_ENTREGADORES.filter((e) => e.status === "ativo" && e.id !== excludeEntregadorId);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
