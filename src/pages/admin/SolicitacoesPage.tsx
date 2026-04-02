@@ -324,6 +324,7 @@ export default function SolicitacoesPage() {
         )}
         {sol.status === "em_andamento" && (
           <PermissionGuard permission="solicitacoes.edit">
+            <ActionButton tooltip="Transferir entregador" icon={ArrowLeftRight} onClick={() => setTransferJustify(sol)} variant="info" />
             <ActionButton tooltip="Concluir entrega" icon={CheckCheck} onClick={() => setConciliacaoTarget(sol)} variant="success" />
           </PermissionGuard>
         )}
