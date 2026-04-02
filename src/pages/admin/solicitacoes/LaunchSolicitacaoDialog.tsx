@@ -76,7 +76,7 @@ const TIPOS_COLETA = [
 interface LaunchSolicitacaoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { clienteId: string; tipoOperacao: string; tipoColeta: TipoColeta; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; rotas: RotaForm[] }) => void;
+  onSubmit: (data: { clienteId: string; tipoOperacao: string; tipoColeta: TipoColeta; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; retroativoConcluida?: boolean; rotas: RotaForm[] }) => void;
 }
 
 export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: LaunchSolicitacaoDialogProps) {
@@ -101,12 +101,13 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
   const [observacoes, setObservacoes] = useState("");
   const [retroativoEnabled, setRetroativoEnabled] = useState(false);
   const [dataRetroativa, setDataRetroativa] = useState<Date | undefined>();
+  const [retroativoConcluida, setRetroativoConcluida] = useState(false);
   // Step 2
   const [rotas, setRotas] = useState<RotaForm[]>([emptyRota()]);
 
   const resetForm = () => {
     setStep(0); setTipoColeta(""); setClienteId(""); setTipoOperacao(tiposAtivos[0]?.id ?? ""); setPontoColeta(""); setEntregadorId(""); setObservacoes("");
-    setRetroativoEnabled(false); setDataRetroativa(undefined);
+    setRetroativoEnabled(false); setDataRetroativa(undefined); setRetroativoConcluida(false);
     setRotas([emptyRota()]);
   };
 
@@ -220,6 +221,7 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
       clienteId, tipoOperacao, tipoColeta: tipoColeta as TipoColeta, pontoColeta,
       entregadorId: entregadorId || undefined,
       dataRetroativa: retroativoEnabled && dataRetroativa ? dataRetroativa.toISOString() : undefined,
+      retroativoConcluida: retroativoEnabled && retroativoConcluida ? true : undefined,
       rotas,
     });
     resetForm();
@@ -427,33 +429,46 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                   />
                 </div>
                 {retroativoEnabled && (
-                  <div className="space-y-2">
-                    <Label className="text-sm">Data da Solicitação *</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !dataRetroativa && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {dataRetroativa ? format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={dataRetroativa}
-                          onSelect={setDataRetroativa}
-                          disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Data da Solicitação *</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !dataRetroativa && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {dataRetroativa ? format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={dataRetroativa}
+                            onSelect={setDataRetroativa}
+                            disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-md border border-border p-3">
+                      <div>
+                        <Label className="text-sm font-medium">Lançar como Concluída</Label>
+                        <p className="text-xs text-muted-foreground">Preenche automaticamente início e conclusão</p>
+                      </div>
+                      <Switch
+                        checked={retroativoConcluida}
+                        onCheckedChange={setRetroativoConcluida}
+                      />
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -535,6 +550,16 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                         </Badge>
                         {format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR })}
                       </span>
+                      {retroativoConcluida && (
+                        <>
+                          <span className="text-muted-foreground">Status Inicial</span>
+                          <span>
+                            <Badge variant="default" className="text-[10px] h-5">
+                              <CheckCircle className="h-3 w-3 mr-1" /> Concluída
+                            </Badge>
+                          </span>
+                        </>
+                      )}
                     </>
                   )}
                 </div>

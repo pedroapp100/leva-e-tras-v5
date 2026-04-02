@@ -205,6 +205,7 @@ export interface Solicitacao {
   valor_total_taxas?: number | null;
   valor_total_repasse?: number | null;
   justificativa?: string | null;
+  retroativo?: boolean;
   historico: HistoricoEvento[];
   created_at: string;
   updated_at: string;
