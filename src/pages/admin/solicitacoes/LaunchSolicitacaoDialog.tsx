@@ -429,45 +429,46 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                   />
                 </div>
                 {retroativoEnabled && (
-                  <div className="space-y-2">
-                    <Label className="text-sm">Data da Solicitação *</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !dataRetroativa && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {dataRetroativa ? format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={dataRetroativa}
-                          onSelect={setDataRetroativa}
-                          disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-
-                  {/* Lançar como Concluída */}
-                  <div className="flex items-center justify-between rounded-md border border-border p-3">
-                    <div>
-                      <Label className="text-sm font-medium">Lançar como Concluída</Label>
-                      <p className="text-xs text-muted-foreground">Preenche automaticamente início e conclusão</p>
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Data da Solicitação *</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !dataRetroativa && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {dataRetroativa ? format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={dataRetroativa}
+                            onSelect={setDataRetroativa}
+                            disabled={(date) => date > new Date() || date < new Date("2020-01-01")}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
-                    <Switch
-                      checked={retroativoConcluida}
-                      onCheckedChange={setRetroativoConcluida}
-                    />
-                  </div>
+
+                    <div className="flex items-center justify-between rounded-md border border-border p-3">
+                      <div>
+                        <Label className="text-sm font-medium">Lançar como Concluída</Label>
+                        <p className="text-xs text-muted-foreground">Preenche automaticamente início e conclusão</p>
+                      </div>
+                      <Switch
+                        checked={retroativoConcluida}
+                        onCheckedChange={setRetroativoConcluida}
+                      />
+                    </div>
+                  </>
                 )}
               </div>
             </div>
