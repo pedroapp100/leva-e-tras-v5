@@ -167,7 +167,7 @@ export default function SolicitacoesPage() {
         { tipo: "criacao", timestamp: now, descricao: "Solicitação criada" },
         ...(data.entregadorId ? [{ tipo: "aceita", status_anterior: "pendente", status_novo: "aceita", timestamp: now, descricao: `Atribuída a ${getEntregadorName(data.entregadorId)}` }] : []),
       ],
-      created_at: now, updated_at: now,
+      created_at: now, updated_at: new Date().toISOString(),
     };
     addSolicitacao(newSol, novasRotas);
     toast.success(`Solicitação ${codigo} criada!`);
