@@ -212,7 +212,16 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
   };
 
   const handleSubmit = () => {
-    onSubmit({ clienteId, tipoOperacao, tipoColeta: tipoColeta as TipoColeta, pontoColeta, entregadorId: entregadorId || undefined, rotas });
+    if (retroativoEnabled && !dataRetroativa) {
+      toast.error("Selecione a data retroativa.");
+      return;
+    }
+    onSubmit({
+      clienteId, tipoOperacao, tipoColeta: tipoColeta as TipoColeta, pontoColeta,
+      entregadorId: entregadorId || undefined,
+      dataRetroativa: retroativoEnabled && dataRetroativa ? dataRetroativa.toISOString() : undefined,
+      rotas,
+    });
     resetForm();
     onOpenChange(false);
   };
