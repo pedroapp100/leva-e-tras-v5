@@ -318,7 +318,21 @@ export default function SolicitacoesPage() {
     },
     {
       key: "data_solicitacao", header: "Data", sortable: true,
-      cell: (r) => <span className="tabular-nums text-sm text-muted-foreground">{fmtDate(r.data_solicitacao)}</span>,
+      cell: (r) => (
+        <div className="flex items-center gap-1.5">
+          <span className="tabular-nums text-sm text-muted-foreground">{fmtDate(r.data_solicitacao)}</span>
+          {r.retroativo && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-amber-500/30 text-amber-600 gap-0.5">
+                  <History className="h-3 w-3" />
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent side="top"><p>Lançamento retroativo</p></TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      ),
     },
     {
       key: "actions", header: "Ações", className: "w-36 text-center",
