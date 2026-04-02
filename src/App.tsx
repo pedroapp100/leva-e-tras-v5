@@ -60,7 +60,7 @@ const queryClient = new QueryClient();
 
 function RootRedirect() {
   const { user, role } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Index />;
   return <Navigate to={ROLE_REDIRECTS[role!] || "/admin"} replace />;
 }
 
