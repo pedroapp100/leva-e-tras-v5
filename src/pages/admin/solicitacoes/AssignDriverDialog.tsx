@@ -10,6 +10,7 @@ interface AssignDriverDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAssign: (entregadorId: string) => void;
+  excludeEntregadorId?: string | null;
 }
 
 export function AssignDriverDialog({ open, onOpenChange, onAssign }: AssignDriverDialogProps) {
