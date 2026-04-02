@@ -16,11 +16,11 @@ interface ProtectedRouteProps {
  * Se sem permissão → redirect para rota padrão do role
  */
 export function ProtectedRoute({ children, allowedRoles, requiredPermission }: ProtectedRouteProps) {
-  const { user, role, loading } = useAuth();
+  const { user, role, isReady } = useAuth();
   const { hasPermission } = usePermissions();
 
-  if (loading) {
-    return <BrandedLoader fullPage size="lg" text="Autenticando..." />;
+  if (!isReady) {
+    return <BrandedLoader fullPage size="lg" text="Carregando..." />;
   }
 
   if (!user) {
