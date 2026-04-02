@@ -34,6 +34,7 @@ import RelatoriosPage from "./pages/admin/RelatoriosPage";
 import LogsPage from "./pages/admin/LogsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
+import Index from "./pages/Index";
 import EntregasPage from "./pages/admin/EntregasPage";
 import CaixasEntregadoresPage from "./pages/admin/CaixasEntregadoresPage";
 
@@ -59,7 +60,7 @@ const queryClient = new QueryClient();
 
 function RootRedirect() {
   const { user, role } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Index />;
   return <Navigate to={ROLE_REDIRECTS[role!] || "/admin"} replace />;
 }
 
@@ -84,6 +85,7 @@ const App = () => (
                   <Routes>
                   {/* Public */}
                   <Route path="/" element={<RootRedirect />} />
+                  <Route path="/landing" element={<Index />} />
                   <Route path="/entregas-moto" element={<PlaceholderPage title="Entregas Moto" />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/login/reset" element={<ForgotPasswordPage />} />
