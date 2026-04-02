@@ -524,8 +524,19 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                       <span className="text-muted-foreground">Entregador</span>
                       <span className="font-medium">{entregadoresAtivos.find((e) => e.id === entregadorId)?.nome}</span>
                     </>
-                  )}
+                   )}
                   <span className="text-muted-foreground">Rotas</span><span>{rotas.length}</span>
+                  {retroativoEnabled && dataRetroativa && (
+                    <>
+                      <span className="text-muted-foreground">Data Retroativa</span>
+                      <span className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] h-5 border-amber-500/30 text-amber-600">
+                          <History className="h-3 w-3 mr-1" /> Retroativo
+                        </Badge>
+                        {format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR })}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 
