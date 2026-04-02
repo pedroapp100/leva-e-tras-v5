@@ -499,6 +499,12 @@ export default function SolicitacoesPage() {
           onOpenChange={(open) => !open && setAssignTarget(null)}
           onAssign={(entregadorId) => { if (assignTarget) handleAssign(assignTarget.id, entregadorId); setAssignTarget(null); }}
         />
+        <AssignDriverDialog
+          open={!!transferTarget}
+          onOpenChange={(open) => { if (!open) { setTransferTarget(null); setTransferMotivo(""); } }}
+          onAssign={(entregadorId) => handleTransfer(entregadorId)}
+          excludeEntregadorId={transferTarget?.entregador_id}
+        />
         {conciliacaoTarget && (
           <ConciliacaoDialog
             open={!!conciliacaoTarget}
