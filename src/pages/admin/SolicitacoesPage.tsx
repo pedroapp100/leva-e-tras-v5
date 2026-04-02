@@ -127,9 +127,10 @@ export default function SolicitacoesPage() {
   };
 
   // Actions
-  const handleLaunch = (data: { clienteId: string; tipoOperacao: string; tipoColeta?: string; pontoColeta: string; entregadorId?: string; rotas: { id?: string; bairro_destino_id?: string; responsavel?: string; telefone?: string; observacoes?: string; receber_do_cliente?: boolean; valor_a_receber?: number; taxa_resolvida: number | null; taxas_extras?: { nome: string; valor: number }[] }[] }) => {
-    const now = new Date().toISOString();
-    const codigo = `LT-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${String(solicitacoes.length + 1).padStart(5, "0")}`;
+  const handleLaunch = (data: { clienteId: string; tipoOperacao: string; tipoColeta?: string; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; rotas: { id?: string; bairro_destino_id?: string; responsavel?: string; telefone?: string; observacoes?: string; receber_do_cliente?: boolean; valor_a_receber?: number; taxa_resolvida: number | null; taxas_extras?: { nome: string; valor: number }[] }[] }) => {
+    const now = data.dataRetroativa ?? new Date().toISOString();
+    const dateForCode = data.dataRetroativa ? data.dataRetroativa.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    const codigo = `LT-${dateForCode.replace(/-/g, "")}-${String(solicitacoes.length + 1).padStart(5, "0")}`;
     
     // Calculate valor_total_taxas from routes
     const valorTotalTaxas = data.rotas.reduce((sum, r) => {
