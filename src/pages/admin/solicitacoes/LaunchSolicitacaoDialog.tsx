@@ -101,6 +101,7 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
   const [observacoes, setObservacoes] = useState("");
   const [retroativoEnabled, setRetroativoEnabled] = useState(false);
   const [dataRetroativa, setDataRetroativa] = useState<Date | undefined>();
+  const [retroativoConcluida, setRetroativoConcluida] = useState(false);
   // Step 2
   const [rotas, setRotas] = useState<RotaForm[]>([emptyRota()]);
 
