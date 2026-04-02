@@ -34,7 +34,6 @@ import FinanceiroPage from "./pages/admin/FinanceiroPage";
 import RelatoriosPage from "./pages/admin/RelatoriosPage";
 import LogsPage from "./pages/admin/LogsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
-import PlaceholderPage from "./pages/PlaceholderPage";
 import Index from "./pages/Index";
 import EntregasPage from "./pages/admin/EntregasPage";
 import CaixasEntregadoresPage from "./pages/admin/CaixasEntregadoresPage";
@@ -87,7 +86,6 @@ const App = () => (
                   <Routes>
                   {/* Public */}
                   <Route path="/" element={<RootRedirect />} />
-                  <Route path="/entregas-moto" element={<PlaceholderPage title="Entregas Moto" />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/login/reset" element={<ForgotPasswordPage />} />
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
