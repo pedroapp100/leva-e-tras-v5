@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Plus, CheckCircle, ChevronRight, ChevronLeft, Briefcase, Store, Package, RotateCcw, MapPin, CircleCheckBig, MapPinned, Receipt, Wallet } from "lucide-react";
+import { Plus, CheckCircle, ChevronRight, ChevronLeft, Briefcase, Store, Package, RotateCcw, MapPin, CircleCheckBig, MapPinned, Receipt, Wallet, CalendarIcon, History } from "lucide-react";
 import { toast } from "sonner";
 import { RotaCard, getRotaSubtotalOperacao, getRotaTotalEntregador } from "./RotaCard";
 import type { RotaForm } from "./RotaCard";
