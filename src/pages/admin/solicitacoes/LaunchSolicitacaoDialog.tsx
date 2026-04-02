@@ -550,6 +550,16 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                         </Badge>
                         {format(dataRetroativa, "dd/MM/yyyy", { locale: ptBR })}
                       </span>
+                      {retroativoConcluida && (
+                        <>
+                          <span className="text-muted-foreground">Status Inicial</span>
+                          <span>
+                            <Badge variant="default" className="text-[10px] h-5">
+                              <CheckCircle className="h-3 w-3 mr-1" /> Concluída
+                            </Badge>
+                          </span>
+                        </>
+                      )}
                     </>
                   )}
                 </div>

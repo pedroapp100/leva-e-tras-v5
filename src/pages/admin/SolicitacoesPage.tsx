@@ -127,12 +127,11 @@ export default function SolicitacoesPage() {
   };
 
   // Actions
-  const handleLaunch = (data: { clienteId: string; tipoOperacao: string; tipoColeta?: string; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; rotas: { id?: string; bairro_destino_id?: string; responsavel?: string; telefone?: string; observacoes?: string; receber_do_cliente?: boolean; valor_a_receber?: number; taxa_resolvida: number | null; taxas_extras?: { nome: string; valor: number }[] }[] }) => {
+  const handleLaunch = (data: { clienteId: string; tipoOperacao: string; tipoColeta?: string; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; retroativoConcluida?: boolean; rotas: { id?: string; bairro_destino_id?: string; responsavel?: string; telefone?: string; observacoes?: string; receber_do_cliente?: boolean; valor_a_receber?: number; taxa_resolvida: number | null; taxas_extras?: { nome: string; valor: number }[] }[] }) => {
     const now = data.dataRetroativa ?? new Date().toISOString();
     const dateForCode = data.dataRetroativa ? data.dataRetroativa.slice(0, 10) : new Date().toISOString().slice(0, 10);
     const codigo = `LT-${dateForCode.replace(/-/g, "")}-${String(solicitacoes.length + 1).padStart(5, "0")}`;
     
-    // Calculate valor_total_taxas from routes
     const valorTotalTaxas = data.rotas.reduce((sum, r) => {
       const taxa = r.taxa_resolvida ?? 0;
       const extras = (r.taxas_extras ?? []).reduce((s, e) => s + e.valor, 0);
@@ -140,8 +139,8 @@ export default function SolicitacoesPage() {
     }, 0);
 
     const solId = `sol-${Date.now()}`;
+    const isRetroativoConcluida = !!data.retroativoConcluida;
 
-    // Create Rota objects from RotaForm data
     const novasRotas: Rota[] = data.rotas.map((r, idx) => ({
       id: r.id || `rota-${Date.now()}-${idx}`,
       solicitacao_id: solId,
@@ -153,20 +152,43 @@ export default function SolicitacoesPage() {
       valor_a_receber: r.valor_a_receber ?? null,
       taxa_resolvida: r.taxa_resolvida,
       regra_preco_id: null,
-      status: "ativa" as const,
+      status: isRetroativoConcluida ? "concluida" as const : "ativa" as const,
     }));
+
+    // Determine status and dates based on retroativoConcluida
+    let status: StatusSolicitacao = data.entregadorId ? "aceita" : "pendente";
+    let dataInicio: string | null = null;
+    let dataConclusao: string | null = null;
+    const historico: any[] = [
+      { tipo: "criacao", timestamp: now, descricao: "Solicitação criada (retroativo)" },
+    ];
+
+    if (isRetroativoConcluida) {
+      status = "concluida";
+      // Simulate: started 30min after creation, concluded 60min after
+      const baseDate = new Date(now);
+      dataInicio = new Date(baseDate.getTime() + 30 * 60000).toISOString();
+      dataConclusao = new Date(baseDate.getTime() + 60 * 60000).toISOString();
+      if (data.entregadorId) {
+        historico.push({ tipo: "aceita", status_anterior: "pendente", status_novo: "aceita", timestamp: now, descricao: `Atribuída a ${getEntregadorName(data.entregadorId)}` });
+      }
+      historico.push({ tipo: "em_andamento", status_anterior: "aceita", status_novo: "em_andamento", timestamp: dataInicio, descricao: "Entregador iniciou coleta" });
+      historico.push({ tipo: "concluida", status_anterior: "em_andamento", status_novo: "concluida", timestamp: dataConclusao, descricao: "Entrega concluída (retroativo)" });
+    } else {
+      if (data.entregadorId) {
+        historico.push({ tipo: "aceita", status_anterior: "pendente", status_novo: "aceita", timestamp: now, descricao: `Atribuída a ${getEntregadorName(data.entregadorId)}` });
+      }
+    }
 
     const newSol: Solicitacao = {
       id: solId, codigo, cliente_id: data.clienteId,
       entregador_id: data.entregadorId || null,
-      status: data.entregadorId ? "aceita" : "pendente",
+      status,
       tipo_operacao: data.tipoOperacao as Solicitacao["tipo_operacao"],
-      ponto_coleta: data.pontoColeta, data_solicitacao: now, data_inicio: null, data_conclusao: null,
+      ponto_coleta: data.pontoColeta, data_solicitacao: now, data_inicio: dataInicio, data_conclusao: dataConclusao,
       valor_total_taxas: valorTotalTaxas, valor_total_repasse: null, justificativa: null,
-      historico: [
-        { tipo: "criacao", timestamp: now, descricao: "Solicitação criada" },
-        ...(data.entregadorId ? [{ tipo: "aceita", status_anterior: "pendente", status_novo: "aceita", timestamp: now, descricao: `Atribuída a ${getEntregadorName(data.entregadorId)}` }] : []),
-      ],
+      retroativo: !!data.dataRetroativa,
+      historico,
       created_at: now, updated_at: new Date().toISOString(),
     };
     addSolicitacao(newSol, novasRotas);
