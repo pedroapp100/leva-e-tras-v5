@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from "react";
-import type { Role } from "@/types/database";
+import { createContext, useContext, useState, useCallback, type ReactNode, useEffect, useRef } from "react";
+import type { Role, UserAccount } from "@/types/database";
 import { getPermissionsForRole } from "@/lib/permissions";
 import { useUserStore } from "@/data/mockUsers";
 
@@ -33,14 +33,119 @@ const ERROR_MESSAGES: Record<string, string> = {
   unknown: "Erro inesperado. Tente novamente.",
 };
 
+const AUTH_STORAGE_KEY = "let-auth-user";
+
+type SessionPersistence = "local" | "session";
+
+function mapAccountToAuthUser(account: UserAccount): AuthUser {
+  return {
+    id: account.id,
+    email: account.email,
+    nome: account.nome,
+    role: account.role,
+    cargo_id: account.cargo_id ?? undefined,
+    avatarUrl: account.avatarUrl ?? undefined,
+    permissions: getPermissionsForRole(account.role, account.cargo_id ?? undefined),
+  };
+}
+
+function isRole(value: unknown): value is Role {
+  return value === "admin" || value === "cliente" || value === "entregador";
+}
+
+function sanitizeStoredUser(value: unknown): AuthUser | null {
+  if (!value || typeof value !== "object") return null;
+
+  const candidate = value as Partial<AuthUser>;
+  if (
+    typeof candidate.id !== "string" ||
+    typeof candidate.email !== "string" ||
+    typeof candidate.nome !== "string" ||
+    !isRole(candidate.role)
+  ) {
+    return null;
+  }
+
+  const cargoId = typeof candidate.cargo_id === "string" ? candidate.cargo_id : undefined;
+  const avatarUrl = typeof candidate.avatarUrl === "string" ? candidate.avatarUrl : undefined;
+
+  return {
+    id: candidate.id,
+    email: candidate.email,
+    nome: candidate.nome,
+    role: candidate.role,
+    cargo_id: cargoId,
+    avatarUrl,
+    permissions: getPermissionsForRole(candidate.role, cargoId),
+  };
+}
+
+function readStoredUser(storage: Storage): AuthUser | null {
+  try {
+    const raw = storage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+
+    const user = sanitizeStoredUser(JSON.parse(raw));
+    if (!user) {
+      storage.removeItem(AUTH_STORAGE_KEY);
+    }
+
+    return user;
+  } catch {
+    storage.removeItem(AUTH_STORAGE_KEY);
+    return null;
+  }
+}
+
+function loadStoredAuth(): { user: AuthUser | null; persistence: SessionPersistence | null } {
+  if (typeof window === "undefined") {
+    return { user: null, persistence: null };
+  }
+
+  const localUser = readStoredUser(window.localStorage);
+  if (localUser) return { user: localUser, persistence: "local" };
+
+  const sessionUser = readStoredUser(window.sessionStorage);
+  if (sessionUser) return { user: sessionUser, persistence: "session" };
+
+  return { user: null, persistence: null };
+}
+
+function clearStoredAuth() {
+  if (typeof window === "undefined") return;
+
+  window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  window.sessionStorage.removeItem(AUTH_STORAGE_KEY);
+}
+
+function persistStoredAuth(user: AuthUser, persistence: SessionPersistence) {
+  if (typeof window === "undefined") return;
+
+  clearStoredAuth();
+
+  const storage = persistence === "local" ? window.localStorage : window.sessionStorage;
+  storage.setItem(
+    AUTH_STORAGE_KEY,
+    JSON.stringify({
+      id: user.id,
+      email: user.email,
+      nome: user.nome,
+      role: user.role,
+      cargo_id: user.cargo_id ?? null,
+      avatarUrl: user.avatarUrl ?? null,
+    })
+  );
+}
+
 // ── Context type ──
 interface AuthContextType {
   user: AuthUser | null;
   role: Role | null;
+  isReady: boolean;
   loading: boolean;
   isBlocked: boolean;
   remainingAttempts: number;
-  login: (email: string, password: string) => Promise<{ success: boolean; user?: AuthUser; error?: string }>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; user?: AuthUser; error?: string }>;
   logout: () => void;
   changeCargo: (cargoId: string) => void;
   requestPasswordReset: (email: string) => Promise<{ success: boolean; error?: string }>;
@@ -60,6 +165,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { findByEmail } = useUserStore();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [sessionPersistence, setSessionPersistence] = useState<SessionPersistence | null>(null);
   const [loginAttempts, setLoginAttempts] = useState<LoginAttempt>({ count: 0, firstAttemptAt: 0 });
   const transitionTimeoutRef = useRef<number | null>(null);
 
@@ -71,10 +178,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const { user: storedUser, persistence } = loadStoredAuth();
+
+    if (storedUser && persistence) {
+      setUser(storedUser);
+      setSessionPersistence(persistence);
+    }
+
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
     return () => {
       clearTransitionTimeout();
     };
   }, [clearTransitionTimeout]);
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    if (!user || !sessionPersistence) {
+      clearStoredAuth();
+      return;
+    }
+
+    persistStoredAuth(user, sessionPersistence);
+  }, [isReady, user, sessionPersistence]);
 
   const isBlocked = (() => {
     if (loginAttempts.count < MAX_ATTEMPTS) return false;
@@ -84,7 +213,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const remainingAttempts = Math.max(0, MAX_ATTEMPTS - loginAttempts.count);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string, rememberMe = false) => {
     if (isBlocked) {
       return { success: false, error: ERROR_MESSAGES.too_many_attempts };
     }
@@ -110,16 +239,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: ERROR_MESSAGES.user_inactive };
     }
 
-    // Login success — inject permissions based on role + cargo
-    const userWithPerms: AuthUser = {
-      id: account.id,
-      email: account.email,
-      nome: account.nome,
-      role: account.role,
-      cargo_id: account.cargo_id ?? undefined,
-      avatarUrl: account.avatarUrl ?? undefined,
-      permissions: getPermissionsForRole(account.role, account.cargo_id ?? undefined),
-    };
+    const userWithPerms = mapAccountToAuthUser(account);
+    const persistence: SessionPersistence = rememberMe ? "local" : "session";
+
+    persistStoredAuth(userWithPerms, persistence);
+    setSessionPersistence(persistence);
     setUser(userWithPerms);
     setLoginAttempts({ count: 0, firstAttemptAt: 0 });
 
@@ -131,7 +255,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     clearTransitionTimeout();
+    clearStoredAuth();
     setLoading(false);
+    setSessionPersistence(null);
     setUser(null);
   }, [clearTransitionTimeout]);
 
@@ -167,6 +293,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         role: user?.role ?? null,
+          isReady,
         loading,
         isBlocked,
         remainingAttempts,

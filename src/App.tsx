@@ -10,6 +10,7 @@ import { CaixaStoreProvider } from "@/contexts/CaixaStore";
 import { LogStoreProvider } from "@/contexts/LogStore";
 import { UserStoreProvider } from "@/data/mockUsers";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import { BrandedLoader } from "@/components/shared/BrandedLoader";
 import { OnboardingProvider, OnboardingOverlay, OnboardingTooltip, WelcomeModal } from "@/onboarding";
 
 // Layouts
@@ -59,7 +60,8 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function RootRedirect() {
-  const { user, role } = useAuth();
+  const { user, role, isReady } = useAuth();
+  if (!isReady) return <BrandedLoader fullPage size="lg" text="Carregando..." />;
   if (!user) return <Index />;
   return <Navigate to={ROLE_REDIRECTS[role!] || "/admin"} replace />;
 }

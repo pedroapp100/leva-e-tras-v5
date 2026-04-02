@@ -53,7 +53,7 @@ export default function LoginPage() {
       return;
     }
 
-    const { success, user, error: loginError } = await login(normalizedEmail, password);
+    const { success, user, error: loginError } = await login(normalizedEmail, password, rememberMe);
     if (success && user) {
       navigate(ROLE_REDIRECTS[user.role] || "/admin", { replace: true });
     } else {
