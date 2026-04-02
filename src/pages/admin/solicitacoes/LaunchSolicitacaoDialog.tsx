@@ -76,7 +76,7 @@ const TIPOS_COLETA = [
 interface LaunchSolicitacaoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { clienteId: string; tipoOperacao: string; tipoColeta: TipoColeta; pontoColeta: string; entregadorId?: string; rotas: RotaForm[] }) => void;
+  onSubmit: (data: { clienteId: string; tipoOperacao: string; tipoColeta: TipoColeta; pontoColeta: string; entregadorId?: string; dataRetroativa?: string; rotas: RotaForm[] }) => void;
 }
 
 export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: LaunchSolicitacaoDialogProps) {
