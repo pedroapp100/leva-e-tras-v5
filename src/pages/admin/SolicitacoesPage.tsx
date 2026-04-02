@@ -246,6 +246,39 @@ export default function SolicitacoesPage() {
     setJustifyTarget(null);
   };
 
+  const handleTransfer = (newEntregadorId: string) => {
+    if (!transferTarget) return;
+    const sol = transferTarget;
+    const previousEntregadorId = sol.entregador_id;
+    const previousName = getEntregadorName(previousEntregadorId);
+    const newName = getEntregadorName(newEntregadorId);
+    updateSolicitacao(sol.id, (s) => ({
+      ...s,
+      entregador_id: newEntregadorId,
+      status: "aceita" as StatusSolicitacao,
+      data_inicio: null,
+      historico: [
+        ...s.historico,
+        {
+          tipo: "aceita",
+          status_anterior: "em_andamento",
+          status_novo: "aceita",
+          timestamp: new Date().toISOString(),
+          descricao: `Transferida de ${previousName} para ${newName}: ${transferMotivo}`,
+        },
+      ],
+    }));
+    toast.success(`Solicitação transferida para ${newName}!`);
+    addNotification({
+      title: "Corrida transferida",
+      message: `Solicitação ${sol.codigo} foi transferida de ${previousName} para ${newName}.`,
+      type: "info",
+      link: "/entregador/solicitacoes",
+    });
+    setTransferTarget(null);
+    setTransferMotivo("");
+  };
+
   const ActionButton = ({ tooltip, icon: Icon, onClick, variant = "default" }: { tooltip: string; icon: React.ElementType; onClick: (e: React.MouseEvent) => void; variant?: "default" | "destructive" | "success" | "info" }) => {
     const variantStyles: Record<string, string> = {
       default: "text-foreground hover:bg-accent",
