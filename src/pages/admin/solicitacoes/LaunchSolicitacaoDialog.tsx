@@ -456,6 +456,18 @@ export function LaunchSolicitacaoDialog({ open, onOpenChange, onSubmit }: Launch
                       </PopoverContent>
                     </Popover>
                   </div>
+
+                  {/* Lançar como Concluída */}
+                  <div className="flex items-center justify-between rounded-md border border-border p-3">
+                    <div>
+                      <Label className="text-sm font-medium">Lançar como Concluída</Label>
+                      <p className="text-xs text-muted-foreground">Preenche automaticamente início e conclusão</p>
+                    </div>
+                    <Switch
+                      checked={retroativoConcluida}
+                      onCheckedChange={setRetroativoConcluida}
+                    />
+                  </div>
                 )}
               </div>
             </div>
