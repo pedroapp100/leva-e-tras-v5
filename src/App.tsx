@@ -85,6 +85,7 @@ const App = () => (
                   <Routes>
                   {/* Public */}
                   <Route path="/" element={<RootRedirect />} />
+                  <Route path="/landing" element={<Index />} />
                   <Route path="/entregas-moto" element={<PlaceholderPage title="Entregas Moto" />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/login/reset" element={<ForgotPasswordPage />} />
