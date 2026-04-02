@@ -527,6 +527,17 @@ export default function SolicitacoesPage() {
         )}
       </Suspense>
       <JustificationDialog
+        open={!!transferJustify}
+        onOpenChange={(open) => { if (!open) setTransferJustify(null); }}
+        title="Transferir Entregador"
+        description="Informe o motivo da transferência (ex: pane na moto). Mínimo 10 caracteres."
+        onConfirm={(motivo) => {
+          setTransferMotivo(motivo);
+          setTransferTarget(transferJustify);
+          setTransferJustify(null);
+        }}
+      />
+      <JustificationDialog
         open={!!justifyTarget}
         onOpenChange={(open) => !open && setJustifyTarget(null)}
         title={justifyTarget?.action === "cancelar" ? "Cancelar Solicitação" : "Rejeitar Solicitação"}
