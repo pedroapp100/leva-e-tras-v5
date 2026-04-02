@@ -319,6 +319,7 @@ export default function SolicitacoesPage() {
         )}
         {sol.status === "aceita" && (
           <PermissionGuard permission="solicitacoes.edit">
+            <ActionButton tooltip="Transferir entregador" icon={ArrowLeftRight} onClick={() => setTransferJustify(sol)} variant="info" />
             <ActionButton tooltip="Iniciar entrega" icon={Play} onClick={() => handleStartDelivery(sol)} variant="success" />
           </PermissionGuard>
         )}
