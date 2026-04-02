@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, ClipboardList, Clock, CheckCircle, Truck, Eye, UserPlus, Play, X, Trash2, Pencil, CheckCheck, Calculator, ClipboardCheck, History } from "lucide-react";
+import { Plus, ClipboardList, Clock, CheckCircle, Truck, Eye, UserPlus, Play, X, Trash2, Pencil, CheckCheck, Calculator, ClipboardCheck, History, ArrowLeftRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SimuladorOperacoes } from "@/components/shared/SimuladorOperacoes";
 import { toast } from "sonner";
@@ -62,6 +62,9 @@ export default function SolicitacoesPage() {
   const [launchOpen, setLaunchOpen] = useState(false);
   const [viewSolicitacao, setViewSolicitacao] = useState<Solicitacao | null>(null);
   const [assignTarget, setAssignTarget] = useState<Solicitacao | null>(null);
+  const [transferTarget, setTransferTarget] = useState<Solicitacao | null>(null);
+  const [transferJustify, setTransferJustify] = useState<Solicitacao | null>(null);
+  const [transferMotivo, setTransferMotivo] = useState("");
   const [conciliacaoTarget, setConciliacaoTarget] = useState<Solicitacao | null>(null);
   const [justifyTarget, setJustifyTarget] = useState<{ sol: Solicitacao; action: "cancelar" | "rejeitar" } | null>(null);
   const [simuladorOpen, setSimuladorOpen] = useState(false);
@@ -243,6 +246,39 @@ export default function SolicitacoesPage() {
     setJustifyTarget(null);
   };
 
+  const handleTransfer = (newEntregadorId: string) => {
+    if (!transferTarget) return;
+    const sol = transferTarget;
+    const previousEntregadorId = sol.entregador_id;
+    const previousName = getEntregadorName(previousEntregadorId);
+    const newName = getEntregadorName(newEntregadorId);
+    updateSolicitacao(sol.id, (s) => ({
+      ...s,
+      entregador_id: newEntregadorId,
+      status: "aceita" as StatusSolicitacao,
+      data_inicio: null,
+      historico: [
+        ...s.historico,
+        {
+          tipo: "aceita",
+          status_anterior: "em_andamento",
+          status_novo: "aceita",
+          timestamp: new Date().toISOString(),
+          descricao: `Transferida de ${previousName} para ${newName}: ${transferMotivo}`,
+        },
+      ],
+    }));
+    toast.success(`Solicitação transferida para ${newName}!`);
+    addNotification({
+      title: "Corrida transferida",
+      message: `Solicitação ${sol.codigo} foi transferida de ${previousName} para ${newName}.`,
+      type: "info",
+      link: "/entregador/solicitacoes",
+    });
+    setTransferTarget(null);
+    setTransferMotivo("");
+  };
+
   const ActionButton = ({ tooltip, icon: Icon, onClick, variant = "default" }: { tooltip: string; icon: React.ElementType; onClick: (e: React.MouseEvent) => void; variant?: "default" | "destructive" | "success" | "info" }) => {
     const variantStyles: Record<string, string> = {
       default: "text-foreground hover:bg-accent",
@@ -288,6 +324,7 @@ export default function SolicitacoesPage() {
         )}
         {sol.status === "em_andamento" && (
           <PermissionGuard permission="solicitacoes.edit">
+            <ActionButton tooltip="Transferir entregador" icon={ArrowLeftRight} onClick={() => setTransferJustify(sol)} variant="info" />
             <ActionButton tooltip="Concluir entrega" icon={CheckCheck} onClick={() => setConciliacaoTarget(sol)} variant="success" />
           </PermissionGuard>
         )}
@@ -462,6 +499,12 @@ export default function SolicitacoesPage() {
           onOpenChange={(open) => !open && setAssignTarget(null)}
           onAssign={(entregadorId) => { if (assignTarget) handleAssign(assignTarget.id, entregadorId); setAssignTarget(null); }}
         />
+        <AssignDriverDialog
+          open={!!transferTarget}
+          onOpenChange={(open) => { if (!open) { setTransferTarget(null); setTransferMotivo(""); } }}
+          onAssign={(entregadorId) => handleTransfer(entregadorId)}
+          excludeEntregadorId={transferTarget?.entregador_id}
+        />
         {conciliacaoTarget && (
           <ConciliacaoDialog
             open={!!conciliacaoTarget}
@@ -483,6 +526,17 @@ export default function SolicitacoesPage() {
           />
         )}
       </Suspense>
+      <JustificationDialog
+        open={!!transferJustify}
+        onOpenChange={(open) => { if (!open) setTransferJustify(null); }}
+        title="Transferir Entregador"
+        description="Informe o motivo da transferência (ex: pane na moto). Mínimo 10 caracteres."
+        onConfirm={(motivo) => {
+          setTransferMotivo(motivo);
+          setTransferTarget(transferJustify);
+          setTransferJustify(null);
+        }}
+      />
       <JustificationDialog
         open={!!justifyTarget}
         onOpenChange={(open) => !open && setJustifyTarget(null)}
