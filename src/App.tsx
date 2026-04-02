@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -5,62 +6,65 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth, ROLE_REDIRECTS } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
-import { GlobalStoreProvider } from "@/contexts/GlobalStore";
-import { CaixaStoreProvider } from "@/contexts/CaixaStore";
-import { LogStoreProvider } from "@/contexts/LogStore";
 import { UserStoreProvider } from "@/data/mockUsers";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { BrandedLoader } from "@/components/shared/BrandedLoader";
-import { OnboardingProvider, OnboardingOverlay, OnboardingTooltip, WelcomeModal } from "@/onboarding";
-
-// Layouts
-import { AdminLayout } from "./components/layouts/AdminLayout";
-import { ClientLayout } from "./components/layouts/ClientLayout";
-import { DriverLayout } from "./components/layouts/DriverLayout";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-
-// Auth pages
-import LoginPage from "./pages/auth/LoginPage";
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-
-// Admin pages
-import AdminDashboard from "./pages/admin/Dashboard";
-import SolicitacoesPage from "./pages/admin/SolicitacoesPage";
-import ClientesPage from "./pages/admin/ClientesPage";
-import EntregadoresPage from "./pages/admin/EntregadoresPage";
-import FaturasPage from "./pages/admin/FaturasPage";
-import FinanceiroPage from "./pages/admin/FinanceiroPage";
-import RelatoriosPage from "./pages/admin/RelatoriosPage";
-import LogsPage from "./pages/admin/LogsPage";
-import SettingsPage from "./pages/admin/SettingsPage";
 import Index from "./pages/Index";
-import EntregasPage from "./pages/admin/EntregasPage";
-import CaixasEntregadoresPage from "./pages/admin/CaixasEntregadoresPage";
 
-// Cliente pages
-import ClienteDashboard from "./pages/cliente/ClienteDashboard";
-import MinhasSolicitacoesPage from "./pages/cliente/MinhasSolicitacoesPage";
-import ClienteFinanceiroPage from "./pages/cliente/ClienteFinanceiroPage";
-import ClientePerfilPage from "./pages/cliente/ClientePerfilPage";
-import SimuladorClientePage from "./pages/cliente/SimuladorClientePage";
+const ProtectedAppShell = lazy(() =>
+  import("./components/app/ProtectedAppShell").then((module) => ({ default: module.ProtectedAppShell }))
+);
 
-// Entregador pages
-import EntregadorDashboard from "./pages/entregador/EntregadorDashboard";
-import EntregadorSolicitacoesPage from "./pages/entregador/EntregadorSolicitacoesPage";
-import EntregadorHistoricoPage from "./pages/entregador/EntregadorHistoricoPage";
-import EntregadorFinanceiroPage from "./pages/entregador/EntregadorFinanceiroPage";
-import EntregadorPerfilPage from "./pages/entregador/EntregadorPerfilPage";
-import EntregadorCaixaPage from "./pages/entregador/EntregadorCaixaPage";
+const AdminLayout = lazy(() =>
+  import("./components/layouts/AdminLayout").then((module) => ({ default: module.AdminLayout }))
+);
+const ClientLayout = lazy(() =>
+  import("./components/layouts/ClientLayout").then((module) => ({ default: module.ClientLayout }))
+);
+const DriverLayout = lazy(() =>
+  import("./components/layouts/DriverLayout").then((module) => ({ default: module.DriverLayout }))
+);
 
-// Not found
-import NotFound from "./pages/NotFound";
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
+
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const SolicitacoesPage = lazy(() => import("./pages/admin/SolicitacoesPage"));
+const ClientesPage = lazy(() => import("./pages/admin/ClientesPage"));
+const EntregadoresPage = lazy(() => import("./pages/admin/EntregadoresPage"));
+const EntregasPage = lazy(() => import("./pages/admin/EntregasPage"));
+const CaixasEntregadoresPage = lazy(() => import("./pages/admin/CaixasEntregadoresPage"));
+const FaturasPage = lazy(() => import("./pages/admin/FaturasPage"));
+const FinanceiroPage = lazy(() => import("./pages/admin/FinanceiroPage"));
+const RelatoriosPage = lazy(() => import("./pages/admin/RelatoriosPage"));
+const LogsPage = lazy(() => import("./pages/admin/LogsPage"));
+const SettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
+
+const ClienteDashboard = lazy(() => import("./pages/cliente/ClienteDashboard"));
+const MinhasSolicitacoesPage = lazy(() => import("./pages/cliente/MinhasSolicitacoesPage"));
+const ClienteFinanceiroPage = lazy(() => import("./pages/cliente/ClienteFinanceiroPage"));
+const ClientePerfilPage = lazy(() => import("./pages/cliente/ClientePerfilPage"));
+const SimuladorClientePage = lazy(() => import("./pages/cliente/SimuladorClientePage"));
+
+const EntregadorDashboard = lazy(() => import("./pages/entregador/EntregadorDashboard"));
+const EntregadorSolicitacoesPage = lazy(() => import("./pages/entregador/EntregadorSolicitacoesPage"));
+const EntregadorHistoricoPage = lazy(() => import("./pages/entregador/EntregadorHistoricoPage"));
+const EntregadorFinanceiroPage = lazy(() => import("./pages/entregador/EntregadorFinanceiroPage"));
+const EntregadorPerfilPage = lazy(() => import("./pages/entregador/EntregadorPerfilPage"));
+const EntregadorCaixaPage = lazy(() => import("./pages/entregador/EntregadorCaixaPage"));
+
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
+function RouteFallback() {
+  return <BrandedLoader fullPage size="lg" text="Carregando..." />;
+}
+
 function RootRedirect() {
   const { user, role, isReady } = useAuth();
-  if (!isReady) return <BrandedLoader fullPage size="lg" text="Carregando..." />;
+  if (!isReady) return <RouteFallback />;
   if (!user) return <Index />;
   return <Navigate to={ROLE_REDIRECTS[role!] || "/admin"} replace />;
 }
@@ -73,16 +77,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <UserStoreProvider>
-          <AuthProvider>
-            <LogStoreProvider>
-            <GlobalStoreProvider>
-            <CaixaStoreProvider>
-            <OnboardingProvider>
-              <WelcomeModal />
-              <OnboardingOverlay />
-              <OnboardingTooltip />
+            <AuthProvider>
               <ErrorBoundary>
-                <>
+                <Suspense fallback={<RouteFallback />}>
                   <Routes>
                   {/* Public */}
                   <Route path="/" element={<RootRedirect />} />
@@ -91,7 +88,7 @@ const App = () => (
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                   {/* Admin */}
-                  <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><AdminLayout /></ProtectedRoute>}>
+                  <Route path="/admin" element={<ProtectedAppShell allowedRoles={["admin"]}><AdminLayout /></ProtectedAppShell>}>
                     <Route index element={<AdminDashboard />} />
                     <Route path="solicitacoes" element={<SolicitacoesPage />} />
                     <Route path="clientes" element={<ClientesPage />} />
@@ -106,7 +103,7 @@ const App = () => (
                   </Route>
 
                   {/* Cliente */}
-                  <Route path="/cliente" element={<ProtectedRoute allowedRoles={["cliente"]}><ClientLayout /></ProtectedRoute>}>
+                  <Route path="/cliente" element={<ProtectedAppShell allowedRoles={["cliente"]}><ClientLayout /></ProtectedAppShell>}>
                     <Route index element={<ClienteDashboard />} />
                     <Route path="solicitacoes" element={<MinhasSolicitacoesPage />} />
                     <Route path="financeiro" element={<ClienteFinanceiroPage />} />
@@ -115,7 +112,7 @@ const App = () => (
                   </Route>
 
                   {/* Entregador */}
-                  <Route path="/entregador" element={<ProtectedRoute allowedRoles={["entregador"]}><DriverLayout /></ProtectedRoute>}>
+                  <Route path="/entregador" element={<ProtectedAppShell allowedRoles={["entregador"]}><DriverLayout /></ProtectedAppShell>}>
                     <Route index element={<EntregadorDashboard />} />
                     <Route path="solicitacoes" element={<EntregadorSolicitacoesPage />} />
                     <Route path="historico" element={<EntregadorHistoricoPage />} />
@@ -135,13 +132,9 @@ const App = () => (
 
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </>
+                </Suspense>
               </ErrorBoundary>
-            </OnboardingProvider>
-            </CaixaStoreProvider>
-            </GlobalStoreProvider>
-            </LogStoreProvider>
-          </AuthProvider>
+            </AuthProvider>
           </UserStoreProvider>
         </BrowserRouter>
       </TooltipProvider>
